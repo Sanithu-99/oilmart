@@ -58,7 +58,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
         </div>
       </section>
       <aside className="hero-side-stack" aria-label="Store services">
-        <article className="hero-info-card hero-info-card-blue"><span>01 / Store</span><h2>{d.footer.store}</h2><address>{storeConfig.address.line1}, {storeConfig.address.line2}<br/>{storeConfig.address.city}</address><a href={`tel:${storeConfig.phone.replace(/\s/g, "")}`}>{storeConfig.phone}</a></article>
+        <article className="hero-info-card hero-info-card-petrol"><span>01 / Store</span><h2>{d.footer.store}</h2><address>{storeConfig.address.line1}, {storeConfig.address.line2}<br/>{storeConfig.address.city}</address><a href={`tel:${storeConfig.phone.replace(/\s/g, "")}`}>{storeConfig.phone}</a></article>
         <article className="hero-info-card hero-info-card-yellow"><span>02 / Pickup</span><h2>{d.footer.pickup}</h2><p>{d.footer.pickupBody}</p><Link href={`/${locale}/products`}>{d.footer.pickupAction}<ArrowRight size={16}/></Link></article>
       </aside>
     </div></section>
@@ -91,6 +91,6 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
 
     <section className="bg-[#f1f0e8] py-20"><div className="site-container"><div className="section-heading"><div><p className="eyebrow">Recently added</p><h2>{d.home.arrivals}</h2></div><Link href={`/${locale}/products?sort=newest`} className="text-link">{d.home.allProducts}<ArrowRight size={16}/></Link></div><div className="product-grid">{data.newArrivals.map((product) => <ProductCard key={product.id} product={product} locale={locale} dictionary={d}/>)}</div></div></section>
 
-    {data.promotion && <section className="site-container section-space" id="offers"><div className="rounded-3xl border-b-4 border-[#d5b762] bg-[#4f121b] p-9 text-white"><p className="eyebrow text-[#d5b762]">{d.nav.offers}</p><h2 className="font-display text-4xl">{data.promotion.name}</h2>{data.promotion.description && <p className="mt-3 max-w-2xl text-[#eadfda]">{data.promotion.description}</p>}</div></section>}
+    {data.promotion && <section className="site-container section-space" id="offers"><div className="rounded-3xl border-b-4 border-[#ffd11a] bg-[#10372f] p-9 text-white"><p className="eyebrow text-[#ffd11a]">{d.nav.offers}</p><h2 className="font-display text-4xl">{data.promotion.name}</h2>{data.promotion.description && <p className="mt-3 max-w-2xl text-[#e7f3ee]">{data.promotion.description}</p>}</div></section>}
   </>;
 }

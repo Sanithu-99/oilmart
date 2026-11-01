@@ -7,7 +7,7 @@ Primary branch: `main`
 
 ## Executive status
 
-The project is a production-oriented Next.js commerce application for a Sri Lankan lubricant retailer. Phases 1–4, the supplied inventory report import, product imagery pass, secure admin operations, customer accounts, loyalty pricing and cart pricing propagation are implemented. The current layout is retained with an oxblood/burgundy, dark red-brown, warm cream, forest, clay and muted-brass palette.
+The project is a production-oriented Next.js commerce application for a Sri Lankan lubricant retailer. Phases 1–4, the supplied inventory report import, product imagery pass, secure admin operations, customer accounts, loyalty pricing and cart pricing propagation are implemented. The current layout is retained with a deep petrol-green, original bright-yellow, warm cream and restrained chili-red palette.
 
 It is not ready for a public transactional launch because checkout/order submission and payment are intentionally disabled, most imported products still require verified retail prices, product content/images need supplier approval, and external delivery/notification/monitoring/legal decisions remain open.
 
@@ -101,12 +101,12 @@ It is not ready for a public transactional launch because checkout/order submiss
 
 - The current information architecture and responsive layout are intentionally preserved.
 - Blue/yellow cricket colors were removed.
-- Current palette: oxblood and burgundy for primary retail actions, dark red-brown for the header, warm cream/sand surfaces, forest green for depth, clay red for secondary emphasis and muted brass for highlights.
+- Current palette: deep petrol green for the header and primary retail actions, the restored bright yellow (`#FFD11A`) for high-visibility highlights, warm cream/sand surfaces and restrained chili red for secondary emphasis.
 - The footer retains the large animated “Saranankara Oil Mart” wordmark with the oil movement clipped inside the letters.
 - Category tiles use real lubricant product imagery rather than generic icons/AI-style graphics.
 - All 28 active catalogue brands appear as a two-row, opposite-direction logo marquee. It pauses for pointer/keyboard interaction, becomes manually scrollable when reduced motion is requested and every primary logo links to its filtered catalogue.
 - A compact gold “We Deliver” truck badge sits in the top utility bar without displacing the hotline on mobile.
-- The project-owner-supplied oil-flow clip was reduced from 41 MB/1440p to a 2.9 MB, silent, 14-second 720p web loop. It is masked inside the footer wordmark, has a poster frame and falls back to still brass lettering for reduced-motion or mask-incompatible browsers.
+- The project-owner-supplied oil-flow clip was reduced from 41 MB/1440p to a 2.9 MB, silent, 14-second 720p web loop. It is masked inside the footer wordmark, has a poster frame and falls back to still golden-oil lettering for reduced-motion or mask-incompatible browsers.
 - Brand and footage provenance/approval notes are recorded in `docs/assets/brand-logo-sources.md`. Four ambiguous report-category brands use exact-name lockups pending supplier-confirmed official assets.
 
 ## Security and data boundaries that must remain
