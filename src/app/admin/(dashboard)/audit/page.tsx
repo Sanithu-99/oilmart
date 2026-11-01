@@ -1,0 +1,6 @@
+import { ClipboardList } from "lucide-react";
+
+import { requireAdminPage } from "@/features/admin/auth/authorization";
+import { db } from "@/lib/db/client";
+
+export default async function AuditPage(){await requireAdminPage("audit.read");const events=await db.auditLog.findMany({include:{actor:{select:{name:true,email:true}}},orderBy:{createdAt:"desc"},take:100});return <><div className="admin-page-heading"><div><p className="admin-eyebrow">Security & accountability</p><h1>Audit log</h1><p>Append-only administrative events with sensitive fields redacted before storage.</p></div></div><section className="admin-table-card"><div className="admin-table-scroll"><table className="admin-product-table"><thead><tr><th>Event</th><th>Actor</th><th>Entity</th><th>Time</th><th>Reference</th></tr></thead><tbody>{events.map(event=><tr key={event.id}><td><div className="admin-product-cell"><span><ClipboardList size={16}/></span><strong>{event.action.replaceAll("_"," ")}</strong></div></td><td>{event.actor?.name??event.actor?.email??"System"}</td><td>{event.entityType}{event.entityId&&<small>{event.entityId}</small>}</td><td>{event.createdAt.toLocaleString("en-LK")}</td><td><code>{event.correlationId?.slice(0,8)??"—"}</code></td></tr>)}</tbody></table></div>{!events.length&&<div className="admin-empty-state">No events have been recorded yet.</div>}</section></>}

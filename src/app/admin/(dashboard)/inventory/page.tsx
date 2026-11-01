@@ -1,0 +1,12 @@
+import { Boxes, CircleAlert } from "lucide-react";
+
+import { adjustInventoryAction } from "@/features/admin/catalog-actions";
+import { requireAdminPage } from "@/features/admin/auth/authorization";
+import { InventoryAdjustmentType } from "@/generated/prisma/client";
+import { db } from "@/lib/db/client";
+
+export default async function InventoryPage() {
+  await requireAdminPage("inventory.read");
+  const records=await db.inventory.findMany({include:{variant:{include:{product:true}},adjustments:{orderBy:{createdAt:"desc"},take:3,include:{actor:{select:{name:true,email:true}}}}},orderBy:{updatedAt:"desc"}});
+  return <><div className="admin-page-heading"><div><p className="admin-eyebrow">Stock ledger</p><h1>Inventory</h1><p>Every adjustment is transactional, immutable and attributed to an administrator.</p></div></div><section className="admin-list-stack">{records.map((item)=>{const available=Number(item.quantityOnHand)-Number(item.quantityReserved); const low=available<=Number(item.lowStockThreshold);return <details className="admin-disclosure" key={item.id}><summary><span className={low?"is-warning":""}>{low?<CircleAlert size={17}/>:<Boxes size={17}/>}</span><div><strong>{item.variant.product.name}</strong><small>{item.variant.sku} · reserved {item.quantityReserved.toString()}</small></div><em className={low?"admin-stock-low":"admin-stock-ok"}>{available.toFixed(3).replace(/\.000$/,"")} available</em></summary><div className="admin-inventory-detail"><form action={adjustInventoryAction} className="admin-inline-form"><input type="hidden" name="inventoryId" value={item.id}/><label className="admin-field">Adjustment (+ / −)<input name="quantityDelta" inputMode="decimal" placeholder="e.g. 12 or -2.5" required/></label><label className="admin-field">Type<select name="type">{Object.values(InventoryAdjustmentType).map((type)=><option key={type}>{type}</option>)}</select></label><label className="admin-field span-2">Reason<input name="reason" required placeholder="Supplier receipt, damage report, physical count…"/></label><button className="admin-primary-button">Record adjustment</button></form><div className="admin-history-list">{item.adjustments.map((adjustment)=><div key={adjustment.id}><strong>{Number(adjustment.quantityDelta)>0?"+":""}{adjustment.quantityDelta.toString()}</strong><span>{adjustment.reason}</span><small>{adjustment.actor?.name??adjustment.actor?.email??"System"} · {adjustment.createdAt.toLocaleString("en-LK")}</small></div>)}</div></div></details>;})}</section></>;
+}

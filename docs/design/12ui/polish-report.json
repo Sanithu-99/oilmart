@@ -1,0 +1,2417 @@
+{
+  "version": 1,
+  "policy": "retained-v1",
+  "rules": [
+    "align",
+    "contrast",
+    "escape",
+    "fit-text",
+    "left-rail",
+    "overlap",
+    "page-cut",
+    "photo-corners",
+    "rhythm",
+    "section-breathing",
+    "shell-seam"
+  ],
+  "pages": [
+    {
+      "unit": "account-orders-and-loyalty",
+      "rules": {
+        "align": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "escape": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "fit-text": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "left-rail": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "overlap": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "page-cut": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "photo-corners": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "rhythm": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "shell-seam": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "contrast": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "section-breathing": {
+          "proposed": 0,
+          "overCap": 0,
+          "census": []
+        }
+      },
+      "accepted": [],
+      "rejected": [],
+      "overrides": 0,
+      "before": {
+        "leaves": 0,
+        "textLeaves": 0,
+        "containers": 0,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 0,
+        "reachableActions": 0,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 0,
+        "whitespace": 0,
+        "columns": 0,
+        "gaps": 0,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 42,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1520,
+        "sectionH": 15
+      },
+      "after": {
+        "leaves": 0,
+        "textLeaves": 0,
+        "containers": 0,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 0,
+        "reachableActions": 0,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 0,
+        "whitespace": 0,
+        "columns": 0,
+        "gaps": 0,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 42,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1520,
+        "sectionH": 15
+      },
+      "ruleRecords": [
+        {
+          "rule": "align",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "contrast",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "escape",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "fit-text",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "left-rail",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "overlap",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "page-cut",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "photo-corners",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "rhythm",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "section-breathing",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "shell-seam",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        }
+      ]
+    },
+    {
+      "unit": "administration",
+      "rules": {
+        "align": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "escape": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "fit-text": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "left-rail": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "overlap": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "page-cut": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "photo-corners": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "rhythm": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "shell-seam": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "contrast": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "section-breathing": {
+          "proposed": 0,
+          "overCap": 0,
+          "census": []
+        }
+      },
+      "accepted": [],
+      "rejected": [],
+      "overrides": 0,
+      "before": {
+        "leaves": 0,
+        "textLeaves": 0,
+        "containers": 0,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 0,
+        "reachableActions": 0,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 0,
+        "whitespace": 0,
+        "columns": 0,
+        "gaps": 0,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 60,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1520,
+        "sectionH": 15
+      },
+      "after": {
+        "leaves": 0,
+        "textLeaves": 0,
+        "containers": 0,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 0,
+        "reachableActions": 0,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 0,
+        "whitespace": 0,
+        "columns": 0,
+        "gaps": 0,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 60,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1520,
+        "sectionH": 15
+      },
+      "ruleRecords": [
+        {
+          "rule": "align",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "contrast",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "escape",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "fit-text",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "left-rail",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "overlap",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "page-cut",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "photo-corners",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "rhythm",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "section-breathing",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "shell-seam",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        }
+      ]
+    },
+    {
+      "unit": "administration-h",
+      "rules": {
+        "align": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "escape": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "fit-text": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "left-rail": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "overlap": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "page-cut": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "photo-corners": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "rhythm": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "shell-seam": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "contrast": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "section-breathing": {
+          "proposed": 0,
+          "overCap": 0,
+          "census": []
+        }
+      },
+      "accepted": [],
+      "rejected": [],
+      "overrides": 0,
+      "before": {
+        "leaves": 0,
+        "textLeaves": 0,
+        "containers": 0,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 0,
+        "reachableActions": 0,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 0,
+        "whitespace": 0,
+        "columns": 0,
+        "gaps": 0,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 102,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1520,
+        "sectionH": 15
+      },
+      "after": {
+        "leaves": 0,
+        "textLeaves": 0,
+        "containers": 0,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 0,
+        "reachableActions": 0,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 0,
+        "whitespace": 0,
+        "columns": 0,
+        "gaps": 0,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 102,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1520,
+        "sectionH": 15
+      },
+      "ruleRecords": [
+        {
+          "rule": "align",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "contrast",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "escape",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "fit-text",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "left-rail",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "overlap",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "page-cut",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "photo-corners",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "rhythm",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "section-breathing",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "shell-seam",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        }
+      ]
+    },
+    {
+      "unit": "catalog-and-product-details",
+      "rules": {
+        "align": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "escape": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "fit-text": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "left-rail": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "overlap": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "page-cut": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "photo-corners": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "rhythm": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "shell-seam": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "contrast": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "section-breathing": {
+          "proposed": 0,
+          "overCap": 0,
+          "census": []
+        }
+      },
+      "accepted": [],
+      "rejected": [],
+      "overrides": 0,
+      "before": {
+        "leaves": 0,
+        "textLeaves": 0,
+        "containers": 0,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 0,
+        "reachableActions": 0,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 0,
+        "whitespace": 0,
+        "columns": 0,
+        "gaps": 0,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 84,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1520,
+        "sectionH": 15
+      },
+      "after": {
+        "leaves": 0,
+        "textLeaves": 0,
+        "containers": 0,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 0,
+        "reachableActions": 0,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 0,
+        "whitespace": 0,
+        "columns": 0,
+        "gaps": 0,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 84,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1520,
+        "sectionH": 15
+      },
+      "ruleRecords": [
+        {
+          "rule": "align",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "contrast",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "escape",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "fit-text",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "left-rail",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "overlap",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "page-cut",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "photo-corners",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "rhythm",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "section-breathing",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "shell-seam",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        }
+      ]
+    },
+    {
+      "unit": "holding-en",
+      "rules": {
+        "align": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "escape": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "fit-text": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "left-rail": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "overlap": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "page-cut": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "photo-corners": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "rhythm": {
+          "proposed": 3,
+          "overCap": 0
+        },
+        "shell-seam": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "contrast": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "section-breathing": {
+          "proposed": 0,
+          "overCap": 0,
+          "census": []
+        }
+      },
+      "accepted": [
+        {
+          "rule": "align",
+          "overrides": 1
+        },
+        {
+          "rule": "rhythm",
+          "overrides": 3
+        },
+        {
+          "rule": "contrast",
+          "overrides": 1
+        }
+      ],
+      "rejected": [],
+      "overrides": 5,
+      "before": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 11,
+        "reachableActions": 11,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 12,
+        "whitespace": 8,
+        "columns": 22,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "after": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 11,
+        "reachableActions": 11,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 11,
+        "whitespace": 0,
+        "columns": 23,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "ruleRecords": [
+        {
+          "rule": "align",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "contrast",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "escape",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "fit-text",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "left-rail",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "overlap",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "page-cut",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "photo-corners",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "rhythm",
+          "status": "fired",
+          "proposed": 3,
+          "accepted": 3,
+          "overCap": 0
+        },
+        {
+          "rule": "section-breathing",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "shell-seam",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        }
+      ]
+    },
+    {
+      "unit": "holding-home",
+      "rules": {
+        "align": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "escape": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "fit-text": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "left-rail": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "overlap": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "page-cut": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "photo-corners": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "rhythm": {
+          "proposed": 3,
+          "overCap": 0
+        },
+        "shell-seam": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "contrast": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "section-breathing": {
+          "proposed": 0,
+          "overCap": 0,
+          "census": []
+        }
+      },
+      "accepted": [
+        {
+          "rule": "align",
+          "overrides": 1
+        },
+        {
+          "rule": "rhythm",
+          "overrides": 3
+        },
+        {
+          "rule": "contrast",
+          "overrides": 1
+        }
+      ],
+      "rejected": [],
+      "overrides": 5,
+      "before": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 11,
+        "reachableActions": 11,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 12,
+        "whitespace": 8,
+        "columns": 22,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "after": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 11,
+        "reachableActions": 11,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 11,
+        "whitespace": 0,
+        "columns": 23,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "ruleRecords": [
+        {
+          "rule": "align",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "contrast",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "escape",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "fit-text",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "left-rail",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "overlap",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "page-cut",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "photo-corners",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "rhythm",
+          "status": "fired",
+          "proposed": 3,
+          "accepted": 3,
+          "overCap": 0
+        },
+        {
+          "rule": "section-breathing",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "shell-seam",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        }
+      ]
+    },
+    {
+      "unit": "holding-p0-saranankara-oil-mart",
+      "rules": {
+        "align": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "escape": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "fit-text": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "left-rail": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "overlap": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "page-cut": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "photo-corners": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "rhythm": {
+          "proposed": 3,
+          "overCap": 0
+        },
+        "shell-seam": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "contrast": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "section-breathing": {
+          "proposed": 0,
+          "overCap": 0,
+          "census": []
+        }
+      },
+      "accepted": [
+        {
+          "rule": "align",
+          "overrides": 1
+        },
+        {
+          "rule": "rhythm",
+          "overrides": 3
+        },
+        {
+          "rule": "contrast",
+          "overrides": 1
+        }
+      ],
+      "rejected": [],
+      "overrides": 5,
+      "before": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 12,
+        "reachableActions": 12,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 12,
+        "whitespace": 8,
+        "columns": 22,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "after": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 12,
+        "reachableActions": 12,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 11,
+        "whitespace": 0,
+        "columns": 23,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "ruleRecords": [
+        {
+          "rule": "align",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "contrast",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "escape",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "fit-text",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "left-rail",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "overlap",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "page-cut",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "photo-corners",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "rhythm",
+          "status": "fired",
+          "proposed": 3,
+          "accepted": 3,
+          "overCap": 0
+        },
+        {
+          "rule": "section-breathing",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "shell-seam",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        }
+      ]
+    },
+    {
+      "unit": "holding-p2-cart-and-guest-checkout",
+      "rules": {
+        "align": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "escape": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "fit-text": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "left-rail": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "overlap": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "page-cut": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "photo-corners": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "rhythm": {
+          "proposed": 3,
+          "overCap": 0
+        },
+        "shell-seam": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "contrast": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "section-breathing": {
+          "proposed": 0,
+          "overCap": 0,
+          "census": []
+        }
+      },
+      "accepted": [
+        {
+          "rule": "align",
+          "overrides": 1
+        },
+        {
+          "rule": "rhythm",
+          "overrides": 3
+        },
+        {
+          "rule": "contrast",
+          "overrides": 1
+        }
+      ],
+      "rejected": [],
+      "overrides": 5,
+      "before": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 12,
+        "reachableActions": 12,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 12,
+        "whitespace": 8,
+        "columns": 22,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "after": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 12,
+        "reachableActions": 12,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 11,
+        "whitespace": 0,
+        "columns": 23,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "ruleRecords": [
+        {
+          "rule": "align",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "contrast",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "escape",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "fit-text",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "left-rail",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "overlap",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "page-cut",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "photo-corners",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "rhythm",
+          "status": "fired",
+          "proposed": 3,
+          "accepted": 3,
+          "overCap": 0
+        },
+        {
+          "rule": "section-breathing",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "shell-seam",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        }
+      ]
+    },
+    {
+      "unit": "holding-reports",
+      "rules": {
+        "align": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "escape": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "fit-text": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "left-rail": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "overlap": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "page-cut": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "photo-corners": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "rhythm": {
+          "proposed": 3,
+          "overCap": 0
+        },
+        "shell-seam": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "contrast": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "section-breathing": {
+          "proposed": 0,
+          "overCap": 0,
+          "census": []
+        }
+      },
+      "accepted": [
+        {
+          "rule": "align",
+          "overrides": 1
+        },
+        {
+          "rule": "rhythm",
+          "overrides": 3
+        },
+        {
+          "rule": "contrast",
+          "overrides": 1
+        }
+      ],
+      "rejected": [],
+      "overrides": 5,
+      "before": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 11,
+        "reachableActions": 11,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 12,
+        "whitespace": 8,
+        "columns": 22,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "after": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 11,
+        "reachableActions": 11,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 11,
+        "whitespace": 0,
+        "columns": 23,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "ruleRecords": [
+        {
+          "rule": "align",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "contrast",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "escape",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "fit-text",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "left-rail",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "overlap",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "page-cut",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "photo-corners",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "rhythm",
+          "status": "fired",
+          "proposed": 3,
+          "accepted": 3,
+          "overCap": 0
+        },
+        {
+          "rule": "section-breathing",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "shell-seam",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        }
+      ]
+    },
+    {
+      "unit": "holding-settings",
+      "rules": {
+        "align": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "escape": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "fit-text": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "left-rail": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "overlap": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "page-cut": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "photo-corners": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "rhythm": {
+          "proposed": 3,
+          "overCap": 0
+        },
+        "shell-seam": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "contrast": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "section-breathing": {
+          "proposed": 0,
+          "overCap": 0,
+          "census": []
+        }
+      },
+      "accepted": [
+        {
+          "rule": "align",
+          "overrides": 1
+        },
+        {
+          "rule": "rhythm",
+          "overrides": 3
+        },
+        {
+          "rule": "contrast",
+          "overrides": 1
+        }
+      ],
+      "rejected": [],
+      "overrides": 5,
+      "before": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 11,
+        "reachableActions": 11,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 12,
+        "whitespace": 8,
+        "columns": 22,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "after": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 11,
+        "reachableActions": 11,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 11,
+        "whitespace": 0,
+        "columns": 23,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "ruleRecords": [
+        {
+          "rule": "align",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "contrast",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "escape",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "fit-text",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "left-rail",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "overlap",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "page-cut",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "photo-corners",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "rhythm",
+          "status": "fired",
+          "proposed": 3,
+          "accepted": 3,
+          "overCap": 0
+        },
+        {
+          "rule": "section-breathing",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "shell-seam",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        }
+      ]
+    },
+    {
+      "unit": "holding-தம-ழ",
+      "rules": {
+        "align": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "escape": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "fit-text": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "left-rail": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "overlap": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "page-cut": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "photo-corners": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "rhythm": {
+          "proposed": 3,
+          "overCap": 0
+        },
+        "shell-seam": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "contrast": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "section-breathing": {
+          "proposed": 0,
+          "overCap": 0,
+          "census": []
+        }
+      },
+      "accepted": [
+        {
+          "rule": "align",
+          "overrides": 1
+        },
+        {
+          "rule": "rhythm",
+          "overrides": 3
+        },
+        {
+          "rule": "contrast",
+          "overrides": 1
+        }
+      ],
+      "rejected": [],
+      "overrides": 5,
+      "before": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 11,
+        "reachableActions": 11,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 12,
+        "whitespace": 8,
+        "columns": 22,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "after": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 11,
+        "reachableActions": 11,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 11,
+        "whitespace": 0,
+        "columns": 23,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "ruleRecords": [
+        {
+          "rule": "align",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "contrast",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "escape",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "fit-text",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "left-rail",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "overlap",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "page-cut",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "photo-corners",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "rhythm",
+          "status": "fired",
+          "proposed": 3,
+          "accepted": 3,
+          "overCap": 0
+        },
+        {
+          "rule": "section-breathing",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "shell-seam",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        }
+      ]
+    },
+    {
+      "unit": "holding-ස-හල",
+      "rules": {
+        "align": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "escape": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "fit-text": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "left-rail": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "overlap": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "page-cut": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "photo-corners": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "rhythm": {
+          "proposed": 3,
+          "overCap": 0
+        },
+        "shell-seam": {
+          "proposed": 0,
+          "overCap": 0
+        },
+        "contrast": {
+          "proposed": 1,
+          "overCap": 0
+        },
+        "section-breathing": {
+          "proposed": 0,
+          "overCap": 0,
+          "census": []
+        }
+      },
+      "accepted": [
+        {
+          "rule": "align",
+          "overrides": 1
+        },
+        {
+          "rule": "rhythm",
+          "overrides": 3
+        },
+        {
+          "rule": "contrast",
+          "overrides": 1
+        }
+      ],
+      "rejected": [],
+      "overrides": 5,
+      "before": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 11,
+        "reachableActions": 11,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 12,
+        "whitespace": 8,
+        "columns": 22,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "after": {
+        "leaves": 26,
+        "textLeaves": 11,
+        "containers": 21,
+        "overflow": 0,
+        "containment": 0,
+        "actions": 11,
+        "reachableActions": 11,
+        "unreachableActions": 0,
+        "overlap": 0,
+        "alignment": 11,
+        "whitespace": 0,
+        "columns": 23,
+        "gaps": 21,
+        "seams": 0,
+        "narrowSeams": 0,
+        "documentHeight": 1024,
+        "offcenter": 0,
+        "rail": 0,
+        "missingText": 0,
+        "shifted": 0,
+        "maxShift": 0,
+        "sectionW": 1536,
+        "sectionH": 1024
+      },
+      "ruleRecords": [
+        {
+          "rule": "align",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "contrast",
+          "status": "fired",
+          "proposed": 1,
+          "accepted": 1,
+          "overCap": 0
+        },
+        {
+          "rule": "escape",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "fit-text",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "left-rail",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "overlap",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "page-cut",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "photo-corners",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "rhythm",
+          "status": "fired",
+          "proposed": 3,
+          "accepted": 3,
+          "overCap": 0
+        },
+        {
+          "rule": "section-breathing",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        },
+        {
+          "rule": "shell-seam",
+          "status": "silent",
+          "proposed": 0,
+          "accepted": 0,
+          "overCap": 0
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "enabled": true,
+    "policy": "retained-v1",
+    "pageCount": 12,
+    "pageErrors": 0,
+    "fired": 24,
+    "silent": 108,
+    "reverted": 0,
+    "rules": [
+      {
+        "name": "align",
+        "fired": 8,
+        "silent": 4,
+        "reverted": 0,
+        "proposed": 8,
+        "accepted": 8,
+        "overCap": 0
+      },
+      {
+        "name": "contrast",
+        "fired": 8,
+        "silent": 4,
+        "reverted": 0,
+        "proposed": 8,
+        "accepted": 8,
+        "overCap": 0
+      },
+      {
+        "name": "escape",
+        "fired": 0,
+        "silent": 12,
+        "reverted": 0,
+        "proposed": 0,
+        "accepted": 0,
+        "overCap": 0
+      },
+      {
+        "name": "fit-text",
+        "fired": 0,
+        "silent": 12,
+        "reverted": 0,
+        "proposed": 0,
+        "accepted": 0,
+        "overCap": 0
+      },
+      {
+        "name": "left-rail",
+        "fired": 0,
+        "silent": 12,
+        "reverted": 0,
+        "proposed": 0,
+        "accepted": 0,
+        "overCap": 0
+      },
+      {
+        "name": "overlap",
+        "fired": 0,
+        "silent": 12,
+        "reverted": 0,
+        "proposed": 0,
+        "accepted": 0,
+        "overCap": 0
+      },
+      {
+        "name": "page-cut",
+        "fired": 0,
+        "silent": 12,
+        "reverted": 0,
+        "proposed": 0,
+        "accepted": 0,
+        "overCap": 0
+      },
+      {
+        "name": "photo-corners",
+        "fired": 0,
+        "silent": 12,
+        "reverted": 0,
+        "proposed": 0,
+        "accepted": 0,
+        "overCap": 0
+      },
+      {
+        "name": "rhythm",
+        "fired": 8,
+        "silent": 4,
+        "reverted": 0,
+        "proposed": 24,
+        "accepted": 24,
+        "overCap": 0
+      },
+      {
+        "name": "section-breathing",
+        "fired": 0,
+        "silent": 12,
+        "reverted": 0,
+        "proposed": 0,
+        "accepted": 0,
+        "overCap": 0
+      },
+      {
+        "name": "shell-seam",
+        "fired": 0,
+        "silent": 12,
+        "reverted": 0,
+        "proposed": 0,
+        "accepted": 0,
+        "overCap": 0
+      }
+    ]
+  }
+}

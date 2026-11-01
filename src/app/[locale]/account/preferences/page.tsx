@@ -1,0 +1,8 @@
+import { PreferencesForm } from "@/components/customer/account-forms";
+import { requestAccountDeletionAction } from "@/features/customer/account/actions";
+import { requireCustomerPage } from "@/features/customer/auth/authorization";
+import { ConsentType } from "@/generated/prisma/client";
+import { db } from "@/lib/db/client";
+import { requireLocale } from "@/lib/i18n/config";
+
+export default async function Page({ params }: { params: Promise<{ locale: string }> }) { const locale = requireLocale((await params).locale); const customer = await requireCustomerPage(locale); const rows = await db.marketingConsent.findMany({ where: { customerId: customer.id }, orderBy: { recordedAt: "desc" } }); const latest = (type: ConsentType) => rows.find((row) => row.type === type)?.granted ?? false; return <><section className="account-panel"><div className="panel-heading"><div><p className="eyebrow">Your choices</p><h2>Communication preferences</h2></div></div><p className="panel-intro">Transactional order and security messages are separate from optional marketing.</p><PreferencesForm email={latest(ConsentType.EMAIL_MARKETING)} sms={latest(ConsentType.SMS_MARKETING)}/></section><section className="account-panel danger-zone"><h2>Privacy request</h2><p>You can request account deletion. The store will review legal retention requirements before removing eligible personal data.</p>{customer.deletionRequestedAt ? <p className="inline-status success">Requested {customer.deletionRequestedAt.toLocaleDateString("en-LK")}</p> : <form action={requestAccountDeletionAction}><button className="danger-button">Request account deletion</button></form>}</section></>; }

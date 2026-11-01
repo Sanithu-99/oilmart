@@ -1,0 +1,401 @@
+{
+  "version": 1,
+  "status": "failed",
+  "runId": "crt-9d71cf679896b553f9b979f34902c0ecc83b6653",
+  "runKey": "branch:v1:img-972da6cf424b4266290152cebafb80df:-:d1e7d510e00f969d:site:branch-execute-v3",
+  "workflowRevision": "branch-execute-v3",
+  "scope": "site",
+  "concept": "Expand the selected Saranankara Oil Mart direction into a cohesive responsive commerce site and admin app. Continue the homepage below the fold with only database-driven category, brand, featured, new arrival, promotion and factual business sections plus footer. Add catalog/search with category, brand, price and availability filters; premium product detail with gallery, exact LKR pricing, stock, quantity, technical specifications, pickup/delivery facts and related products; cart; guest-friendly checkout with pickup/manual delivery quote and accurately labelled offline payments; account/order history; loyalty application; and a professional admin overview/catalog screen with sidebar, low-stock and pending-workflow states. Use English copy while reserving EN/සිංහල/தமிழ் controls. Preserve warm-white, charcoal and restrained amber, serif editorial headings, clean sans body, strong search, generous spacing and accessible 44px controls. Do not add vehicle compatibility, reviews, ratings, invented prices/specifications/brands/claims/awards/hours/email, active online gateways, hidden fees, gradients or glow. Use clear empty/configuration states where data is absent.",
+  "conceptSha256": "d1e7d510e00f969d3ead10cddf1e337a2991e11791d2bf537562328596f34617",
+  "origin": "https://12ui.com",
+  "outDir": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch",
+  "attemptPath": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/branch.attempt.json",
+  "planPath": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/branch.plan.json",
+  "startedAt": "2026-10-29T00:58:57.505Z",
+  "completedAt": "2026-10-29T01:06:14.870Z",
+  "screenCount": 8,
+  "succeededCount": 8,
+  "failedCount": 0,
+  "blockedCount": 0,
+  "pageCount": 6,
+  "logicalPageCount": 5,
+  "convertedPageCount": 4,
+  "winnerPageFailed": true,
+  "terminalClass": "required_winner_page_failed",
+  "winner": {
+    "path": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/screens/winner.png",
+    "sha256": "972da6cf424b4266290152cebafb80df78a094b5beb50137a09960c4861fa98e",
+    "bytes": 1583311,
+    "width": 1536,
+    "height": 1024
+  },
+  "screens": [
+    {
+      "slot": "a",
+      "pageIndex": 0,
+      "pageId": "p0-saranankara-oil-mart",
+      "viewportOrdinal": 2,
+      "status": "succeeded",
+      "direction": "Saranankara Oil Mart (part 2)",
+      "path": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/screens/a.png",
+      "sha256": "889e7e8ce76c96bb26bda1728d7ff5ca635d6517c54aff94c49727b87b3a0249",
+      "bytes": 1498127,
+      "width": 1536,
+      "height": 1024,
+      "canvasDecision": {
+        "provenance": "inherited-from-winner",
+        "sourceCanvas": {
+          "width": 1536,
+          "height": 1024
+        }
+      },
+      "footer": true
+    },
+    {
+      "slot": "b",
+      "pageIndex": 1,
+      "pageId": "p1-catalog-and-product-details",
+      "viewportOrdinal": 1,
+      "status": "succeeded",
+      "direction": "Catalog and Product Details",
+      "path": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/screens/b.png",
+      "sha256": "8e8d156e903547a69ad2ec862ef2ac1153f59153de95bcde87e33ad7327161c6",
+      "bytes": 1530001,
+      "width": 1536,
+      "height": 1024,
+      "canvasDecision": {
+        "provenance": "inherited-from-winner",
+        "sourceCanvas": {
+          "width": 1536,
+          "height": 1024
+        }
+      }
+    },
+    {
+      "slot": "c",
+      "pageIndex": 1,
+      "pageId": "p1-catalog-and-product-details",
+      "viewportOrdinal": 2,
+      "status": "succeeded",
+      "direction": "Catalog and Product Details (part 2)",
+      "path": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/screens/c.png",
+      "sha256": "f663037ac6524496d48bf5bc6129f5ad8ae8193210f23d7977a0f6a11e8ce696",
+      "bytes": 1650841,
+      "width": 1536,
+      "height": 1024,
+      "dependsOnSlot": "b",
+      "canvasDecision": {
+        "provenance": "inherited-from-winner",
+        "sourceCanvas": {
+          "width": 1536,
+          "height": 1024
+        }
+      },
+      "footer": true
+    },
+    {
+      "slot": "d",
+      "pageIndex": 2,
+      "pageId": "p2-cart-and-guest-checkout",
+      "viewportOrdinal": 1,
+      "status": "succeeded",
+      "direction": "Cart and Guest Checkout",
+      "path": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/screens/d.png",
+      "sha256": "3f4f34e70a600917d6cf850fc13c61a2206a6916720bc1b9cb431c4f34cda635",
+      "bytes": 1407368,
+      "width": 1536,
+      "height": 1024,
+      "canvasDecision": {
+        "provenance": "inherited-from-winner",
+        "sourceCanvas": {
+          "width": 1536,
+          "height": 1024
+        }
+      }
+    },
+    {
+      "slot": "e",
+      "pageIndex": 2,
+      "pageId": "p2-cart-and-guest-checkout",
+      "viewportOrdinal": 2,
+      "status": "succeeded",
+      "direction": "Cart and Guest Checkout (part 2)",
+      "path": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/screens/e.png",
+      "sha256": "821683f651b6b0f12d77f07bed8878a06d3628296393e0f37462ce079737ebc7",
+      "bytes": 1539302,
+      "width": 1536,
+      "height": 1024,
+      "dependsOnSlot": "d",
+      "canvasDecision": {
+        "provenance": "inherited-from-winner",
+        "sourceCanvas": {
+          "width": 1536,
+          "height": 1024
+        }
+      },
+      "footer": true
+    },
+    {
+      "slot": "f",
+      "pageIndex": 3,
+      "pageId": "p3-account-orders-and-loyalty",
+      "viewportOrdinal": 1,
+      "status": "succeeded",
+      "direction": "Account, Orders and Loyalty",
+      "path": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/screens/f.png",
+      "sha256": "528eaaea83536fbb8ecb7fad3d7ff5c38d8c729d505d18b4d514b68ee31c92a8",
+      "bytes": 1526116,
+      "width": 1536,
+      "height": 1024,
+      "canvasDecision": {
+        "provenance": "inherited-from-winner",
+        "sourceCanvas": {
+          "width": 1536,
+          "height": 1024
+        }
+      },
+      "footer": true
+    },
+    {
+      "slot": "g",
+      "pageIndex": 4,
+      "pageId": "p4-administration",
+      "viewportOrdinal": 1,
+      "status": "succeeded",
+      "direction": "Administration",
+      "path": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/screens/g.png",
+      "sha256": "e48a649ba34cde3f99d31877fef29692add314fcfac2e2bcec1c7cae8218d4da",
+      "bytes": 1437833,
+      "width": 1536,
+      "height": 1024,
+      "canvasDecision": {
+        "provenance": "inherited-from-winner",
+        "sourceCanvas": {
+          "width": 1536,
+          "height": 1024
+        }
+      }
+    },
+    {
+      "slot": "h",
+      "pageIndex": 5,
+      "pageId": "p4-administration-h",
+      "viewportOrdinal": 1,
+      "generationPageIndex": 4,
+      "generationViewportOrdinal": 2,
+      "status": "succeeded",
+      "direction": "Administration (part 2)",
+      "path": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/screens/h.png",
+      "sha256": "26ae8dea5c5d88842e5eee32987af8cc141cc4416e17beb4976e15872e7503f8",
+      "bytes": 1494186,
+      "width": 1536,
+      "height": 1024,
+      "dependsOnSlot": "g",
+      "canvasDecision": {
+        "provenance": "inherited-from-winner",
+        "sourceCanvas": {
+          "width": 1536,
+          "height": 1024
+        }
+      }
+    }
+  ],
+  "pages": [
+    {
+      "index": 0,
+      "id": "p0-saranankara-oil-mart",
+      "kind": "source",
+      "title": "Saranankara Oil Mart",
+      "slots": [
+        "a"
+      ],
+      "startsFromWinner": true,
+      "conversion": {
+        "status": "failed",
+        "idempotencyKey": "branch-package:v1:crt-9d71cf679896b553f9b979f34902c0ecc83b6653:0:4a4761191210f590d776f6d2721c0828:html:standard:default",
+        "output": "html",
+        "canonicalWidth": 1536,
+        "error": "fetch failed"
+      }
+    },
+    {
+      "index": 1,
+      "id": "p1-catalog-and-product-details",
+      "kind": "additional",
+      "title": "Catalog and Product Details",
+      "slots": [
+        "b",
+        "c"
+      ],
+      "startsFromWinner": false,
+      "conversion": {
+        "status": "succeeded",
+        "packageId": "9bc94682-2bf9-4286-a86a-43ec89b19334",
+        "idempotencyKey": "branch-package:v1:crt-9d71cf679896b553f9b979f34902c0ecc83b6653:1:674b137883f493da53380aa9f87b9502:html:standard:default",
+        "output": "html",
+        "canonicalWidth": 1536,
+        "conversionId": "7d480891-f7ea-4fcc-9142-b7cc98faae65",
+        "outFile": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/pages/p1-catalog-and-product-details.html",
+        "sha256": "1025d866b22ee2f9f1d2bedbb227d0f9526418677a1cede9d133ddf6f895a9cc",
+        "bytes": 5429555,
+        "viewports": [
+          {
+            "id": "b",
+            "ordinal": 1,
+            "status": "succeeded",
+            "conversionId": "4373263a-66f1-4412-a558-3026ea8cd9a7",
+            "sha256": "8e8d156e903547a69ad2ec862ef2ac1153f59153de95bcde87e33ad7327161c6",
+            "bought": true
+          },
+          {
+            "id": "c",
+            "ordinal": 2,
+            "status": "succeeded",
+            "conversionId": "bc126785-2129-441c-9159-4deda810c6a6",
+            "sha256": "f663037ac6524496d48bf5bc6129f5ad8ae8193210f23d7977a0f6a11e8ce696",
+            "bought": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "id": "p2-cart-and-guest-checkout",
+      "kind": "additional",
+      "title": "Cart and Guest Checkout",
+      "slots": [
+        "d",
+        "e"
+      ],
+      "startsFromWinner": false,
+      "conversion": {
+        "status": "failed",
+        "packageId": "ccb3c6ba-b555-491a-917c-76292db1955f",
+        "idempotencyKey": "branch-package:v1:crt-9d71cf679896b553f9b979f34902c0ecc83b6653:2:444e5842d9eddc17bb75c976b6163cbe:html:standard:default",
+        "output": "html",
+        "canonicalWidth": 1536,
+        "error": "The conversion service is temporarily unavailable. Please try again; you were not charged.",
+        "viewports": [
+          {
+            "id": "d",
+            "ordinal": 1,
+            "status": "succeeded",
+            "conversionId": "e0c312dc-c63f-4a9b-8ec5-af052dc04c1d",
+            "sha256": "3f4f34e70a600917d6cf850fc13c61a2206a6916720bc1b9cb431c4f34cda635",
+            "bought": true
+          },
+          {
+            "id": "e",
+            "ordinal": 2,
+            "status": "succeeded",
+            "conversionId": "91558fca-30e8-48e8-90b7-a9c479997deb",
+            "sha256": "821683f651b6b0f12d77f07bed8878a06d3628296393e0f37462ce079737ebc7",
+            "bought": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "id": "p3-account-orders-and-loyalty",
+      "kind": "additional",
+      "title": "Account, Orders and Loyalty",
+      "slots": [
+        "f"
+      ],
+      "startsFromWinner": false,
+      "conversion": {
+        "status": "succeeded",
+        "packageId": "ef7e1977-7c72-4f03-9e83-0f79d9713afb",
+        "idempotencyKey": "branch-package:v1:crt-9d71cf679896b553f9b979f34902c0ecc83b6653:3:ffa97f79e7c13bad3f30c2eb92de2e35:html:standard:default",
+        "output": "html",
+        "canonicalWidth": 1536,
+        "conversionId": "3ff2a11c-3371-4e55-8901-ffa05b553e55",
+        "outFile": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/pages/p3-account-orders-and-loyalty.html",
+        "sha256": "343bf8d2affdcf1249e3630bd3f4d6a3afde6ef6b431cec9e25150795a384d91",
+        "bytes": 949636,
+        "viewports": [
+          {
+            "id": "f",
+            "ordinal": 1,
+            "status": "succeeded",
+            "conversionId": "091c2e3f-5d15-440a-9427-b17c7ef8ea8d",
+            "sha256": "528eaaea83536fbb8ecb7fad3d7ff5c38d8c729d505d18b4d514b68ee31c92a8",
+            "bought": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "id": "p4-administration",
+      "kind": "additional",
+      "title": "Administration",
+      "slots": [
+        "g"
+      ],
+      "startsFromWinner": false,
+      "sourcePageIndex": 4,
+      "sourcePageId": "p4-administration",
+      "sourceViewportOrdinal": 1,
+      "conversion": {
+        "status": "succeeded",
+        "packageId": "e212e670-1673-46c7-900d-97d8bd7be32e",
+        "idempotencyKey": "branch-package:v2:crt-9d71cf679896b553f9b979f34902c0ecc83b6653:498ab9a6865cbd0c:4:11875d09ef77eede0d70:html:standard:default",
+        "output": "html",
+        "canonicalWidth": 1536,
+        "conversionId": "14defa1c-bc7c-4c90-9868-3621b975aa9e",
+        "outFile": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/pages/p4-administration.html",
+        "sha256": "10cc3bb2cec8983ec21332dd449b380d3d4c6a02e8c2c02ffeafebecda812a7e",
+        "bytes": 1653128,
+        "viewports": [
+          {
+            "id": "g",
+            "ordinal": 1,
+            "status": "succeeded",
+            "conversionId": "2733dcd4-a66a-46e1-ab50-0454b5a749f3",
+            "sha256": "e48a649ba34cde3f99d31877fef29692add314fcfac2e2bcec1c7cae8218d4da",
+            "bought": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "id": "p4-administration-h",
+      "kind": "additional",
+      "title": "Administration (part 2)",
+      "slots": [
+        "h"
+      ],
+      "startsFromWinner": false,
+      "sourcePageIndex": 4,
+      "sourcePageId": "p4-administration",
+      "sourceViewportOrdinal": 2,
+      "conversion": {
+        "status": "succeeded",
+        "packageId": "1e82a217-6a25-4026-a106-1375def4897a",
+        "idempotencyKey": "branch-package:v2:crt-9d71cf679896b553f9b979f34902c0ecc83b6653:1133c0e4ab67eb3f:4:74c26de299e52cd0f5b1:html:standard:default",
+        "output": "html",
+        "canonicalWidth": 1536,
+        "conversionId": "bec1da46-6ad3-4bc6-89de-c06f88903c0f",
+        "outFile": "/var/folders/fd/6kgtcbnx4yq12t7w_r0gcxw80000gn/T/12ui-expand-the-selected-saranankara-jEyQK7/branch/pages/p4-administration-h.html",
+        "sha256": "00ead34aea06e08d030d3b0eae0cbbf609b6727dc0eecd476ec9fec581f010e0",
+        "bytes": 585981,
+        "viewports": [
+          {
+            "id": "h",
+            "ordinal": 2,
+            "status": "succeeded",
+            "conversionId": "b013de0c-63da-4863-8dde-1f159a21b474",
+            "sha256": "26ae8dea5c5d88842e5eee32987af8cc141cc4416e17beb4976e15872e7503f8",
+            "bought": true
+          }
+        ]
+      }
+    }
+  ],
+  "notes": [
+    "The approved page did not convert: p0-saranankara-oil-mart (failed) starts from the winner, so this partial lost the design the user approved, not a speculative sibling."
+  ]
+}

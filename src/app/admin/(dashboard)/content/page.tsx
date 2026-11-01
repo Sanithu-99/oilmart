@@ -1,0 +1,7 @@
+import { ImageIcon } from "lucide-react";
+
+import { saveHomepageContentAction } from "@/features/admin/catalog-actions";
+import { requireAdminPage } from "@/features/admin/auth/authorization";
+import { db } from "@/lib/db/client";
+
+export default async function ContentPage(){await requireAdminPage("content.manage");const entries=await db.contentEntry.findMany({where:{key:"homepage.hero"}});const entry=(locale:"EN"|"SI"|"TA")=>entries.find(item=>item.locale===locale);return <><div className="admin-page-heading"><div><p className="admin-eyebrow">Storefront publishing</p><h1>Homepage content</h1><p>Published changes flow directly to each localized storefront after save.</p></div></div><form action={saveHomepageContentAction} className="admin-form-card admin-content-form"><div className="admin-form-card-heading"><div><ImageIcon size={17}/><h2>Hero message</h2></div><p>Each locale is edited independently. English remains the safe fallback.</p></div>{(["EN","SI","TA"] as const).map((locale)=><fieldset key={locale}><legend>{locale==="EN"?"English":locale==="SI"?"Sinhala":"Tamil"}</legend><label className="admin-field">Heading<input name={`${locale.toLowerCase()}Title`} defaultValue={entry(locale)?.title??""} required={locale==="EN"}/></label><label className="admin-field">Supporting copy<textarea name={`${locale.toLowerCase()}Body`} rows={4} defaultValue={entry(locale)?.body??""}/></label></fieldset>)}<button className="admin-primary-button">Publish homepage content</button></form></>}

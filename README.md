@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Saranankara Oil Mart
 
-## Getting Started
+Production-oriented commerce platform for a Sri Lankan automotive lubricant retailer. The project is a modular Next.js application backed by PostgreSQL and Prisma.
 
-First, run the development server:
+## Current status
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Phases 1–4 are implemented: the application includes a responsive, database-backed storefront in English, Sinhala, and Tamil; URL-driven catalogue filtering; product pages; inventory-aware guest and customer carts; verified customer accounts; saved addresses and order history; loyalty applications and eligible pricing; SEO metadata; and a secure RBAC administrative workspace for catalogue, images, pricing, stock, promotions, loyalty decisions, homepage content and audit history. Approved screens and implementation evidence are preserved under `docs/design/12ui`, `docs/design/phase3`, and `docs/design/phase4`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The seeded catalogue is explicitly demonstration data. Replace every sample product, price, specification, image, and brand record with supplier-approved information before public launch. Online payment and checkout submission are intentionally not active.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Requirements
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Node.js 22
+- pnpm 10
+- PostgreSQL 15, either through Docker or a local server
 
-## Learn More
+## Setup
 
-To learn more about Next.js, take a look at the following resources:
+1. Copy `.env.example` to `.env` and replace the development-only secrets.
+2. Start PostgreSQL with `pnpm db:up` (requires a running Docker daemon).
+3. Run `pnpm db:migrate`.
+4. Run `pnpm db:seed`.
+5. Run `pnpm dev` and open `http://localhost:3000/en`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To create the first administrator, follow `docs/operations/admin-guide.md`. The one-time bootstrap is `pnpm admin:bootstrap` and requires all `ADMIN_BOOTSTRAP_*` environment values.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+For a native PostgreSQL installation, use port `55432` or update `DATABASE_URL`.
 
-## Deploy on Vercel
+## Quality commands
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `pnpm check` — lint, TypeScript, and unit tests
+- `pnpm build` — production build
+- `pnpm test:e2e` — Playwright browser tests
+- `pnpm test:coverage` — unit-test coverage
+- `pnpm db:studio` — Prisma Studio
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Important boundaries
+
+- Money is stored in integer minor units; measured quantities use exact decimals.
+- Browser-submitted prices are never authoritative.
+- Guest cart tokens are random, stored only in an HttpOnly cookie, and persisted in PostgreSQL as SHA-256 hashes.
+- Cart mutations reload current product price and inventory before accepting a quantity.
+- Loyalty prices are shown only after server-side verification of an active, unexpired membership on a verified account.
+- Card surcharge support is modeled but disabled.
+- Quotation fee collection is disabled.
+- Distance-based delivery quoting is disabled until a route provider is configured.
+- No live payment, email, SMS, object-storage, or monitoring provider is represented as configured.
+
+See [architecture](docs/architecture/overview.md), [security](docs/security/security-model.md), and [production readiness](docs/production-readiness.md).

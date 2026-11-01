@@ -1,0 +1,18 @@
+import { FolderTree, Plus } from "lucide-react";
+
+import { saveCategoryAction } from "@/features/admin/catalog-actions";
+import { requireAdminPage } from "@/features/admin/auth/authorization";
+import { PublicationStatus } from "@/generated/prisma/client";
+import { db } from "@/lib/db/client";
+
+export default async function CategoriesPage() {
+  await requireAdminPage("catalog.write");
+  const categories = await db.category.findMany({ include: { translations: true, _count: { select: { products: true } } }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] });
+  return <><div className="admin-page-heading"><div><p className="admin-eyebrow">Catalogue structure</p><h1>Categories</h1><p>Manage navigation labels, hierarchy, imagery, translations and search metadata.</p></div></div><div className="admin-management-grid"><section className="admin-form-card"><div className="admin-form-card-heading"><div><Plus size={17}/><h2>New category</h2></div></div><CategoryForm categories={categories}/></section><section className="admin-list-stack">{categories.map((category) => <details key={category.id} className="admin-disclosure"><summary><span><FolderTree size={17}/></span><div><strong>{category.name}</strong><small>/{category.slug} · {category._count.products} products</small></div><em className={`admin-status admin-status-${category.status.toLowerCase()}`}>{category.status}</em></summary><CategoryForm category={category} categories={categories}/></details>)}</section></div></>;
+}
+
+type CategoryRecord = Awaited<ReturnType<typeof db.category.findMany<{ include: { translations: true; _count: { select: { products: true } } } }>>>[number];
+function CategoryForm({ category, categories }: { category?: CategoryRecord; categories: Array<{ id: string; name: string }> }) {
+  const si=category?.translations.find((item)=>item.locale==="SI"); const ta=category?.translations.find((item)=>item.locale==="TA");
+  return <form action={saveCategoryAction} className="admin-inline-form">{category && <input type="hidden" name="id" value={category.id}/>}<label className="admin-field">Name<input name="name" defaultValue={category?.name} required/></label><label className="admin-field">Slug<input name="slug" defaultValue={category?.slug} required/></label><label className="admin-field span-2">Description<textarea name="description" defaultValue={category?.description ?? ""}/></label><label className="admin-field">Parent<select name="parentId" defaultValue={category?.parentId ?? ""}><option value="">Top level</option>{categories.filter((item)=>item.id!==category?.id).map((item)=><option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label className="admin-field">Sort order<input name="sortOrder" type="number" defaultValue={category?.sortOrder ?? 0}/></label><label className="admin-field">Sinhala name<input name="siName" defaultValue={si?.name}/></label><label className="admin-field">Tamil name<input name="taName" defaultValue={ta?.name}/></label><label className="admin-field">Image URL<input name="imageUrl" type="url" defaultValue={category?.imageUrl ?? ""}/></label><label className="admin-field">SEO title<input name="seoTitle" defaultValue={category?.seoTitle ?? ""}/></label><label className="admin-field span-2">SEO description<input name="seoDescription" defaultValue={category?.seoDescription ?? ""}/></label><label className="admin-field">Status<select name="status" defaultValue={category?.status ?? PublicationStatus.DRAFT}>{Object.values(PublicationStatus).map((item)=><option key={item}>{item}</option>)}</select></label><button className="admin-primary-button">{category ? "Save category" : "Create category"}</button></form>;
+}
