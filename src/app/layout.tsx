@@ -35,7 +35,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(
+    process.env.APP_URL ||
+      process.env.URL ||
+      process.env.DEPLOY_PRIME_URL ||
+      "http://localhost:3000",
+  ),
   title: {
     default: storeConfig.name,
     template: `%s | ${storeConfig.name}`,

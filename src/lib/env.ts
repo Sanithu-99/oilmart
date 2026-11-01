@@ -28,7 +28,14 @@ let parsedEnv: AppEnv | undefined;
 export function getEnv(): AppEnv {
   if (parsedEnv) return parsedEnv;
 
-  const result = envSchema.safeParse(process.env);
+  const result = envSchema.safeParse({
+    ...process.env,
+    APP_URL:
+      process.env.APP_URL ||
+      process.env.URL ||
+      process.env.DEPLOY_PRIME_URL ||
+      "http://localhost:3000",
+  });
   if (!result.success) {
     const fields = result.error.issues.map((issue) => issue.path.join(".")).join(", ");
     throw new Error(`Invalid environment configuration: ${fields}`);
