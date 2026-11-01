@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck } from "lucide-react";
 
-import { CategoryGraphic } from "@/components/storefront/category-graphic";
 import { ProductCard } from "@/components/storefront/product-card";
 import { getHomepageData } from "@/features/catalog/queries";
 import { storeConfig } from "@/lib/config/store";
@@ -11,6 +10,29 @@ import { requireLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 
 export const metadata: Metadata = { title: "Premium automotive lubricants in Sri Lanka" };
+
+const categoryShowcase: Record<string, { image: string; product: string }> = {
+  "engine-oils": {
+    image: "/images/storefront/categories/havoline-prods-eco.jpg",
+    product: "Caltex Havoline ProDS Eco 5W-30",
+  },
+  "diesel-engine-oils": {
+    image: "/images/storefront/categories/castrol-crb-turbomax.png",
+    product: "Castrol CRB Turbomax 15W-40",
+  },
+  "motorcycle-oils": {
+    image: "/images/storefront/categories/servo-4t-xtra.png",
+    product: "SERVO 4T Xtra 20W-40",
+  },
+  "transmission-fluids": {
+    image: "/images/storefront/categories/castrol-transmax.png",
+    product: "Castrol Transmax CVT",
+  },
+  "gear-oils": {
+    image: "/images/storefront/categories/shell-spirax-s2g.jpg",
+    product: "Shell Spirax S2 G 80W-90",
+  },
+};
 
 export default async function LocaleHome({ params }: { params: Promise<{ locale: string }> }) {
   const locale = requireLocale((await params).locale);
@@ -36,10 +58,17 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
 
     <section className="category-market"><div className="site-container">
       <div className="category-market-heading"><div><p className="eyebrow">{d.home.categoryEyebrow}</p><h2>{d.home.categories}</h2></div><p>{d.home.categoryBody}</p></div>
-      <div className="category-market-grid">{data.categories.slice(0,5).map((category, index) => <Link href={`/${locale}/products?category=${category.slug}`} key={category.slug} className={`category-market-card category-market-card-${index + 1}`}>
-        <div className="category-market-art"><span>{String(index + 1).padStart(2,"0")}</span><CategoryGraphic variant={index}/></div>
-        <div className="category-market-copy"><div><h3>{category.name}</h3><p>{category.description ?? d.home.browseProducts}</p></div><ArrowRight aria-hidden="true" size={21}/></div>
-      </Link>)}</div>
+      <div className="category-market-grid">{data.categories.slice(0,5).map((category, index) => {
+        const showcase = categoryShowcase[category.slug] ?? { image: "/images/storefront/sample-lubricant.png", product: category.name };
+        return <Link href={`/${locale}/products?category=${category.slug}`} key={category.slug} className={`category-market-card category-market-card-${index + 1}`}>
+          <div className="category-market-art">
+            <span className="category-market-number">{String(index + 1).padStart(2,"0")}</span>
+            <Image src={showcase.image} alt={showcase.product} fill sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) 45vw, 20vw" className="category-market-product"/>
+            <span className="category-market-product-name">{showcase.product}</span>
+          </div>
+          <div className="category-market-copy"><div><h3>{category.name}</h3><p>{category.description ?? d.home.browseProducts}</p></div><span className="category-market-arrow"><ArrowRight aria-hidden="true" size={19}/></span></div>
+        </Link>;
+      })}</div>
     </div></section>
 
     <section className="site-container section-space" id="about"><div className="rounded-2xl border border-amber-200 bg-[#fff8e9] px-6 py-5 sm:flex sm:items-center sm:justify-between"><div><p className="font-semibold text-amber-900">{d.home.demo}</p><p className="mt-1 max-w-4xl text-sm leading-6 text-amber-900/75">{d.home.demoBody}</p></div><BadgeCheck className="mt-4 shrink-0 text-amber-700 sm:mt-0" size={27}/></div></section>
