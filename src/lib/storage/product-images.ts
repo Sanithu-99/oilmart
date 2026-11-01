@@ -10,6 +10,7 @@ import sharp from "sharp";
 import { getEnv } from "@/lib/env";
 
 const MAX_BYTES = 5 * 1024 * 1024;
+const NEON_PRODUCT_IMAGE_BUCKET = "product-images";
 
 export type StoredProductImage = { storageKey: string; url: string; width: number; height: number };
 
@@ -27,12 +28,22 @@ async function normalize(file: File) {
   return { buffer: output.data, width: output.info.width, height: output.info.height };
 }
 
-function s3Client(env: ReturnType<typeof getEnv>) {
+function resolveS3(env: ReturnType<typeof getEnv>) {
+  const endpoint = env.AWS_ENDPOINT_URL_S3 ?? env.S3_ENDPOINT;
+  const region = env.AWS_REGION ?? env.S3_REGION;
+  const bucket = env.S3_BUCKET ?? (env.AWS_ENDPOINT_URL_S3 ? NEON_PRODUCT_IMAGE_BUCKET : undefined);
+  const accessKeyId = env.AWS_ACCESS_KEY_ID ?? env.S3_ACCESS_KEY_ID;
+  const secretAccessKey = env.AWS_SECRET_ACCESS_KEY ?? env.S3_SECRET_ACCESS_KEY;
+  const publicUrl = env.S3_PUBLIC_URL ?? (endpoint && bucket ? `${endpoint.replace(/\/$/, "")}/${bucket}` : undefined);
+  return { endpoint, region, bucket, accessKeyId, secretAccessKey, publicUrl };
+}
+
+function s3Client(config: ReturnType<typeof resolveS3>) {
   return new S3Client({
-    region: env.S3_REGION!,
-    endpoint: env.S3_ENDPOINT,
-    forcePathStyle: Boolean(env.S3_ENDPOINT),
-    credentials: { accessKeyId: env.S3_ACCESS_KEY_ID!, secretAccessKey: env.S3_SECRET_ACCESS_KEY! },
+    region: config.region!,
+    endpoint: config.endpoint,
+    forcePathStyle: Boolean(config.endpoint),
+    credentials: { accessKeyId: config.accessKeyId!, secretAccessKey: config.secretAccessKey! },
   });
 }
 
@@ -40,10 +51,11 @@ export async function storeProductImage(productId: string, file: File): Promise<
   const normalized = await normalize(file);
   const storageKey = `products/${productId}/${randomUUID()}.webp`;
   const env = getEnv();
-  const hasS3 = env.S3_BUCKET && env.S3_REGION && env.S3_ACCESS_KEY_ID && env.S3_SECRET_ACCESS_KEY && env.S3_PUBLIC_URL;
+  const storage = resolveS3(env);
+  const hasS3 = storage.bucket && storage.region && storage.accessKeyId && storage.secretAccessKey && storage.publicUrl;
   if (hasS3) {
-    await s3Client(env).send(new PutObjectCommand({ Bucket: env.S3_BUCKET, Key: storageKey, Body: normalized.buffer, ContentType: "image/webp", CacheControl: "public,max-age=31536000,immutable" }));
-    return { storageKey, url: `${env.S3_PUBLIC_URL!.replace(/\/$/, "")}/${storageKey}`, width: normalized.width, height: normalized.height };
+    await s3Client(storage).send(new PutObjectCommand({ Bucket: storage.bucket, Key: storageKey, Body: normalized.buffer, ContentType: "image/webp", CacheControl: "public,max-age=31536000,immutable" }));
+    return { storageKey, url: `${storage.publicUrl!.replace(/\/$/, "")}/${storageKey}`, width: normalized.width, height: normalized.height };
   }
   if (env.NODE_ENV === "production") throw new Error("S3-compatible image storage must be configured in production");
   const destination = path.join(process.cwd(), "public", "uploads", storageKey);
@@ -62,6 +74,7 @@ export async function removeProductImage(storageKey: string) {
     await unlink(destination).catch((error: NodeJS.ErrnoException) => { if (error.code !== "ENOENT") throw error; });
     return;
   }
-  if (!env.S3_BUCKET || !env.S3_REGION || !env.S3_ACCESS_KEY_ID || !env.S3_SECRET_ACCESS_KEY) throw new Error("S3 storage is not configured");
-  await s3Client(env).send(new DeleteObjectCommand({ Bucket: env.S3_BUCKET, Key: storageKey }));
+  const storage = resolveS3(env);
+  if (!storage.bucket || !storage.region || !storage.accessKeyId || !storage.secretAccessKey) throw new Error("S3 storage is not configured");
+  await s3Client(storage).send(new DeleteObjectCommand({ Bucket: storage.bucket, Key: storageKey }));
 }

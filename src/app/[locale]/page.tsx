@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Cog, Droplet, Gauge, Snowflake, Wrench } from "lucide-react";
+import { ArrowRight, BadgeCheck } from "lucide-react";
 
+import { CategoryGraphic } from "@/components/storefront/category-graphic";
 import { ProductCard } from "@/components/storefront/product-card";
 import { getHomepageData } from "@/features/catalog/queries";
 import { storeConfig } from "@/lib/config/store";
@@ -16,7 +17,6 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
   const d = getDictionary(locale);
   const data = await getHomepageData(locale);
   const heroParts = data.hero?.title?.split("|").map((part) => part.trim()) ?? [];
-  const categoryIcons = [Gauge, Cog, Wrench, Droplet, Snowflake];
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "AutomotiveBusiness",
@@ -34,8 +34,12 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
       </div>
     </section>
 
-    <section className="border-y bg-[#fffdf8]"><div className="site-container grid divide-y md:grid-cols-3 md:divide-x md:divide-y-0 lg:grid-cols-5">
-      {data.categories.slice(0,5).map((category, index) => { const Icon = categoryIcons[index] ?? Droplet; return <Link href={`/${locale}/products?category=${category.slug}`} key={category.slug} className="category-link"><span className="category-icon"><Icon size={22}/></span><h2>{category.name}</h2><p>{category.description ?? "Browse available products"}</p><ArrowRight className="mt-4 text-amber-700" size={18}/></Link>; })}
+    <section className="category-market"><div className="site-container">
+      <div className="category-market-heading"><div><p className="eyebrow">{d.home.categoryEyebrow}</p><h2>{d.home.categories}</h2></div><p>{d.home.categoryBody}</p></div>
+      <div className="category-market-grid">{data.categories.slice(0,5).map((category, index) => <Link href={`/${locale}/products?category=${category.slug}`} key={category.slug} className={`category-market-card category-market-card-${index + 1}`}>
+        <div className="category-market-art"><span>{String(index + 1).padStart(2,"0")}</span><CategoryGraphic variant={index}/></div>
+        <div className="category-market-copy"><div><h3>{category.name}</h3><p>{category.description ?? d.home.browseProducts}</p></div><ArrowRight aria-hidden="true" size={21}/></div>
+      </Link>)}</div>
     </div></section>
 
     <section className="site-container section-space" id="about"><div className="rounded-2xl border border-amber-200 bg-[#fff8e9] px-6 py-5 sm:flex sm:items-center sm:justify-between"><div><p className="font-semibold text-amber-900">{d.home.demo}</p><p className="mt-1 max-w-4xl text-sm leading-6 text-amber-900/75">{d.home.demoBody}</p></div><BadgeCheck className="mt-4 shrink-0 text-amber-700 sm:mt-0" size={27}/></div></section>
