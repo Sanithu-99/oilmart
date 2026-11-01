@@ -5,7 +5,6 @@ export default defineConfig({
     realtime: true,
   },
   auth: true,
-  aiGateway: true,
   functions: {
     health: {
       name: "Oil Mart integration health",

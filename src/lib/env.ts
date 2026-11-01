@@ -15,7 +15,7 @@ const envSchema = z.object({
   NEON_AI_GATEWAY_BASE_URL: z.preprocess(emptyToUndefined, z.url().optional()),
   NEON_REALTIME_URL: z.preprocess(emptyToUndefined, z.url().optional()),
   NEON_REALTIME_SECRET: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
-  NEON_FUNCTION_URL: z.preprocess(emptyToUndefined, z.url().optional()),
+  NEON_FUNCTION_HEALTH_BASE_URL: z.preprocess(emptyToUndefined, z.url().optional()),
   NEON_FUNCTION_ORIGIN_SECRET: z.preprocess(emptyToUndefined, z.string().min(32).optional()),
   AWS_ACCESS_KEY_ID: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
   AWS_SECRET_ACCESS_KEY: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
