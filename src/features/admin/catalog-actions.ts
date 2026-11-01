@@ -1,7 +1,7 @@
 "use server";
 
 import Decimal from "decimal.js";
-import { revalidatePath } from "next/cache";
+import { refresh, revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -36,10 +36,18 @@ function moneyMinor(value: string) {
   return BigInt(amount.mul(100).toFixed(0));
 }
 
-function revalidateCommerce() {
+function validatePriceRelationship(standardPriceMinor: bigint, loyaltyPriceMinor: bigint | null) {
+  if (loyaltyPriceMinor == null) return;
+  if (standardPriceMinor === 0n) throw new Error("Set a standard retail price before adding a loyalty price");
+  if (loyaltyPriceMinor > standardPriceMinor) throw new Error("Loyalty price cannot exceed the standard price");
+}
+
+function revalidateCommerce(slug?: string) {
   for (const locale of ["en", "si", "ta"]) {
     revalidatePath(`/${locale}`);
     revalidatePath(`/${locale}/products`);
+    revalidatePath(`/${locale}/cart`);
+    if (slug) revalidatePath(`/${locale}/products/${slug}`);
   }
   revalidatePath("/admin", "layout");
 }
@@ -72,6 +80,7 @@ export async function saveProductAction(form: FormData) {
   const standardPriceMinor = moneyMinor(text(form, "standardPrice"));
   const loyaltyPrice = text(form, "loyaltyPrice");
   const loyaltyPriceMinor = loyaltyPrice ? moneyMinor(loyaltyPrice) : null;
+  validatePriceRelationship(standardPriceMinor, loyaltyPriceMinor);
   const translations = [Locale.SI, Locale.TA].flatMap((locale) => {
     const prefix = locale.toLowerCase();
     const name = text(form, `${prefix}Name`);
@@ -80,7 +89,7 @@ export async function saveProductAction(form: FormData) {
       : [];
   });
 
-  const productId = await db.$transaction(async (tx) => {
+  const savedProduct = await db.$transaction(async (tx) => {
     const before = parsed.id ? await tx.product.findUnique({ where: { id: parsed.id } }) : null;
     const data = {
       sku: parsed.sku,
@@ -155,16 +164,71 @@ export async function saveProductAction(form: FormData) {
         update: { toSlug: product.slug },
       });
     }
-    if (!before || before.standardPriceMinor !== standardPriceMinor || before.loyaltyPriceMinor !== loyaltyPriceMinor) {
+    const priceChanged = !before || before.standardPriceMinor !== standardPriceMinor || before.loyaltyPriceMinor !== loyaltyPriceMinor;
+    const priceReason = text(form, "priceReason");
+    if (before && priceChanged && !priceReason) throw new Error("A reason is required when changing a retail price");
+    if (priceChanged) {
       await tx.priceHistory.create({
-        data: { productId: product.id, actorId: actor.id, standardPriceMinor, loyaltyPriceMinor, reason: text(form, "priceReason") || (before ? "Admin price update" : "Initial price") },
+        data: { productId: product.id, actorId: actor.id, standardPriceMinor, loyaltyPriceMinor, reason: priceReason || "Initial price" },
       });
     }
     await writeAudit(tx, actor, { action: before ? "PRODUCT_UPDATED" : "PRODUCT_CREATED", entityType: "Product", entityId: product.id, before, after: product });
-    return product.id;
+    return { id: product.id, slug: product.slug };
   });
-  revalidateCommerce();
-  redirect(`/admin/products/${productId}?saved=1`);
+  revalidateCommerce(savedProduct.slug);
+  redirect(`/admin/products/${savedProduct.id}?saved=1`);
+}
+
+export async function updateProductPriceAction(form: FormData) {
+  const actor = await requireAdmin("catalog.write");
+  const productId = z.string().min(1).parse(form.get("productId"));
+  const expectedUpdatedAt = z.coerce.date().parse(form.get("expectedUpdatedAt"));
+  const standardPriceMinor = moneyMinor(text(form, "standardPrice"));
+  const loyaltyPrice = text(form, "loyaltyPrice");
+  const loyaltyPriceMinor = loyaltyPrice ? moneyMinor(loyaltyPrice) : null;
+  const reason = z.string().trim().min(3).max(240).parse(form.get("priceReason"));
+  validatePriceRelationship(standardPriceMinor, loyaltyPriceMinor);
+
+  const product = await db.$transaction(async (tx) => {
+    const before = await tx.product.findUniqueOrThrow({
+      where: { id: productId },
+      include: { variants: { where: { active: true }, orderBy: { sortOrder: "asc" }, take: 1 } },
+    });
+    const updated = await tx.product.updateMany({
+      where: { id: productId, updatedAt: expectedUpdatedAt },
+      data: { standardPriceMinor, loyaltyPriceMinor },
+    });
+    if (updated.count !== 1) throw new Error("This product changed while you were editing it. Reload and try again.");
+    const defaultVariant = before.variants[0];
+    if (defaultVariant && (defaultVariant.priceOverrideMinor != null || defaultVariant.loyaltyPriceMinor != null)) {
+      await tx.productVariant.update({
+        where: { id: defaultVariant.id },
+        data: {
+          ...(defaultVariant.priceOverrideMinor != null ? { priceOverrideMinor: standardPriceMinor } : {}),
+          ...(defaultVariant.loyaltyPriceMinor != null ? { loyaltyPriceMinor } : {}),
+        },
+      });
+    }
+    const after = await tx.product.findUniqueOrThrow({ where: { id: productId } });
+    const priceChanged = before.standardPriceMinor !== standardPriceMinor || before.loyaltyPriceMinor !== loyaltyPriceMinor;
+    if (priceChanged) {
+      await tx.priceHistory.create({
+        data: { productId, actorId: actor.id, standardPriceMinor, loyaltyPriceMinor, reason },
+      });
+      await writeAudit(tx, actor, {
+        action: "PRODUCT_PRICE_UPDATED",
+        entityType: "Product",
+        entityId: productId,
+        before: { standardPriceMinor: before.standardPriceMinor, loyaltyPriceMinor: before.loyaltyPriceMinor },
+        after: { standardPriceMinor, loyaltyPriceMinor },
+        metadata: { reason, source: "admin-quick-price", propagatedVariantId: defaultVariant?.id ?? null },
+      });
+    }
+    return after;
+  }, { isolationLevel: "Serializable" });
+
+  revalidateCommerce(product.slug);
+  refresh();
 }
 
 export async function setProductStatusAction(form: FormData) {

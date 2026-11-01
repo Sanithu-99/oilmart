@@ -2,7 +2,7 @@
 
 ## Not launch-ready
 
-Phases 1–3 are complete. The storefront, multilingual catalogue, guest cart, secure administrative authentication/RBAC, catalogue/content management, transactional inventory, promotion pricing, audit trail and persistent database-backed abuse limits are implemented and tested. Customer authentication, loyalty application workflows, checkout/order submission, notification delivery, external provider credentials, MFA, production content and final security/performance verification remain launch blockers.
+Phases 1–4 and the Inventory Details Report import are complete. The storefront, multilingual catalogue, guest/customer carts, customer authentication, loyalty workflows, secure administrative authentication/RBAC, catalogue/content management, transactional inventory, promotion pricing, audit trail and persistent database-backed abuse limits are implemented and tested. Remaining launch blockers are verified retail prices for the imported catalogue, supplier approval of imagery/specifications, checkout/order submission, notification delivery, production provider credentials, the temporary-to-handoff Neon migration, credential rotation, MFA policy, legal/content approval and final accessibility/security/performance verification.
 
 ## External dependencies
 
@@ -19,7 +19,7 @@ Managed PostgreSQL, S3-compatible storage/public URL, email provider/domain, SMS
 - Card surcharge legality/contract approval (disabled).
 - Offline payment methods and manual verification procedure.
 - Tax rules, returns/refunds, privacy, terms, delivery, and warranty policy text.
-- Email, social links, brand assets, approved manufacturer logo rights, and production product data/images.
+- Email, social links, approved/current manufacturer logo rights, the supplied Vecteezy footage license/attribution, and production product data/images.
 - Administrative users and MFA policy.
 
 ## Launch gates

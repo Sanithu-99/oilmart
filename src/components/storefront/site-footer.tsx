@@ -23,8 +23,13 @@ export function SiteFooter({ locale, dictionary }: { locale: StoreLocale; dictio
     <div className="site-container footer-meta"><Link href={`/${locale}`} className="footer-small-wordmark"><strong>Saranankara</strong><span>Oil Mart</span></Link><p>© {new Date().getFullYear()} {storeConfig.name}. {dictionary.footer.rights}</p></div>
     <Link href={`/${locale}`} className="footer-oil-signoff" aria-label="Saranankara Oil Mart home">
       <span className="footer-oil-caption">Automotive oils · Dehiwala</span>
-      <span className="footer-oil-name">Saranankara</span>
-      <span className="footer-oil-subname">Oil Mart</span>
+      <span className="footer-video-wordmark" aria-hidden="true">
+        <video autoPlay loop muted playsInline preload="metadata" poster="/images/storefront/footer-oil-flow-poster.webp">
+          <source src="/videos/footer-oil-flow.mp4" type="video/mp4"/>
+        </video>
+      </span>
+      <span className="footer-oil-fallback" aria-hidden="true"><span>Saranankara</span><span>Oil Mart</span></span>
+      <span className="sr-only">Saranankara Oil Mart</span>
     </Link>
   </footer>;
 }

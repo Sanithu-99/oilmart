@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+import { BrandLogoWall } from "@/components/storefront/brand-logo-wall";
 import { ProductCard } from "@/components/storefront/product-card";
 import { getHomepageData } from "@/features/catalog/queries";
 import { storeConfig } from "@/lib/config/store";
@@ -77,12 +78,19 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
       })}</div>
     </div></section>
 
-    {data.brands.length > 0 && <section className="site-container pb-6" id="brands"><div className="section-heading"><div><p className="eyebrow">Catalogue</p><h2>{d.home.brands}</h2></div></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">{data.brands.map((brand) => <Link className="brand-tile" href={`/${locale}/products?brand=${brand.slug}`} key={brand.slug}>{brand.logoUrl ? <Image src={brand.logoUrl} alt={brand.name} width={150} height={60}/> : <span>{brand.name}</span>}</Link>)}</div></section>}
+    {data.brands.length > 0 && <section className="brand-market" id="brands">
+      <div className="site-container brand-market-heading">
+        <div><p className="eyebrow">Trusted catalogue</p><h2>{d.home.brands}</h2></div>
+        <p>Browse recognised lubricant, filter and automotive-care brands currently carried by our store.</p>
+        <span>{data.brands.length} brands</span>
+      </div>
+      <BrandLogoWall brands={data.brands} locale={locale}/>
+    </section>}
 
     <section className="site-container section-space"><div className="section-heading"><div><p className="eyebrow">Curated selection</p><h2>{d.home.featured}</h2></div><Link href={`/${locale}/products`} className="text-link">{d.home.allProducts}<ArrowRight size={16}/></Link></div><div className="product-grid">{data.featured.map((product) => <ProductCard key={product.id} product={product} locale={locale} dictionary={d}/>)}</div></section>
 
-    <section className="bg-[#eaf0fa] py-20"><div className="site-container"><div className="section-heading"><div><p className="eyebrow">Recently added</p><h2>{d.home.arrivals}</h2></div><Link href={`/${locale}/products?sort=newest`} className="text-link">{d.home.allProducts}<ArrowRight size={16}/></Link></div><div className="product-grid">{data.newArrivals.map((product) => <ProductCard key={product.id} product={product} locale={locale} dictionary={d}/>)}</div></div></section>
+    <section className="bg-[#f1f0e8] py-20"><div className="site-container"><div className="section-heading"><div><p className="eyebrow">Recently added</p><h2>{d.home.arrivals}</h2></div><Link href={`/${locale}/products?sort=newest`} className="text-link">{d.home.allProducts}<ArrowRight size={16}/></Link></div><div className="product-grid">{data.newArrivals.map((product) => <ProductCard key={product.id} product={product} locale={locale} dictionary={d}/>)}</div></div></section>
 
-    {data.promotion && <section className="site-container section-space" id="offers"><div className="rounded-3xl border-b-4 border-[#ffd11a] bg-[#142d79] p-9 text-white"><p className="eyebrow text-[#ffd11a]">{d.nav.offers}</p><h2 className="font-display text-4xl">{data.promotion.name}</h2>{data.promotion.description && <p className="mt-3 max-w-2xl text-[#d9e4ff]">{data.promotion.description}</p>}</div></section>}
+    {data.promotion && <section className="site-container section-space" id="offers"><div className="rounded-3xl border-b-4 border-[#d5b762] bg-[#4f121b] p-9 text-white"><p className="eyebrow text-[#d5b762]">{d.nav.offers}</p><h2 className="font-display text-4xl">{data.promotion.name}</h2>{data.promotion.description && <p className="mt-3 max-w-2xl text-[#eadfda]">{data.promotion.description}</p>}</div></section>}
   </>;
 }

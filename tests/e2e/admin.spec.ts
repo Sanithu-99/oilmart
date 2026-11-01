@@ -26,6 +26,7 @@ test.afterAll(async () => {
   const product = await db.product.findUnique({ where: { sku }, include: { variants: { include: { inventory: true } } } });
   if (product) {
     const inventoryIds = product.variants.flatMap((variant) => variant.inventory?.id ? [variant.inventory.id] : []);
+    await db.cartItem.deleteMany({ where: { productId: product.id } });
     await db.inventoryAdjustment.deleteMany({ where: { inventoryId: { in: inventoryIds } } });
     await db.product.delete({ where: { id: product.id } });
   }
@@ -42,7 +43,7 @@ test("admin authentication and product-to-storefront workflow", async ({ page })
   await page.getByLabel("Password").fill(password);
   await page.getByRole("button", { name: "Sign in securely" }).click();
   await expect(page).toHaveURL(/\/admin$/);
-  await expect(page.getByRole("heading", { name: "Good morning." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Store overview." })).toBeVisible();
 
   await page.goto("/admin/products/new");
   await page.getByLabel("Product name").fill(`Managed Test Oil ${suffix}`);
@@ -66,8 +67,25 @@ test("admin authentication and product-to-storefront workflow", async ({ page })
   await stockRecord.getByRole("button", { name: "Record adjustment" }).click();
   await expect(page).toHaveURL(/adjusted=1/);
 
+  await page.goto(`/en/products/${slug}`);
+  await page.getByRole("button", { name: "Add to cart" }).first().click();
+  await expect(page.getByRole("dialog", { name: "Shopping cart" }).getByText("LKR 1,250.50", { exact: true }).first()).toBeVisible();
+
   await page.goto(`/admin/products?q=${encodeURIComponent(sku)}`);
-  const row = page.locator("tr", { hasText: sku });
+  let row = page.locator("tr", { hasText: sku });
+  await row.locator("details.admin-price-editor summary").click();
+  await row.getByLabel("Retail price (LKR)").fill("1450.50");
+  await row.getByLabel("Reason").fill("E2E active-cart price propagation");
+  await row.getByRole("button", { name: "Save price" }).click();
+  await expect(row).toContainText("1,450.50");
+
+  await page.goto(`/en/products/${slug}`);
+  await expect(page.getByText("LKR 1,450.50", { exact: true }).first()).toBeVisible();
+  await page.getByRole("button", { name: /Cart with 1 item/ }).click();
+  await expect(page.getByRole("dialog", { name: "Shopping cart" }).getByText("LKR 1,450.50", { exact: true }).first()).toBeVisible();
+
+  await page.goto(`/admin/products?q=${encodeURIComponent(sku)}`);
+  row = page.locator("tr", { hasText: sku });
   await row.getByRole("button", { name: "Archive" }).click();
   await expect(page).toHaveURL(/updated=1/);
   await page.goto(`/en/products/${slug}`);

@@ -24,7 +24,11 @@ UI visibility is not authorization. Every server action reloads the active user,
 ## Catalogue operations
 
 - Create products as drafts; add translations, SEO, price, quantity rules, images and related products before publishing.
-- Price edits create immutable history with actor and reason.
+- The overview dashboard shows the Inventory Details Report import coverage, image coverage and retail-price completion. Use **Review missing prices** to open the pricing queue.
+- The Products page can filter **Needs retail price** / **Retail price ready**. Open a price cell to quick-edit the standard and optional loyalty price; a reason is required.
+- Quick price edits use a serializable transaction and stale-write guard, create immutable price history and an audit event, and revalidate every storefront locale. Existing active carts refresh to the latest price. If the default variant has a price override, quick edit updates that effective price too.
+- The full product editor supports detailed price and variant changes. A reason is required whenever an existing product-level price changes; explicit variant overrides remain visible and separately editable.
+- A zero standard price means “contact the store”; it is never treated as a free product and cannot be newly added to cart.
 - Archives remove products from storefront queries without destroying historical records.
 - Slug changes create redirects for product detail and category-filter traffic.
 - Image uploads accept JPEG, PNG, WebP or AVIF up to 5 MB and 320–8,000 pixels. Files are decoded, rotated, stripped and converted to WebP. Production requires S3-compatible configuration including `S3_PUBLIC_URL`; local files under `public/uploads` are development-only.

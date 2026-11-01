@@ -31,7 +31,7 @@ async function loyaltyEligibleFor(customerId: string | null | undefined) {
 }
 
 async function presentCart(cart: CartRecord | null) {
-  if (!cart) return { id: null, itemCount: 0, items: [], subtotalMinor: "0", totalMinor: "0", currency: "LKR" };
+  if (!cart) return { id: null, itemCount: 0, items: [], subtotalMinor: "0", totalMinor: "0", currency: "LKR", hasUnavailablePrices: false };
   const loyaltyEligible = await loyaltyEligibleFor(cart.customerId);
   const now = new Date();
   const promotions = await db.promotion.findMany({
@@ -54,12 +54,14 @@ async function presentCart(cart: CartRecord | null) {
     })?.unitPriceMinor,
   }));
   const pricing = calculatePrice(lines, { loyaltyEligible });
+  const hasUnavailablePrices = lines.some((line) => line.standardUnitPriceMinor <= 0n);
   return {
     id: cart.id,
     currency: cart.currency,
     itemCount: cart.items.reduce((sum, item) => sum + Number(item.quantity.toString()), 0),
     subtotalMinor: pricing.subtotalMinor.toString(),
     totalMinor: pricing.totalMinor.toString(),
+    hasUnavailablePrices,
     items: cart.items.map((item, index) => {
       const available = Math.max(
         0,
@@ -78,6 +80,7 @@ async function presentCart(cart: CartRecord | null) {
         minQuantity: item.variant.minQuantity.toString(),
         available,
         inStock: available > 0,
+        priceAvailable: lines[index]!.standardUnitPriceMinor > 0n,
         standardUnitPriceMinor: (item.variant.priceOverrideMinor ?? item.product.standardPriceMinor).toString(),
         unitPriceMinor: pricing.lines[index]!.unitPriceMinor.toString(),
         priceSource: pricing.lines[index]!.priceSource,
@@ -129,6 +132,9 @@ export async function addCartItem(identity: CartIdentity, variantId: string, qua
     include: { product: true, inventory: true },
   });
   if (!variant) throw new Error("Product variant is unavailable");
+  if ((variant.priceOverrideMinor ?? variant.product.standardPriceMinor) <= 0n) {
+    throw new Error("Please contact the store to confirm this product's retail price");
+  }
   if (quantity.lt(variant.minQuantity) || !quantity.minus(variant.minQuantity).mod(variant.quantityStep).eq(0)) {
     throw new Error("Invalid quantity increment");
   }

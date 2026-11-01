@@ -6,7 +6,7 @@ Production-oriented commerce platform for a Sri Lankan automotive lubricant reta
 
 Phases 1–4 are implemented: the application includes a responsive, database-backed storefront in English, Sinhala, and Tamil; URL-driven catalogue filtering; product pages; inventory-aware guest and customer carts; verified customer accounts; saved addresses and order history; loyalty applications and eligible pricing; SEO metadata; and a secure RBAC administrative workspace for catalogue, images, pricing, stock, promotions, loyalty decisions, homepage content and audit history. Approved screens and implementation evidence are preserved under `docs/design/12ui`, `docs/design/phase3`, and `docs/design/phase4`.
 
-The seeded catalogue is explicitly demonstration data. Replace every sample product, price, specification, image, and brand record with supplier-approved information before public launch. Online payment and checkout submission are intentionally not active.
+The supplied Inventory Details Report has been normalized into the live catalogue. Legacy sample products are archived, imported stock is database-backed, and products without a verified retail price deliberately use a call-to-confirm flow instead of displaying a made-up amount. Product imagery and compatibility/specification details still require final supplier approval before public launch. Online payment and checkout submission are intentionally not active.
 
 ## Requirements
 

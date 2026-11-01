@@ -84,6 +84,19 @@ Four responsive prototype packages were published and polished. The remote conve
 - Playwright verifies the customer workflow on desktop and Pixel-class mobile: access redirect, sign-in, guest-cart merge, address CRUD, order isolation, loyalty application/admin approval and reorder.
 - Phase 4 visual evidence and the 12UI target closeout kit are stored in `docs/design/phase4`.
 
+## Inventory catalogue and pricing operations: complete
+
+- The supplied Inventory Details Report was normalized into a repeatable 313-product import with 313 stock records, 15 active categories and 28 active brands; legacy sample products are archived.
+- Imported catalogue records use stable `INV-` SKUs, pack/unit metadata, exact decimal stock quantities, active publication state and the call-to-confirm flow when a verified retail price is unavailable.
+- 182 imported products have audited product imagery. Image provenance is recorded in `docs/product-image-sources.json`; final supplier approval remains a launch gate.
+- The admin overview now treats the report as an operating queue: it shows image coverage, retail-price completion, missing-price count and the next products requiring verification.
+- The product table supports price-readiness filtering and authorized quick price updates with exact minor-unit conversion, validation, optimistic concurrency, serializable transactions, immutable price history and append-only audit events.
+- Storefront product pages, listings and active carts all read the current database price. Active cart state is refreshed on navigation, focus, cart opening and a periodic interval. Products whose price is changed to zero become confirmation-required rather than free.
+- Completed order lines remain immutable price snapshots. Checkout/order submission is still intentionally disabled; its future implementation must reprice server-side and create the order snapshot atomically.
+- The blue/yellow theme was replaced without changing the approved layout. The current system uses oxblood, burgundy, dark red-brown, warm cream, forest green, clay red and muted brass.
+- The available-brand area now uses all 28 catalogue brands in an accessible, two-row moving logo wall, while the top utility strip carries a responsive “We Deliver” badge.
+- The supplied oil-flow footage is optimized to a 2.9 MB silent web loop and masked inside the large footer wordmark, with poster and reduced-motion fallbacks. Asset provenance and remaining logo/license approval are documented in `docs/assets/brand-logo-sources.md`.
+
 ## Next phase
 
-Checkout/order submission, real provider credentials and sandbox verification, notification-worker delivery, optional MFA policy, production content approval and final launch review.
+Enter and approve the remaining retail prices; complete supplier image/specification approval; implement checkout/order submission, fulfillment and payment flows; configure real email/SMS/monitoring credentials; decide MFA policy; migrate from the temporary Neon account to the handoff database; rotate exposed development credentials; and complete the final legal, accessibility, security, performance and launch review.
