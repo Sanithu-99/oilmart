@@ -21,7 +21,7 @@ test.beforeAll(async () => {
   const [passwordHash, owner, product] = await Promise.all([
     hash(password, 4),
     db.role.findUniqueOrThrow({ where: { key: "owner" } }),
-    db.product.findUniqueOrThrow({ where: { slug: "sample-engine-oil-5w-30-4l" }, include: { variants: true } }),
+    db.product.findUniqueOrThrow({ where: { slug: "caltex-havoline-formula-10w30-1-l-0a398b" }, include: { variants: true } }),
   ]);
   const customerUser = await db.user.create({ data: { name: "Phase Four Customer", email: customerEmail, emailVerified: new Date(), passwordHash, customer: { create: { firstName: "Phase", lastName: "Customer", locale: Locale.EN, termsAcceptedAt: new Date(), privacyAcceptedAt: new Date() } } }, include: { customer: true } });
   customerUserId = customerUser.id;
@@ -47,7 +47,7 @@ test.afterAll(async () => {
 
 test("customer account, cart merge, scoped orders, addresses, loyalty review, and reorder", async ({ page, browser }, testInfo) => {
   test.setTimeout(120_000);
-  await page.goto("/en/products/sample-engine-oil-5w-30-4l");
+  await page.goto("/en/products/caltex-havoline-formula-10w30-1-l-0a398b");
   await page.getByRole("button", { name: "Add to cart" }).first().click();
   await expect(page.getByRole("dialog", { name: "Shopping cart" })).toBeVisible();
 
@@ -60,7 +60,7 @@ test("customer account, cart merge, scoped orders, addresses, loyalty review, an
   await expect(page.getByRole("heading", { name: "Profile details" })).toBeVisible();
 
   await page.goto("/en/cart");
-  await expect(page.getByRole("link", { name: "Sample Engine Oil 5W-30" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Caltex Havoline Formula 10W30 (1 L)" })).toBeVisible();
   await page.goto("/en/account/addresses");
   await page.getByLabel("Label").last().fill("Workshop");
   await page.getByLabel("Recipient").last().fill("Phase Four Customer");

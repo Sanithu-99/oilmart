@@ -13,24 +13,24 @@ export const metadata: Metadata = { title: "Premium automotive lubricants in Sri
 
 const categoryShowcase: Record<string, { image: string; product: string }> = {
   "engine-oils": {
-    image: "/images/storefront/categories/havoline-prods-eco.jpg",
-    product: "Caltex Havoline ProDS Eco 5W-30",
+    image: "/images/products/inventory/caltex-prods-5w30.webp",
+    product: "Caltex Havoline ProDS ECO5 5W-30",
   },
   "diesel-engine-oils": {
-    image: "/images/storefront/categories/castrol-crb-turbomax.png",
-    product: "Castrol CRB Turbomax 15W-40",
+    image: "/images/products/inventory/caltex-delo-gold-ultra.webp",
+    product: "Caltex Delo Gold Ultra 15W-40",
   },
   "motorcycle-oils": {
-    image: "/images/storefront/categories/servo-4t-xtra.png",
-    product: "SERVO 4T Xtra 20W-40",
+    image: "/images/products/inventory/caltex-havoline-super-4t.webp",
+    product: "Caltex Havoline Super 4T",
   },
   "transmission-fluids": {
-    image: "/images/storefront/categories/castrol-transmax.png",
-    product: "Castrol Transmax CVT",
+    image: "/images/products/inventory/valvoline-maxlife-atf.webp",
+    product: "Valvoline MaxLife ATF",
   },
   "gear-oils": {
-    image: "/images/storefront/categories/shell-spirax-s2g.jpg",
-    product: "Shell Spirax S2 G 80W-90",
+    image: "/images/products/inventory/caltex-delo-gear-ep5.webp",
+    product: "Caltex Delo Gear EP5 80W-90",
   },
 };
 
@@ -65,7 +65,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
     <section className="category-market"><div className="site-container">
       <div className="category-market-heading"><div><p className="eyebrow">{d.home.categoryEyebrow}</p><h2>{d.home.categories}</h2></div><p>{d.home.categoryBody}</p></div>
       <div className="category-market-grid">{data.categories.slice(0,5).map((category, index) => {
-        const showcase = categoryShowcase[category.slug] ?? { image: "/images/storefront/sample-lubricant.png", product: category.name };
+        const showcase = categoryShowcase[category.slug] ?? { image: "/images/products/inventory/caltex-prods-5w30.webp", product: category.name };
         return <Link href={`/${locale}/products?category=${category.slug}`} key={category.slug} className={`category-market-card category-market-card-${index + 1}`}>
           <div className="category-market-art">
             <span className="category-market-number">{String(index + 1).padStart(2,"0")}</span>

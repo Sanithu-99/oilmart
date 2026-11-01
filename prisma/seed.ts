@@ -9,6 +9,7 @@ import {
   PublicationStatus,
   UnitOfSale,
 } from "../src/generated/prisma/client";
+import inventoryProducts from "./data/inventory-products.json";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) throw new Error("DATABASE_URL is required to seed the database");
@@ -58,15 +59,26 @@ const rolePermissionMap: Record<string, readonly string[]> = {
 };
 
 const categories = [
-  ["engine-oils", "Engine Oils"],
-  ["diesel-engine-oils", "Diesel Engine Oils"],
-  ["motorcycle-oils", "Motorcycle Oils"],
-  ["transmission-fluids", "Transmission Fluids"],
-  ["gear-oils", "Gear Oils"],
-  ["coolants", "Coolants"],
-  ["loose-oils", "Loose Oils"],
-  ["other-automotive-products", "Other Automotive Products"],
+  ["engine-oils", "Engine Oils", "Petrol and passenger-vehicle engine oils in current stock."],
+  ["diesel-engine-oils", "Diesel Engine Oils", "Lubricants for diesel engines, commercial vehicles and fleets."],
+  ["motorcycle-oils", "Motorcycle Oils", "Two-stroke and four-stroke oils for motorcycles and three-wheelers."],
+  ["transmission-fluids", "Transmission Fluids", "ATF, CVT and other automatic transmission fluids."],
+  ["gear-oils", "Gear Oils", "Manual transmission and differential lubricants."],
+  ["suspension-fluids", "Suspension Fluids", "Fork and shock-absorber fluids."],
+  ["coolants", "Coolants", "Radiator coolants and antifreeze products."],
+  ["brake-fluids", "Brake Fluids", "DOT-rated brake and clutch fluids."],
+  ["greases-lubricants", "Greases & Lubricants", "Greases, hydraulic oils and specialist lubricants."],
+  ["filters", "Filters", "Oil, fuel and air filters for popular vehicle applications."],
+  ["additives-cleaners", "Additives & Cleaners", "Fuel, engine and radiator treatments and cleaners."],
+  ["car-care", "Car Care", "Cleaning, polishing, interior and exterior care products."],
+  ["battery-care", "Battery Care", "Battery water, acid and related maintenance products."],
+  ["loose-oils", "Loose Oils", "Workshop oils sold by measured quantity."],
+  ["automotive-accessories", "Automotive Accessories", "Useful workshop, maintenance and vehicle accessories."],
 ] as const;
+
+function slugify(value: string) {
+  return value.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
 
 async function main() {
   const permissionRecords = new Map<string, string>();
@@ -116,197 +128,120 @@ async function main() {
     }
   }
 
-  for (const [sortOrder, [slug, name]] of categories.entries()) {
-    await db.category.upsert({
+  const categoryRecords = new Map<string, string>();
+  for (const [sortOrder, [slug, name, description]] of categories.entries()) {
+    const category = await db.category.upsert({
       where: { slug },
-      update: { name, description: `Browse available ${name.toLowerCase()} products.`, sortOrder, status: PublicationStatus.ACTIVE },
-      create: { slug, name, description: `Browse available ${name.toLowerCase()} products.`, sortOrder, status: PublicationStatus.ACTIVE },
+      update: { name, description, sortOrder, status: PublicationStatus.ACTIVE },
+      create: { slug, name, description, sortOrder, status: PublicationStatus.ACTIVE },
     });
+    categoryRecords.set(slug, category.id);
   }
-
-  const sampleBrand = await db.brand.upsert({
-    where: { slug: "sample-range" },
-    update: { name: "Sample Range", status: PublicationStatus.ACTIVE },
-    create: {
-      slug: "sample-range",
-      name: "Sample Range",
-      description: "Demonstration catalogue data — not a verified commercial brand.",
-      status: PublicationStatus.ACTIVE,
-    },
+  await db.category.updateMany({
+    where: { slug: "other-automotive-products" },
+    data: { status: PublicationStatus.ARCHIVED },
   });
 
-  const sampleProducts = [
-    {
-      sku: "SAMPLE-ENG-5W30-4L",
-      slug: "sample-engine-oil-5w-30-4l",
-      name: "Sample Engine Oil 5W-30",
-      category: "engine-oils",
-      shortDescription: "Demonstration full-synthetic engine oil · 4 L",
-      description:
-        "This is demonstration catalogue content used to verify the storefront workflow. Replace it with supplier-verified product data before launch.",
-      specs: { Grade: "5W-30", Volume: "4 L", DataStatus: "Demonstration only" },
-      price: 645000n,
-      stock: "18",
-      featured: true,
-    },
-    {
-      sku: "SAMPLE-DIE-15W40-5L",
-      slug: "sample-diesel-oil-15w-40-5l",
-      name: "Sample Diesel Oil 15W-40",
-      category: "diesel-engine-oils",
-      shortDescription: "Demonstration diesel engine lubricant · 5 L",
-      description: "Demonstration catalogue content. Technical claims must be supplier-verified before launch.",
-      specs: { Grade: "15W-40", Volume: "5 L", DataStatus: "Demonstration only" },
-      price: 780000n,
-      stock: "12",
-      featured: true,
-    },
-    {
-      sku: "SAMPLE-MOTO-10W40-1L",
-      slug: "sample-motorcycle-oil-10w-40-1l",
-      name: "Sample Motorcycle Oil 10W-40",
-      category: "motorcycle-oils",
-      shortDescription: "Demonstration motorcycle lubricant · 1 L",
-      description: "Demonstration catalogue content. Replace with verified product information before launch.",
-      specs: { Grade: "10W-40", Volume: "1 L", DataStatus: "Demonstration only" },
-      price: 285000n,
-      stock: "24",
-      featured: true,
-    },
-    {
-      sku: "SAMPLE-ATF-1L",
-      slug: "sample-transmission-fluid-1l",
-      name: "Sample Transmission Fluid",
-      category: "transmission-fluids",
-      shortDescription: "Demonstration automatic transmission fluid · 1 L",
-      description: "Demonstration catalogue content. Compatibility is intentionally not claimed.",
-      specs: { Volume: "1 L", DataStatus: "Demonstration only" },
-      price: 315000n,
-      stock: "9",
-      featured: false,
-    },
-    {
-      sku: "SAMPLE-GEAR-80W90-4L",
-      slug: "sample-gear-oil-80w-90-4l",
-      name: "Sample Gear Oil 80W-90",
-      category: "gear-oils",
-      shortDescription: "Demonstration gear lubricant · 4 L",
-      description: "Demonstration catalogue content. Replace with verified product information before launch.",
-      specs: { Grade: "80W-90", Volume: "4 L", DataStatus: "Demonstration only" },
-      price: 485000n,
-      stock: "7",
-      featured: true,
-    },
-    {
-      sku: "SAMPLE-COOL-4L",
-      slug: "sample-coolant-4l",
-      name: "Sample Coolant Concentrate",
-      category: "coolants",
-      shortDescription: "Demonstration coolant product · 4 L",
-      description: "Demonstration catalogue content. Replace with verified product information before launch.",
-      specs: { Volume: "4 L", DataStatus: "Demonstration only" },
-      price: 390000n,
-      stock: "4",
-      featured: false,
-    },
-    {
-      sku: "SAMPLE-LOOSE-20W50",
-      slug: "sample-loose-oil-20w-50",
-      name: "Sample Loose Oil 20W-50",
-      category: "loose-oils",
-      shortDescription: "Demonstration loose lubricant · priced per litre",
-      description: "Demonstration catalogue content. Grade and price must be verified before launch.",
-      specs: { Grade: "20W-50", Unit: "Per litre", DataStatus: "Demonstration only" },
-      price: 145000n,
-      stock: "60",
-      featured: true,
-      type: ProductType.LOOSE_OIL,
-      unitOfSale: UnitOfSale.LITRE,
-    },
-    {
-      sku: "SAMPLE-BRAKE-500ML",
-      slug: "sample-brake-fluid-500ml",
-      name: "Sample Brake Fluid",
-      category: "other-automotive-products",
-      shortDescription: "Demonstration automotive fluid · 500 ml",
-      description: "Demonstration catalogue content. Replace with verified product information before launch.",
-      specs: { Volume: "500 ml", DataStatus: "Demonstration only" },
-      price: 165000n,
-      stock: "0",
-      featured: false,
-    },
-  ] as const;
+  const brands = [...new Set(inventoryProducts.map((item) => item.brand).filter((brand): brand is string => Boolean(brand)))];
+  const brandRecords = new Map<string, string>();
+  for (const [sortOrder, name] of brands.sort((a, b) => a.localeCompare(b)).entries()) {
+    const brand = await db.brand.upsert({
+      where: { slug: slugify(name) },
+      update: { name, sortOrder, status: PublicationStatus.ACTIVE },
+      create: { slug: slugify(name), name, sortOrder, status: PublicationStatus.ACTIVE },
+    });
+    brandRecords.set(name, brand.id);
+  }
 
-  const createdProducts: string[] = [];
-  for (const [index, item] of sampleProducts.entries()) {
-    const category = await db.category.findUniqueOrThrow({ where: { slug: item.category } });
+  await db.product.updateMany({
+    where: { sku: { startsWith: "SAMPLE-" } },
+    data: { status: PublicationStatus.ARCHIVED, featured: false },
+  });
+  await db.brand.updateMany({
+    where: { slug: "sample-range" },
+    data: { status: PublicationStatus.ARCHIVED },
+  });
+
+  const currentInventorySkus = inventoryProducts.map((item) => item.sku);
+  await db.product.updateMany({
+    where: { sku: { startsWith: "INV-", notIn: currentInventorySkus } },
+    data: { status: PublicationStatus.ARCHIVED, featured: false },
+  });
+
+  async function upsertInventoryProduct(item: (typeof inventoryProducts)[number]) {
+    const categoryId = categoryRecords.get(item.category);
+    if (!categoryId) throw new Error(`Unknown inventory category: ${item.category}`);
     const product = await db.product.upsert({
       where: { sku: item.sku },
       update: {
+        slug: item.slug,
+        type: item.type as ProductType,
         name: item.name,
         shortDescription: item.shortDescription,
         description: item.description,
-        technicalSpecs: item.specs,
-        standardPriceMinor: item.price,
-        categoryId: category.id,
-        brandId: sampleBrand.id,
+        technicalSpecs: item.specifications,
+        standardPriceMinor: BigInt(item.priceMinor),
+        categoryId,
+        brandId: item.brand ? brandRecords.get(item.brand) ?? null : null,
+        unitOfSale: item.unitOfSale as UnitOfSale,
         featured: item.featured,
         status: PublicationStatus.ACTIVE,
       },
       create: {
         sku: item.sku,
         slug: item.slug,
+        type: item.type as ProductType,
         name: item.name,
         shortDescription: item.shortDescription,
         description: item.description,
-        technicalSpecs: item.specs,
-        categoryId: category.id,
-        brandId: sampleBrand.id,
-        standardPriceMinor: item.price,
-        type: "type" in item ? item.type : ProductType.STANDARD,
-        unitOfSale: "unitOfSale" in item ? item.unitOfSale : UnitOfSale.BOTTLE,
-        status: PublicationStatus.ACTIVE,
+        technicalSpecs: item.specifications,
+        standardPriceMinor: BigInt(item.priceMinor),
+        categoryId,
+        brandId: item.brand ? brandRecords.get(item.brand) ?? null : null,
+        unitOfSale: item.unitOfSale as UnitOfSale,
         featured: item.featured,
+        status: PublicationStatus.ACTIVE,
       },
     });
-    createdProducts.push(product.id);
 
     const variant = await db.productVariant.upsert({
       where: { sku: `${item.sku}-DEFAULT` },
-      update: { name: "Default", active: true },
+      update: { productId: product.id, name: "Default", active: true },
       create: { productId: product.id, sku: `${item.sku}-DEFAULT`, name: "Default" },
     });
     await db.inventory.upsert({
       where: { variantId: variant.id },
-      update: { quantityOnHand: item.stock, quantityReserved: "0", lowStockThreshold: "3" },
-      create: { variantId: variant.id, quantityOnHand: item.stock, lowStockThreshold: "3" },
+      update: { quantityOnHand: item.quantity, quantityReserved: "0", lowStockThreshold: "3" },
+      create: { variantId: variant.id, quantityOnHand: item.quantity, lowStockThreshold: "3" },
     });
-    await db.productImage.upsert({
-      where: { productId_storageKey: { productId: product.id, storageKey: `sample-${index}` } },
-      update: {},
-      create: {
-        productId: product.id,
-        storageKey: `sample-${index}`,
-        url: "/images/storefront/sample-lubricant.png",
-        altText: `${item.name} demonstration product image`,
-        width: 1254,
-        height: 1254,
-        primary: true,
-      },
-    });
+
+    await db.productImage.deleteMany({ where: { productId: product.id, storageKey: "inventory-primary", ...(item.image ? { NOT: { url: item.image } } : {}) } });
+    if (item.image) {
+      await db.productImage.upsert({
+        where: { productId_storageKey: { productId: product.id, storageKey: "inventory-primary" } },
+        update: { url: item.image, altText: `${item.name} product pack`, width: 900, height: 900, primary: true },
+        create: { productId: product.id, storageKey: "inventory-primary", url: item.image, altText: `${item.name} product pack`, width: 900, height: 900, primary: true },
+      });
+    }
+
+    if (item.type === "LOOSE_OIL") {
+      await db.looseOilConfig.upsert({
+        where: { productId: product.id },
+        update: { measurementLabel: "Per litre", minPurchaseQuantity: "1", purchaseIncrement: "1", predefinedQuantities: [1, 2, 4, 5] },
+        create: { productId: product.id, measurementLabel: "Per litre", minPurchaseQuantity: "1", purchaseIncrement: "1", predefinedQuantities: [1, 2, 4, 5] },
+      });
+    } else {
+      await db.looseOilConfig.deleteMany({ where: { productId: product.id } });
+    }
   }
 
-  for (const [sortOrder, targetProductId] of createdProducts.slice(1, 5).entries()) {
-    await db.relatedProduct.upsert({
-      where: { sourceProductId_targetProductId: { sourceProductId: createdProducts[0]!, targetProductId } },
-      update: { sortOrder },
-      create: { sourceProductId: createdProducts[0]!, targetProductId, sortOrder },
-    });
+  for (let index = 0; index < inventoryProducts.length; index += 12) {
+    await Promise.all(inventoryProducts.slice(index, index + 12).map(upsertInventoryProduct));
   }
 
   const settings = [
-    ["store.identity", { name: "Saranankara Oil Mart", demoSeed: true }],
-    ["store.phone", { value: "+94 71 571 6717", demoSeed: true }],
+    ["store.identity", { name: "Saranankara Oil Mart" }],
+    ["store.phone", { value: "+94 71 571 6717" }],
     [
       "store.address",
       {
@@ -315,13 +250,12 @@ async function main() {
         city: "Dehiwala-Mount Lavinia",
         postalCode: "10350",
         country: "Sri Lanka",
-        demoSeed: true,
       },
     ],
-    ["store.currency", { value: "LKR", demoSeed: true }],
-    ["store.timezone", { value: "Asia/Colombo", demoSeed: true }],
-    ["payments.cardSurcharge", { enabled: false, proposedBasisPoints: 400, demoSeed: true }],
-    ["quotations.fee", { enabled: false, amountMinor: null, demoSeed: true }],
+    ["store.currency", { value: "LKR" }],
+    ["store.timezone", { value: "Asia/Colombo" }],
+    ["payments.cardSurcharge", { enabled: false, proposedBasisPoints: 400 }],
+    ["quotations.fee", { enabled: false, amountMinor: null }],
   ] as const;
 
   for (const [key, value] of settings) {
