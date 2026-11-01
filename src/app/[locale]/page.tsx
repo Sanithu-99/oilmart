@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { ProductCard } from "@/components/storefront/product-card";
 import { getHomepageData } from "@/features/catalog/queries";
@@ -70,8 +70,6 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
         </Link>;
       })}</div>
     </div></section>
-
-    <section className="site-container section-space" id="about"><div className="rounded-2xl border border-amber-200 bg-[#fff8e9] px-6 py-5 sm:flex sm:items-center sm:justify-between"><div><p className="font-semibold text-amber-900">{d.home.demo}</p><p className="mt-1 max-w-4xl text-sm leading-6 text-amber-900/75">{d.home.demoBody}</p></div><BadgeCheck className="mt-4 shrink-0 text-amber-700 sm:mt-0" size={27}/></div></section>
 
     {data.brands.length > 0 && <section className="site-container pb-6" id="brands"><div className="section-heading"><div><p className="eyebrow">Catalogue</p><h2>{d.home.brands}</h2></div></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">{data.brands.map((brand) => <Link className="brand-tile" href={`/${locale}/products?brand=${brand.slug}`} key={brand.slug}>{brand.logoUrl ? <Image src={brand.logoUrl} alt={brand.name} width={150} height={60}/> : <span>{brand.name}</span>}</Link>)}</div></section>}
 
