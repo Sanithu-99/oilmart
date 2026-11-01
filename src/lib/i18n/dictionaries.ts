@@ -7,7 +7,7 @@ const en = {
   product: { sample: "Demonstration product", sku: "SKU", specifications: "Specifications", details: "Product details", quantity: "Quantity", related: "Related products", fallback: "This product is currently shown in English because a translation is not yet available." },
   cart: { title: "Your cart", review: "Review your selected products and adjust quantities.", empty: "Your cart is empty.", continue: "Continue shopping", subtotal: "Merchandise subtotal", total: "Total", summary: "Order summary", checkout: "Checkout is not enabled in this phase.", remove: "Remove", updated: "Cart updated", failed: "We could not update your cart. Please try again." },
   common: { add: "Add to cart", adding: "Adding…", added: "Added to cart", stock: "In stock", unavailable: "Out of stock", from: "From", sample: "Sample", previous: "Previous", next: "Next", page: "Page", memberPrice: "Member price", promotionPrice: "Promotion price", standardPrice: "Standard price" },
-  footer: { store: "Our store", pickup: "Store pickup", pickupBody: "Order online and collect after confirmation.", confirmation: "Confirmation required", delivery: "Delivery", deliveryBody: "Delivery is confirmed by manual quote.", contact: "Contact", rights: "All rights reserved." },
+  footer: { store: "Our store", pickup: "Store pickup", pickupBody: "Order online and collect after confirmation.", pickupAction: "Shop for pickup", confirmation: "Confirmation required", delivery: "Delivery", deliveryBody: "Delivery is confirmed by manual quote.", contact: "Contact", rights: "All rights reserved." },
 };
 
 const si: typeof en = {
@@ -17,7 +17,7 @@ const si: typeof en = {
   product: { sample: "ආදර්ශ නිෂ්පාදනය", sku: "භාණ්ඩ කේතය", specifications: "පිරිවිතර", details: "නිෂ්පාදන විස්තර", quantity: "ප්‍රමාණය", related: "සම්බන්ධ නිෂ්පාදන", fallback: "මෙම නිෂ්පාදනය සඳහා පරිවර්තනයක් නොමැති බැවින් ඉංග්‍රීසියෙන් පෙන්වයි." },
   cart: { title: "ඔබගේ කරත්තය", review: "තෝරාගත් නිෂ්පාදන සහ ප්‍රමාණ සමාලෝචනය කරන්න.", empty: "ඔබගේ කරත්තය හිස්ය.", continue: "මිලදී ගැනීම දිගටම", subtotal: "භාණ්ඩ එකතුව", total: "මුළු එකතුව", summary: "ඇණවුම් සාරාංශය", checkout: "මෙම අදියරේ ගෙවීම් සක්‍රිය නැත.", remove: "ඉවත් කරන්න", updated: "කරත්තය යාවත්කාලීන විය", failed: "කරත්තය යාවත්කාලීන කළ නොහැකි විය. නැවත උත්සාහ කරන්න." },
   common: { add: "කරත්තයට එක් කරන්න", adding: "එක් කරමින්…", added: "කරත්තයට එක් කළා", stock: "තොගයේ ඇත", unavailable: "තොග අවසන්", from: "සිට", sample: "ආදර්ශ", previous: "පෙර", next: "ඊළඟ", page: "පිටුව", memberPrice: "සාමාජික මිල", promotionPrice: "ප්‍රවර්ධන මිල", standardPrice: "සාමාන්‍ය මිල" },
-  footer: { store: "අපගේ වෙළඳසැල", pickup: "වෙළඳසැලෙන් ලබාගැනීම", pickupBody: "අන්තර්ජාලයෙන් ඇණවුම් කර තහවුරු කිරීමෙන් පසු ලබාගන්න.", confirmation: "තහවුරු කිරීම අවශ්‍යයි", delivery: "බෙදාහැරීම", deliveryBody: "බෙදාහැරීම අතින් සකස් කළ මිල ගණනකින් තහවුරු කෙරේ.", contact: "සම්බන්ධ වන්න", rights: "සියලු හිමිකම් ඇවිරිණි." },
+  footer: { store: "අපගේ වෙළඳසැල", pickup: "වෙළඳසැලෙන් ලබාගැනීම", pickupBody: "අන්තර්ජාලයෙන් ඇණවුම් කර තහවුරු කිරීමෙන් පසු ලබාගන්න.", pickupAction: "ලබාගැනීම සඳහා මිලදී ගන්න", confirmation: "තහවුරු කිරීම අවශ්‍යයි", delivery: "බෙදාහැරීම", deliveryBody: "බෙදාහැරීම අතින් සකස් කළ මිල ගණනකින් තහවුරු කෙරේ.", contact: "සම්බන්ධ වන්න", rights: "සියලු හිමිකම් ඇවිරිණි." },
 };
 
 const ta: typeof en = {
@@ -27,7 +27,7 @@ const ta: typeof en = {
   product: { sample: "மாதிரி தயாரிப்பு", sku: "பொருள் குறியீடு", specifications: "விவரக்குறிப்புகள்", details: "தயாரிப்பு விவரங்கள்", quantity: "அளவு", related: "தொடர்புடைய தயாரிப்புகள்", fallback: "மொழிபெயர்ப்பு இல்லாததால் இந்த தயாரிப்பு ஆங்கிலத்தில் காட்டப்படுகிறது." },
   cart: { title: "உங்கள் கூடை", review: "தேர்ந்தெடுத்த தயாரிப்புகளையும் அளவுகளையும் மதிப்பாய்வு செய்யுங்கள்.", empty: "உங்கள் கூடை காலியாக உள்ளது.", continue: "தொடர்ந்து வாங்குங்கள்", subtotal: "பொருட்களின் கூட்டுத்தொகை", total: "மொத்தம்", summary: "ஆர்டர் சுருக்கம்", checkout: "இந்த கட்டத்தில் கட்டணம் செயல்படுத்தப்படவில்லை.", remove: "நீக்கு", updated: "கூடை புதுப்பிக்கப்பட்டது", failed: "கூடையைப் புதுப்பிக்க முடியவில்லை. மீண்டும் முயலுங்கள்." },
   common: { add: "கூடையில் சேர்க்கவும்", adding: "சேர்க்கிறது…", added: "கூடையில் சேர்க்கப்பட்டது", stock: "கையிருப்பில் உள்ளது", unavailable: "கையிருப்பில் இல்லை", from: "முதல்", sample: "மாதிரி", previous: "முந்தைய", next: "அடுத்த", page: "பக்கம்", memberPrice: "உறுப்பினர் விலை", promotionPrice: "சலுகை விலை", standardPrice: "வழக்கமான விலை" },
-  footer: { store: "எங்கள் கடை", pickup: "கடையில் பெறுதல்", pickupBody: "இணையத்தில் ஆர்டர் செய்து உறுதிப்படுத்திய பின் பெறுங்கள்.", confirmation: "உறுதிப்படுத்தல் அவசியம்", delivery: "விநியோகம்", deliveryBody: "கைமுறை விலைமதிப்பீட்டிற்குப் பிறகு விநியோகம் உறுதிசெய்யப்படும்.", contact: "தொடர்பு", rights: "அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை." },
+  footer: { store: "எங்கள் கடை", pickup: "கடையில் பெறுதல்", pickupBody: "இணையத்தில் ஆர்டர் செய்து உறுதிப்படுத்திய பின் பெறுங்கள்.", pickupAction: "கடையில் பெற வாங்குங்கள்", confirmation: "உறுதிப்படுத்தல் அவசியம்", delivery: "விநியோகம்", deliveryBody: "கைமுறை விலைமதிப்பீட்டிற்குப் பிறகு விநியோகம் உறுதிசெய்யப்படும்.", contact: "தொடர்பு", rights: "அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை." },
 };
 
 const dictionaries = { en, si, ta } as const;

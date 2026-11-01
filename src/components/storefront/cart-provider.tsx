@@ -91,5 +91,5 @@ export function useCart() {
 
 export function CartButton() {
   const { cart, setOpen } = useCart();
-  return <button className="relative icon-button" onClick={() => setOpen(true)} aria-label={`Cart with ${cart?.itemCount ?? 0} items`}><ShoppingBag size={21}/>{Boolean(cart?.itemCount) && <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-amber-600 px-1 text-[11px] font-bold text-white">{cart!.itemCount}</span>}</button>;
+  return <button className="relative icon-button" onClick={() => setOpen(true)} aria-label={`Cart with ${cart?.itemCount ?? 0} items`}><ShoppingBag size={21}/>{Boolean(cart?.itemCount) && <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-[#c72332] px-1 text-[11px] font-bold text-white">{cart!.itemCount}</span>}</button>;
 }

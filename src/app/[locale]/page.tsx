@@ -48,13 +48,19 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
   };
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}/>
-    <section className="hero-section">
-      <Image src="/images/storefront/hero-lubricants.png" alt="Brand-neutral lubricant bottle and amber oil on a sunlit stone plinth" fill priority sizes="100vw" className="hero-image"/>
-      <div className="hero-wash"/>
-      <div className="site-container relative z-10 flex min-h-[560px] items-center py-14 lg:min-h-[560px]">
-        <div className="max-w-3xl"><p className="eyebrow">{d.home.eyebrow}</p><h1 className="hero-title"><span>{heroParts[0] ?? d.home.titleA}</span><em>{heroParts[1] ?? (data.hero?.title && heroParts.length === 1 ? "" : d.home.titleB)}</em></h1><p className="mt-7 max-w-xl text-lg leading-8 text-slate-600">{data.hero?.body ?? d.home.body}</p><div className="mt-9 flex flex-wrap gap-3"><Link className="button-primary" href={`/${locale}/products`}>{d.home.primary}<ArrowRight size={17}/></Link><Link className="button-secondary" href={`/${locale}/products?category=loose-oils`}>{d.home.secondary}<ArrowRight size={17}/></Link></div></div>
-      </div>
-    </section>
+    <section className="hero-market"><div className="site-container hero-market-grid">
+      <section className="hero-section">
+        <Image src="/images/storefront/hero-lubricants.png" alt="Brand-neutral lubricant bottle and amber oil on a sunlit stone plinth" fill priority sizes="(max-width: 1023px) 100vw, 72vw" className="hero-image"/>
+        <div className="hero-wash"/>
+        <div className="hero-content relative z-10 flex min-h-[560px] items-center px-8 py-14 lg:min-h-[560px] xl:px-14">
+          <div className="max-w-3xl"><p className="eyebrow">{d.home.eyebrow}</p><h1 className="hero-title"><span>{heroParts[0] ?? d.home.titleA}</span><em>{heroParts[1] ?? (data.hero?.title && heroParts.length === 1 ? "" : d.home.titleB)}</em></h1><p className="mt-7 max-w-xl text-lg leading-8 text-slate-600">{data.hero?.body ?? d.home.body}</p><div className="mt-9 flex flex-wrap gap-3"><Link className="button-primary" href={`/${locale}/products`}>{d.home.primary}<ArrowRight size={17}/></Link><Link className="button-secondary" href={`/${locale}/products?category=loose-oils`}>{d.home.secondary}<ArrowRight size={17}/></Link></div></div>
+        </div>
+      </section>
+      <aside className="hero-side-stack" aria-label="Store services">
+        <article className="hero-info-card hero-info-card-blue"><span>01 / Store</span><h2>{d.footer.store}</h2><address>{storeConfig.address.line1}, {storeConfig.address.line2}<br/>{storeConfig.address.city}</address><a href={`tel:${storeConfig.phone.replace(/\s/g, "")}`}>{storeConfig.phone}</a></article>
+        <article className="hero-info-card hero-info-card-yellow"><span>02 / Pickup</span><h2>{d.footer.pickup}</h2><p>{d.footer.pickupBody}</p><Link href={`/${locale}/products`}>{d.footer.pickupAction}<ArrowRight size={16}/></Link></article>
+      </aside>
+    </div></section>
 
     <section className="category-market"><div className="site-container">
       <div className="category-market-heading"><div><p className="eyebrow">{d.home.categoryEyebrow}</p><h2>{d.home.categories}</h2></div><p>{d.home.categoryBody}</p></div>
@@ -75,8 +81,8 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
 
     <section className="site-container section-space"><div className="section-heading"><div><p className="eyebrow">Curated selection</p><h2>{d.home.featured}</h2></div><Link href={`/${locale}/products`} className="text-link">{d.home.allProducts}<ArrowRight size={16}/></Link></div><div className="product-grid">{data.featured.map((product) => <ProductCard key={product.id} product={product} locale={locale} dictionary={d}/>)}</div></section>
 
-    <section className="bg-[#e9ece4] py-20"><div className="site-container"><div className="section-heading"><div><p className="eyebrow">Recently added</p><h2>{d.home.arrivals}</h2></div><Link href={`/${locale}/products?sort=newest`} className="text-link">{d.home.allProducts}<ArrowRight size={16}/></Link></div><div className="product-grid">{data.newArrivals.map((product) => <ProductCard key={product.id} product={product} locale={locale} dictionary={d}/>)}</div></div></section>
+    <section className="bg-[#eaf0fa] py-20"><div className="site-container"><div className="section-heading"><div><p className="eyebrow">Recently added</p><h2>{d.home.arrivals}</h2></div><Link href={`/${locale}/products?sort=newest`} className="text-link">{d.home.allProducts}<ArrowRight size={16}/></Link></div><div className="product-grid">{data.newArrivals.map((product) => <ProductCard key={product.id} product={product} locale={locale} dictionary={d}/>)}</div></div></section>
 
-    {data.promotion && <section className="site-container section-space" id="offers"><div className="rounded-3xl bg-[#103b32] p-9 text-white"><p className="eyebrow text-[#d5b762]">{d.nav.offers}</p><h2 className="font-display text-4xl">{data.promotion.name}</h2>{data.promotion.description && <p className="mt-3 max-w-2xl text-[#d7e2dc]">{data.promotion.description}</p>}</div></section>}
+    {data.promotion && <section className="site-container section-space" id="offers"><div className="rounded-3xl border-b-4 border-[#ffd11a] bg-[#142d79] p-9 text-white"><p className="eyebrow text-[#ffd11a]">{d.nav.offers}</p><h2 className="font-display text-4xl">{data.promotion.name}</h2>{data.promotion.description && <p className="mt-3 max-w-2xl text-[#d9e4ff]">{data.promotion.description}</p>}</div></section>}
   </>;
 }
