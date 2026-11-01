@@ -1,5 +1,7 @@
 [build]
-  command = "pnpm build"
+  # Netlify restores .next between builds. Clear that generated cache first so
+  # Turbopack cannot publish HTML from this commit with a stale CSS bundle.
+  command = "pnpm build:netlify"
 
 [build.environment]
   NODE_VERSION = "22"
