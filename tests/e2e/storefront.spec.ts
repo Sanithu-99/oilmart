@@ -19,6 +19,22 @@ test("catalog filters are URL-driven and server rendered", async ({ page }) => {
   await expect(page.locator(".product-card").first()).toBeVisible();
 });
 
+test("the storefront starts with classic colours and persists the graphite palette when selected", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/en");
+  await expect(page.locator("html")).not.toHaveAttribute("data-store-theme", "graphite");
+
+  const switcher = page.getByRole("button", { name: "Use graphite colours" });
+  await switcher.click();
+  await expect(page.locator("html")).toHaveAttribute("data-store-theme", "graphite");
+  await expect.poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--store-deep").trim())).toBe("#171b1f");
+
+  await page.goto("/en/products");
+  await expect(page.locator("html")).toHaveAttribute("data-store-theme", "graphite");
+  await page.getByRole("button", { name: "Use classic green colours" }).click();
+  await expect(page.locator("html")).not.toHaveAttribute("data-store-theme", "graphite");
+});
+
 test("Sinhala and Tamil routes render translated core interface and language attributes", async ({ page }) => {
   await page.goto("/si");
   await expect(page.locator("html")).toHaveAttribute("lang", "si");
