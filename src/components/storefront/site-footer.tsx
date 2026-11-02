@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Droplet } from "lucide-react";
 
 import { storeConfig } from "@/lib/config/store";
 import type { StoreLocale } from "@/lib/i18n/config";
@@ -20,7 +21,7 @@ export function SiteFooter({ locale, dictionary }: { locale: StoreLocale; dictio
         <div><h2>{dictionary.footer.delivery}</h2><p>{dictionary.footer.deliveryBody}</p></div>
       </section>
     </div>
-    <div className="site-container footer-meta"><Link href={`/${locale}`} className="footer-small-wordmark"><strong>Saranankara</strong><span>Oil Mart</span></Link><p>© {new Date().getFullYear()} {storeConfig.name}. {dictionary.footer.rights}</p></div>
+    <div className="site-container footer-meta"><Link href={`/${locale}`} className="footer-small-wordmark"><span className="footer-small-brand-mark" aria-hidden="true"><Droplet size={29} strokeWidth={1.8}/></span><span className="footer-small-wordmark-copy"><strong>Saranankara</strong><span>Oil Mart</span></span></Link><p>© {new Date().getFullYear()} {storeConfig.name}. {dictionary.footer.rights}</p></div>
     <Link href={`/${locale}`} className="footer-oil-signoff" aria-label="Saranankara Oil Mart home">
       <span className="footer-oil-content">
         <span className="footer-oil-caption">Automotive oils · Dehiwala</span>
