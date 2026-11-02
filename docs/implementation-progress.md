@@ -93,9 +93,10 @@ Four responsive prototype packages were published and polished. The remote conve
 - The product table supports price-readiness filtering and authorized quick price updates with exact minor-unit conversion, validation, optimistic concurrency, serializable transactions, immutable price history and append-only audit events.
 - Storefront product pages, listings and active carts all read the current database price. Active cart state is refreshed on navigation, focus, cart opening and a periodic interval. Products whose price is changed to zero become confirmation-required rather than free.
 - Completed order lines remain immutable price snapshots. Checkout/order submission is still intentionally disabled; its future implementation must reprice server-side and create the order snapshot atomically.
-- The approved layout is retained with a refined deep petrol-green system, the original bright yellow (`#FFD11A`), warm cream surfaces and restrained chili-red accents. Product imagery is normalized to remove excessive source whitespace, so the packs read clearly in cards and category displays.
+- The approved layout is retained with a slightly lighter petrol-green system, the original bright yellow (`#FFD11A`), warm cream surfaces and restrained chili-red accents. Product imagery is normalized to remove excessive source whitespace, so the packs read clearly in cards and category displays.
+- Confirmation-only products now present equal-width Call and WhatsApp actions. Cart and drawer WhatsApp actions open the store chat with product names, SKUs, quantities, current price state and totals already filled in; customers still review and send the message in WhatsApp.
 - The available-brand area now uses all 28 catalogue brands in an accessible, two-row moving logo wall, while the top utility strip carries a responsive “We Deliver” badge.
-- The supplied oil-flow footage is optimized to a 2.9 MB silent web loop and masked inside the large footer wordmark, with poster and reduced-motion fallbacks. Asset provenance and remaining logo/license approval are documented in `docs/assets/brand-logo-sources.md`.
+- The supplied oil-flow footage is optimized to a 2.9 MB silent web loop and masked inside the footer wordmark, with poster and reduced-motion fallbacks. The full footer was compacted and rebalanced for desktop and mobile. Asset provenance and remaining logo/license approval are documented in `docs/assets/brand-logo-sources.md`.
 
 ## Next phase
 

@@ -4,10 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+import { MessageCircle, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+
+import { cartOrderWhatsAppUrl } from "@/lib/contact/whatsapp";
 
 type CartItem = {
-  id: string; variantId: string; slug: string; name: string; quantity: string; quantityStep: string;
+  id: string; variantId: string; slug: string; name: string; sku: string; quantity: string; quantityStep: string;
   available: number; inStock: boolean; priceAvailable: boolean; standardUnitPriceMinor: string; unitPriceMinor: string; lineTotalMinor: string;
   priceSource: "STANDARD" | "LOYALTY" | "PROMOTION";
   image: { url: string; alt: string } | null;
@@ -23,9 +25,9 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null);
 const format = (minor: string) => new Intl.NumberFormat("en-LK", { style: "currency", currency: "LKR", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(minor) / 100);
 const priceLabels = {
-  en: { loyalty: "Member price", promotion: "Promotion price", confirmation: "Price confirmation needed" },
-  si: { loyalty: "සාමාජික මිල", promotion: "ප්‍රවර්ධන මිල", confirmation: "මිල තහවුරු කිරීම අවශ්‍යයි" },
-  ta: { loyalty: "உறுப்பினர் விலை", promotion: "சலுகை விலை", confirmation: "விலை உறுதிப்படுத்தல் தேவை" },
+  en: { loyalty: "Member price", promotion: "Promotion price", confirmation: "Price confirmation needed", orderWhatsApp: "Order on WhatsApp" },
+  si: { loyalty: "සාමාජික මිල", promotion: "ප්‍රවර්ධන මිල", confirmation: "මිල තහවුරු කිරීම අවශ්‍යයි", orderWhatsApp: "WhatsApp හරහා ඇණවුම් කරන්න" },
+  ta: { loyalty: "உறுப்பினர் விலை", promotion: "சலுகை விலை", confirmation: "விலை உறுதிப்படுத்தல் தேவை", orderWhatsApp: "WhatsApp மூலம் ஆர்டர் செய்யுங்கள்" },
 } as const;
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
@@ -101,7 +103,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             </li>)}
           </ul>}
         </div>
-        {Boolean(cart?.items.length) && <div className="border-t p-6">{cart!.hasUnavailablePrices && <p className="mb-4 rounded-xl bg-[#f4efe5] p-3 text-xs leading-5 text-muted-foreground">One or more prices changed to “confirm with store”. Review the cart before ordering.</p>}<div className="mb-5 flex justify-between"><span>Subtotal</span><strong className="font-display text-xl">{format(cart!.subtotalMinor)}</strong></div><Link href={`/${locale}/cart`} onClick={() => setOpen(false)} className="button-primary w-full justify-center">View cart</Link></div>}
+        {Boolean(cart?.items.length) && <div className="border-t p-6">{cart!.hasUnavailablePrices && <p className="mb-4 rounded-xl bg-[#f4efe5] p-3 text-xs leading-5 text-muted-foreground">One or more prices changed to “confirm with store”. Review the cart before ordering.</p>}<div className="mb-5 flex justify-between"><span>Subtotal</span><strong className="font-display text-xl">{format(cart!.subtotalMinor)}</strong></div><a href={cartOrderWhatsAppUrl(cart!)} target="_blank" rel="noreferrer" className="order-whatsapp-button w-full" onClick={() => setOpen(false)}><MessageCircle size={18}/>{labels.orderWhatsApp}</a><Link href={`/${locale}/cart`} onClick={() => setOpen(false)} className="button-secondary mt-3 w-full justify-center">View cart</Link></div>}
       </aside>
     </div>}
   </CartContext.Provider>;

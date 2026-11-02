@@ -33,6 +33,10 @@ test("guest cart persists and revalidates add, update, and remove", async ({ pag
   await page.getByRole("button", { name: "Add to cart" }).first().click();
   await expect(page.getByRole("dialog", { name: "Shopping cart" })).toBeVisible();
   await expect(page.getByRole("dialog").getByText("Caltex Havoline Formula 10W30 (1 L)")).toBeVisible();
+  const whatsappOrder = page.getByRole("dialog").getByRole("link", { name: "Order on WhatsApp" });
+  await expect(whatsappOrder).toHaveAttribute("href", /^https:\/\/wa\.me\/94715716717\?text=/);
+  const whatsappMessage = new URL((await whatsappOrder.getAttribute("href"))!).searchParams.get("text");
+  expect(whatsappMessage).toContain("1 × Caltex Havoline Formula 10W30 (1 L)");
   await page.getByRole("link", { name: "View cart" }).click();
   await expect(page).toHaveURL(/\/en\/cart$/);
   await expect(page.getByRole("link", { name: "Caltex Havoline Formula 10W30 (1 L)" })).toBeVisible();
@@ -46,12 +50,20 @@ test("guest cart persists and revalidates add, update, and remove", async ({ pag
   await expect(page.getByText("Your cart is empty.")).toBeVisible();
 });
 
-test("products without a verified retail price use the call-to-confirm flow", async ({ page }) => {
+test("products without a verified retail price offer equal call and WhatsApp confirmation actions", async ({ page }) => {
   await page.goto("/en/products/caltex-havoline-prods-eco5-sae-5w30-4-l-e920a9");
   await expect(page.getByRole("heading", { name: "Caltex Havoline ProDS ECO5 SAE 5W30 (4 L)" })).toBeVisible();
   const productSection = page.locator("section.site-container.grid").first();
   await expect(productSection.getByText("Contact for price", { exact: true })).toBeVisible();
-  await expect(productSection.getByRole("link", { name: /Call to confirm/ })).toHaveAttribute("href", /^tel:/);
+  const call = productSection.getByRole("link", { name: /Call to confirm/ });
+  const whatsapp = productSection.getByRole("link", { name: /WhatsApp to confirm/ });
+  await expect(call).toHaveAttribute("href", /^tel:/);
+  await expect(whatsapp).toHaveAttribute("href", /^https:\/\/wa\.me\/94715716717\?text=/);
+  const message = new URL((await whatsapp.getAttribute("href"))!).searchParams.get("text");
+  expect(message).toContain("Caltex Havoline ProDS ECO5 SAE 5W30 (4 L)");
+  const [callBox, whatsappBox] = await Promise.all([call.boundingBox(), whatsapp.boundingBox()]);
+  expect(Math.abs(callBox!.width - whatsappBox!.width)).toBeLessThanOrEqual(1);
+  expect(Math.abs(callBox!.height - whatsappBox!.height)).toBeLessThanOrEqual(1);
   await expect(productSection.getByRole("button", { name: "Add to cart" })).toHaveCount(0);
 });
 

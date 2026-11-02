@@ -1,6 +1,7 @@
 export const storeConfig = {
   name: "Saranankara Oil Mart",
   phone: "+94 71 571 6717",
+  whatsapp: "94715716717",
   address: {
     line1: "70/5B, Dhammalankara Maratha",
     line2: "Hill St",
