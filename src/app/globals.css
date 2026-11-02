@@ -359,7 +359,7 @@ a, button, input, select { transition: color var(--duration-base) var(--ease-sta
   .footer-small-wordmark strong { font-size: 18px; }
   .footer-meta p { max-width: 32ch; }
   .footer-oil-signoff { min-height: 206px; padding: 25px 1rem 21px; }
-  .footer-oil-content { width: 100%; }
+  .footer-oil-content { width: 100%; transform: translateY(-18px); }
   .footer-oil-caption { margin-bottom: 13px; padding-inline: 9px; font-size: 7px; letter-spacing: .17em; }
   .footer-wordmark-stage { width: min(100%,430px); }
   .footer-oil-fallback > span:first-child { font-size: clamp(2.5rem,12vw,3.6rem); }
