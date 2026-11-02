@@ -87,6 +87,10 @@ Four responsive prototype packages were published and polished. The remote conve
 ## Inventory catalogue and pricing operations: complete
 
 - The supplied Inventory Details Report was normalized into a repeatable 313-product import with 313 stock records, 15 active categories and 28 active brands; legacy sample products are archived.
+- The Inventory Details Report now also has a 326-row, page-referenced source register in the admin workspace. The Caltex revision effective 26 October 2026 contributes 205 further source rows across all 30 printed application groups.
+- Every active inventory product is classified by one or more vehicle/application types. Customers can filter by these types, and admins can filter or edit the same classifications.
+- 55 exact product-and-pack Caltex matches receive the document's VAT-inclusive gross retail price. Different grades, packs, cartons, drums and loose-oil units are deliberately left unmatched; no price is guessed.
+- Retail is the only imported selling price. Caltex wholesale values and inventory unit/total costs are absent from the schema, source data UI and storefront.
 - Imported catalogue records use stable `INV-` SKUs, pack/unit metadata, exact decimal stock quantities, active publication state and the call-to-confirm flow when a verified retail price is unavailable.
 - 182 imported products have audited product imagery. Image provenance is recorded in `docs/product-image-sources.json`; final supplier approval remains a launch gate.
 - The admin overview now treats the report as an operating queue: it shows image coverage, retail-price completion, missing-price count and the next products requiring verification.
@@ -100,4 +104,4 @@ Four responsive prototype packages were published and polished. The remote conve
 
 ## Next phase
 
-Enter and approve the remaining retail prices; complete supplier image/specification approval; implement checkout/order submission, fulfillment and payment flows; configure real email/SMS/monitoring credentials; decide MFA policy; migrate from the temporary Neon account to the handoff database; rotate exposed development credentials; and complete the final legal, accessibility, security, performance and launch review.
+Enter and approve the remaining retail prices; manually review unmatched source rows; complete supplier image/specification approval; implement checkout/order submission, fulfillment and payment flows; configure real email/SMS/monitoring credentials; decide MFA policy; migrate from the temporary Neon account to the handoff database; rotate exposed development credentials; and complete the final legal, accessibility, security, performance and launch review.

@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { Activity, BadgeCheck, BadgePercent, Boxes, ChevronRight, ClipboardList, Droplets, FolderTree, Gauge, ImageIcon, Menu, PackageSearch, Search, Tags, X } from "lucide-react";
+import { Activity, BadgeCheck, BadgePercent, Boxes, ChevronRight, ClipboardList, Droplets, FileSearch, FolderTree, Gauge, ImageIcon, Menu, PackageSearch, Search, Tags, X } from "lucide-react";
 
 import type { AwaitedAdminActor } from "@/components/admin/types";
 import { LogoutButton } from "@/components/admin/logout-button";
 
 const navigation = [
   ["Overview", "/admin", Gauge, "admin.dashboard.read"], ["Products", "/admin/products", PackageSearch, "catalog.read"], ["Categories", "/admin/categories", FolderTree, "catalog.write"],
+  ["Source data", "/admin/source-data", FileSearch, "catalog.read"],
   ["Brands", "/admin/brands", Tags, "catalog.write"], ["Inventory", "/admin/inventory", Boxes, "inventory.read"], ["Promotions", "/admin/promotions", BadgePercent, "promotions.manage"],
   ["Homepage", "/admin/content", ImageIcon, "content.manage"], ["Audit log", "/admin/audit", ClipboardList, "audit.read"],
   ["Loyalty", "/admin/loyalty", BadgeCheck, "loyalty.manage"],

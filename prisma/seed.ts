@@ -9,12 +9,19 @@ import {
   PublicationStatus,
   UnitOfSale,
 } from "../src/generated/prisma/client";
+import { applicationsForInventoryProduct } from "../src/lib/catalog/applications";
+import caltexRetailPriceList from "./data/caltex-retail-price-list-2026-10-26.json";
 import inventoryProducts from "./data/inventory-products.json";
+import inventoryReportSource from "./data/inventory-report-source-2026-10-14.json";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) throw new Error("DATABASE_URL is required to seed the database");
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString }) });
+
+const caltexByProductSku = new Map(
+  caltexRetailPriceList.items.flatMap((item) => item.matchedProductSku ? [[item.matchedProductSku, item] as const] : []),
+);
 
 const permissions = [
   "admin.dashboard.read",
@@ -171,6 +178,27 @@ async function main() {
   async function upsertInventoryProduct(item: (typeof inventoryProducts)[number]) {
     const categoryId = categoryRecords.get(item.category);
     if (!categoryId) throw new Error(`Unknown inventory category: ${item.category}`);
+    const priceListItem = caltexByProductSku.get(item.sku);
+    const vehicleApplications = [
+      ...new Set([
+        ...applicationsForInventoryProduct(item),
+        ...(priceListItem ? [priceListItem.applicationSlug] : []),
+      ]),
+    ];
+    const technicalSpecs = {
+      ...item.specifications,
+      ...(priceListItem
+        ? {
+            "Supplier material code": priceListItem.materialCode,
+            "Supplier application group": priceListItem.applicationGroup,
+            "Supplier pack size": priceListItem.packSize,
+            ...(priceListItem.productSpecification ? { "Supplier specification": priceListItem.productSpecification } : {}),
+            "Retail price effective": caltexRetailPriceList.source.effectiveDate,
+            "Retail price includes VAT": "Yes",
+          }
+        : {}),
+    };
+    const retailPriceMinor = BigInt(priceListItem?.retailPriceMinor ?? item.priceMinor);
     const product = await db.product.upsert({
       where: { sku: item.sku },
       update: {
@@ -179,8 +207,10 @@ async function main() {
         name: item.name,
         shortDescription: item.shortDescription,
         description: item.description,
-        technicalSpecs: item.specifications,
-        standardPriceMinor: BigInt(item.priceMinor),
+        technicalSpecs,
+        standardPriceMinor: retailPriceMinor,
+        loyaltyPriceMinor: null,
+        vehicleApplications,
         categoryId,
         brandId: item.brand ? brandRecords.get(item.brand) ?? null : null,
         unitOfSale: item.unitOfSale as UnitOfSale,
@@ -194,8 +224,10 @@ async function main() {
         name: item.name,
         shortDescription: item.shortDescription,
         description: item.description,
-        technicalSpecs: item.specifications,
-        standardPriceMinor: BigInt(item.priceMinor),
+        technicalSpecs,
+        standardPriceMinor: retailPriceMinor,
+        loyaltyPriceMinor: null,
+        vehicleApplications,
         categoryId,
         brandId: item.brand ? brandRecords.get(item.brand) ?? null : null,
         unitOfSale: item.unitOfSale as UnitOfSale,
@@ -206,7 +238,7 @@ async function main() {
 
     const variant = await db.productVariant.upsert({
       where: { sku: `${item.sku}-DEFAULT` },
-      update: { productId: product.id, name: "Default", active: true },
+      update: { productId: product.id, name: "Default", priceOverrideMinor: null, loyaltyPriceMinor: null, active: true },
       create: { productId: product.id, sku: `${item.sku}-DEFAULT`, name: "Default" },
     });
     await db.inventory.upsert({
@@ -237,6 +269,124 @@ async function main() {
 
   for (let index = 0; index < inventoryProducts.length; index += 12) {
     await Promise.all(inventoryProducts.slice(index, index + 12).map(upsertInventoryProduct));
+  }
+
+  const productsBySku = new Map(
+    (await db.product.findMany({
+      where: { sku: { in: inventoryProducts.map((item) => item.sku) } },
+      select: { id: true, sku: true, vehicleApplications: true },
+    })).map((product) => [product.sku, product] as const),
+  );
+
+  const inventorySource = await db.catalogueSource.upsert({
+    where: { key: "inventory-details-2026-10-14" },
+    update: {
+      title: inventoryReportSource.source.title,
+      sourceFilename: "Inventory Details Report.pdf",
+      effectiveDate: new Date(`${inventoryReportSource.source.effectiveDate}T00:00:00.000Z`),
+      pageCount: inventoryReportSource.source.pages,
+      currency: inventoryReportSource.source.currency,
+      pricesIncludeVat: inventoryReportSource.source.pricesIncludeVat,
+      retainedPriceColumn: inventoryReportSource.source.retainedPriceColumn,
+      excludedColumns: inventoryReportSource.source.excludedPriceColumns,
+    },
+    create: {
+      key: "inventory-details-2026-10-14",
+      title: inventoryReportSource.source.title,
+      sourceFilename: "Inventory Details Report.pdf",
+      effectiveDate: new Date(`${inventoryReportSource.source.effectiveDate}T00:00:00.000Z`),
+      pageCount: inventoryReportSource.source.pages,
+      currency: inventoryReportSource.source.currency,
+      pricesIncludeVat: inventoryReportSource.source.pricesIncludeVat,
+      retainedPriceColumn: inventoryReportSource.source.retainedPriceColumn,
+      excludedColumns: inventoryReportSource.source.excludedPriceColumns,
+    },
+  });
+
+  const caltexSource = await db.catalogueSource.upsert({
+    where: { key: "caltex-price-list-2026-10-26" },
+    update: {
+      title: caltexRetailPriceList.source.title,
+      sourceFilename: "Caltex Price Revision 26th Oct 2026.pdf",
+      effectiveDate: new Date(`${caltexRetailPriceList.source.effectiveDate}T00:00:00.000Z`),
+      pageCount: caltexRetailPriceList.source.pages,
+      currency: caltexRetailPriceList.source.currency,
+      pricesIncludeVat: caltexRetailPriceList.source.pricesIncludeVat,
+      retainedPriceColumn: caltexRetailPriceList.source.retainedPriceColumn,
+      excludedColumns: caltexRetailPriceList.source.excludedPriceColumns,
+    },
+    create: {
+      key: "caltex-price-list-2026-10-26",
+      title: caltexRetailPriceList.source.title,
+      sourceFilename: "Caltex Price Revision 26th Oct 2026.pdf",
+      effectiveDate: new Date(`${caltexRetailPriceList.source.effectiveDate}T00:00:00.000Z`),
+      pageCount: caltexRetailPriceList.source.pages,
+      currency: caltexRetailPriceList.source.currency,
+      pricesIncludeVat: caltexRetailPriceList.source.pricesIncludeVat,
+      retainedPriceColumn: caltexRetailPriceList.source.retainedPriceColumn,
+      excludedColumns: caltexRetailPriceList.source.excludedPriceColumns,
+    },
+  });
+
+  await db.sourceCatalogueItem.deleteMany({
+    where: {
+      OR: [
+        { sourceId: inventorySource.id, sourceKey: { notIn: inventoryReportSource.items.map((item) => item.sourceKey) } },
+        { sourceId: caltexSource.id, sourceKey: { notIn: caltexRetailPriceList.items.map((item) => item.materialCode) } },
+      ],
+    },
+  });
+
+  for (let index = 0; index < inventoryReportSource.items.length; index += 20) {
+    await Promise.all(inventoryReportSource.items.slice(index, index + 20).map((item) => {
+      const matchedProduct = item.matchedProductSku ? productsBySku.get(item.matchedProductSku) : null;
+      const data = {
+        materialCode: null,
+        name: item.description,
+        specification: null,
+        packSize: null,
+        retailPriceMinor: null,
+        currency: inventoryReportSource.source.currency,
+        quantity: item.quantity,
+        unit: item.unit,
+        sourceCategory: item.sourceCategory,
+        applicationSlug: matchedProduct?.vehicleApplications[0] ?? null,
+        sourcePage: item.sourcePage,
+        sourceRow: item.sourceRow,
+        matchedProductId: matchedProduct?.id ?? null,
+      };
+      return db.sourceCatalogueItem.upsert({
+        where: { sourceId_sourceKey: { sourceId: inventorySource.id, sourceKey: item.sourceKey } },
+        update: data,
+        create: { sourceId: inventorySource.id, sourceKey: item.sourceKey, ...data },
+      });
+    }));
+  }
+
+  for (let index = 0; index < caltexRetailPriceList.items.length; index += 20) {
+    await Promise.all(caltexRetailPriceList.items.slice(index, index + 20).map((item) => {
+      const matchedProduct = item.matchedProductSku ? productsBySku.get(item.matchedProductSku) : null;
+      const data = {
+        materialCode: item.materialCode,
+        name: item.description,
+        specification: item.productSpecification,
+        packSize: item.packSize,
+        retailPriceMinor: BigInt(item.retailPriceMinor),
+        currency: caltexRetailPriceList.source.currency,
+        quantity: null,
+        unit: null,
+        sourceCategory: item.applicationGroup,
+        applicationSlug: item.applicationSlug,
+        sourcePage: item.sourcePage,
+        sourceRow: item.sourceRow,
+        matchedProductId: matchedProduct?.id ?? null,
+      };
+      return db.sourceCatalogueItem.upsert({
+        where: { sourceId_sourceKey: { sourceId: caltexSource.id, sourceKey: item.materialCode } },
+        update: data,
+        create: { sourceId: caltexSource.id, sourceKey: item.materialCode, ...data },
+      });
+    }));
   }
 
   const settings = [

@@ -25,7 +25,10 @@ UI visibility is not authorization. Every server action reloads the active user,
 
 - Create products as drafts; add translations, SEO, price, quantity rules, images and related products before publishing.
 - The overview dashboard shows the Inventory Details Report import coverage, image coverage and retail-price completion. Use **Review missing prices** to open the pricing queue.
-- The Products page can filter **Needs retail price** / **Retail price ready**. Open a price cell to quick-edit the standard and optional loyalty price; a reason is required.
+- **Source data** contains all 326 retained Inventory Details Report rows and all 205 Caltex revision rows, including source page, printed group, pack/quantity, specification, exact-match status and retail price where supplied.
+- The Products page can filter by price readiness and vehicle/application type. Open a price cell to quick-edit the retail price; a reason is required.
+- Product editing exposes the same vehicle/application taxonomy used by the storefront filter.
+- Retail is the only supplier price retained or displayed. Wholesale values from the Caltex document and cost/total-cost values from the inventory report are deliberately excluded.
 - Quick price edits use a serializable transaction and stale-write guard, create immutable price history and an audit event, and revalidate every storefront locale. Existing active carts refresh to the latest price. If the default variant has a price override, quick edit updates that effective price too.
 - The full product editor supports detailed price and variant changes. A reason is required whenever an existing product-level price changes; explicit variant overrides remain visible and separately editable.
 - A zero standard price means “contact the store”; it is never treated as a free product and cannot be newly added to cart.

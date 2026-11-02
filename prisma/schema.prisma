@@ -447,6 +447,7 @@ model Product {
   acceptsPreOrders   Boolean              @default(false)
   seoTitle           String?
   seoDescription     String?
+  vehicleApplications String[]             @default([])
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   brand              Brand?               @relation(fields: [brandId], references: [id], onDelete: SetNull)
@@ -463,10 +464,58 @@ model Product {
   quotationItems     QuotationItem[]
   promotionProducts  PromotionProduct[]
   priceHistory       PriceHistory[]
+  sourceCatalogueItems SourceCatalogueItem[]
 
   @@index([status, featured, createdAt])
   @@index([categoryId, status])
   @@index([brandId, status])
+}
+
+model CatalogueSource {
+  id                  String                @id @default(cuid())
+  key                 String                @unique
+  title               String
+  sourceFilename      String
+  effectiveDate       DateTime?
+  pageCount           Int
+  currency            String                @default("LKR")
+  pricesIncludeVat    Boolean?
+  retainedPriceColumn String?
+  excludedColumns     String[]              @default([])
+  importedAt          DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  items               SourceCatalogueItem[]
+
+  @@index([effectiveDate])
+}
+
+model SourceCatalogueItem {
+  id                 String          @id @default(cuid())
+  sourceId           String
+  sourceKey          String
+  materialCode       String?
+  name               String
+  specification      String?         @db.Text
+  packSize           String?
+  retailPriceMinor   BigInt?
+  currency           String          @default("LKR")
+  quantity           Decimal?        @db.Decimal(18, 3)
+  unit               String?
+  sourceCategory     String?
+  applicationSlug    String?
+  sourcePage         Int?
+  sourceRow          Int?
+  matchedProductId   String?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  source             CatalogueSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  matchedProduct     Product?        @relation(fields: [matchedProductId], references: [id], onDelete: SetNull)
+
+  @@unique([sourceId, sourceKey])
+  @@index([sourceId, sourceCategory])
+  @@index([applicationSlug])
+  @@index([matchedProductId])
+  @@index([materialCode])
 }
 
 model ProductTranslation {

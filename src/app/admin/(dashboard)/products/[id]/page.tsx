@@ -18,6 +18,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
         images: { orderBy: { sortOrder: "asc" } },
         relatedFrom: true,
         priceHistory: { orderBy: { createdAt: "desc" } },
+        sourceCatalogueItems: { include: { source: true }, orderBy: [{ source: { effectiveDate: "desc" } }, { sourcePage: "asc" }] },
         looseOilConfig: true,
       },
     }),

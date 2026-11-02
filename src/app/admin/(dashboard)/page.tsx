@@ -8,7 +8,7 @@ import { formatLkr } from "@/lib/pricing/money";
 export default async function AdminOverviewPage({ searchParams }: { searchParams: Promise<{ forbidden?: string }> }) {
   const forbidden = (await searchParams).forbidden === "1";
   const inventoryCatalogueWhere = { status: PublicationStatus.ACTIVE, sku: { startsWith: "INV-" } } as const;
-  const [productCount, activeProducts, payments, inventory, pendingPreOrders, pendingQuotes, activity, importedCount, importedPriced, importedWithImages, unpricedProducts] = await Promise.all([
+  const [productCount, activeProducts, payments, inventory, pendingPreOrders, pendingQuotes, activity, importedCount, importedPriced, importedWithImages, unpricedProducts, sourceDocuments, sourceRows, retailSourceRows, linkedSourceRows] = await Promise.all([
     db.product.count(),
     db.product.count({ where: { status: PublicationStatus.ACTIVE } }),
     db.payment.aggregate({ where: { status: PaymentStatus.PAID }, _sum: { amountMinor: true }, _count: true }),
@@ -25,6 +25,10 @@ export default async function AdminOverviewPage({ searchParams }: { searchParams
       orderBy: [{ variants: { _count: "desc" } }, { name: "asc" }],
       take: 5,
     }),
+    db.catalogueSource.count(),
+    db.sourceCatalogueItem.count(),
+    db.sourceCatalogueItem.count({ where: { retailPriceMinor: { not: null } } }),
+    db.sourceCatalogueItem.count({ where: { matchedProductId: { not: null } } }),
   ]);
   const lowStock = inventory.filter((item) => Number(item.quantityOnHand) - Number(item.quantityReserved) <= Number(item.lowStockThreshold));
   const revenue = payments._sum.amountMinor ?? 0n;
@@ -45,7 +49,7 @@ export default async function AdminOverviewPage({ searchParams }: { searchParams
     <section className="admin-panel admin-import-panel">
       <div className="admin-panel-heading"><div><p className="admin-eyebrow">Inventory Details Report</p><h2>Imported catalogue readiness</h2></div><FileSpreadsheet size={20}/></div>
       <div className="admin-import-overview">
-        <div className="admin-import-progress"><div><strong>{pricingProgress}%</strong><span>retail pricing complete</span></div><div className="admin-progress-track" aria-label={`${pricingProgress}% of imported products have a retail price`}><span style={{ width: `${pricingProgress}%` }}/></div><p>The report supplied {importedCount} active inventory products. {importedWithImages} have product imagery and {importedPriced} have verified retail prices.</p><Link href="/admin/products?pricing=missing">Open the pricing queue <ArrowRight size={14}/></Link></div>
+        <div className="admin-import-progress"><div><strong>{pricingProgress}%</strong><span>retail pricing complete</span></div><div className="admin-progress-track" aria-label={`${pricingProgress}% of imported products have a retail price`}><span style={{ width: `${pricingProgress}%` }}/></div><p>The inventory report supplied {importedCount} active products, including {importedWithImages} with imagery. Across {sourceDocuments} source documents, {sourceRows} retained rows are searchable, {retailSourceRows} include a retail price and {linkedSourceRows} are linked to stocked products.</p><div className="admin-source-links"><Link href="/admin/source-data">Review source data <ArrowRight size={14}/></Link><Link href="/admin/products?pricing=missing">Open pricing queue <ArrowRight size={14}/></Link></div></div>
         <div className="admin-pricing-queue"><div className="admin-queue-heading"><strong>Next prices to verify</strong><span>{importedMissingPrice} remaining</span></div>{unpricedProducts.map((product) => {
           const inventoryRecord = product.variants[0]?.inventory;
           const available = Number(inventoryRecord?.quantityOnHand ?? 0) - Number(inventoryRecord?.quantityReserved ?? 0);

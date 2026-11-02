@@ -34,6 +34,7 @@ export default async function CatalogPage({ params, searchParams }: { params: Pr
     q: first(query.q)?.trim() || undefined,
     category: first(query.category) || undefined,
     brand: first(query.brand) || undefined,
+    application: first(query.application) || undefined,
     availability: ["in", "out"].includes(first(query.availability) ?? "") ? first(query.availability) as "in" | "out" : undefined,
     sort: ["newest", "price-asc", "price-desc"].includes(first(query.sort) ?? "") ? first(query.sort) as CatalogFilters["sort"] : "newest",
     page: Number(first(query.page)) || 1,
@@ -46,6 +47,7 @@ export default async function CatalogPage({ params, searchParams }: { params: Pr
         <label className="search-field flex-1"><Search size={18}/><input name="q" defaultValue={filters.q} placeholder={d.catalog.search}/></label>
         <label className="select-field"><span className="sr-only">{d.catalog.category}</span><select name="category" defaultValue={filters.category ?? ""}><option value="">{d.catalog.category}</option>{data.categories.map((category) => <option key={category.slug} value={category.slug}>{category.name}</option>)}</select></label>
         <label className="select-field"><span className="sr-only">{d.catalog.brand}</span><select name="brand" defaultValue={filters.brand ?? ""}><option value="">{d.catalog.brand}</option>{data.brands.map((brand) => <option key={brand.slug} value={brand.slug}>{brand.name}</option>)}</select></label>
+        <label className="select-field"><span className="sr-only">{d.catalog.application}</span><select name="application" defaultValue={filters.application ?? ""}><option value="">{d.catalog.application}</option>{data.applications.map((application) => <option key={application.slug} value={application.slug}>{application.name}</option>)}</select></label>
         <label className="select-field"><span className="sr-only">{d.catalog.availability}</span><select name="availability" defaultValue={filters.availability ?? ""}><option value="">{d.catalog.availability}</option><option value="in">{d.catalog.inStock}</option><option value="out">{d.catalog.outOfStock}</option></select></label>
         <label className="select-field"><SlidersHorizontal size={16}/><select name="sort" defaultValue={filters.sort}><option value="newest">{d.catalog.sort}</option><option value="price-asc">{d.catalog.priceLow}</option><option value="price-desc">{d.catalog.priceHigh}</option></select></label>
         <button className="button-primary" type="submit">{d.nav.search}</button>

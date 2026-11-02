@@ -82,12 +82,20 @@ It is not ready for a public transactional launch because checkout/order submiss
 - At the import checkpoint, 19 products had an explicit retail price and the remainder deliberately used price `0` / “Contact for price”; no supplier price was invented.
 - The import/build/fetch/verification utilities are in `scripts/` and the seed is repeatable.
 
+### 6A. Document source register and application classification
+
+- The admin **Source data** route preserves 326 inventory-report rows and 205 Caltex price-revision rows with page/row provenance.
+- The Caltex file's 30 printed groups are normalized into customer-friendly vehicle/application classifications while the original group title remains searchable in admin.
+- All 313 stocked products have at least one classification; the storefront and admin product lists both filter on it.
+- 55 exact product-and-pack matches apply the 26 October 2026 VAT-inclusive gross retail price. Similar names with a different pack, grade, carton, drum or per-litre basis are not auto-matched.
+- Only retail prices are retained. Wholesale, unit-cost and total-cost values are intentionally excluded from storage and UI.
+
 ### 7. Current admin pricing workflow
 
 - The admin overview has an Inventory Details Report readiness panel with dynamic imported-product, image and price coverage.
 - A pricing queue links directly to unpriced products with current stock context.
 - The Products page filters all / needs-price / price-ready records.
-- Authorized admins can quick-edit standard and loyalty prices inline with a mandatory reason.
+- Authorized admins can quick-edit the single retail price inline with a mandatory reason.
 - Quick edits convert LKR to exact minor units, validate price relationships, reject stale concurrent writes, execute serializably, append `PriceHistory`, append `AuditLog` and revalidate all storefront locales.
 - When the displayed default variant has an explicit override, the quick editor propagates the new effective price to that override.
 - Full product editing still exposes variant-specific control and warns when a default variant overrides the product price.

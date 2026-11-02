@@ -6,6 +6,7 @@ import { PublicationStatus, type Prisma } from "@/generated/prisma/client";
 import { getCustomerPricingContext } from "@/features/customer/auth/authorization";
 import { resolvePromotionUnitPrice, type ApplicablePromotion } from "@/features/pricing/promotions";
 import { db } from "@/lib/db/client";
+import { VEHICLE_APPLICATIONS, vehicleApplicationName } from "@/lib/catalog/applications";
 import { localeToDb, type StoreLocale } from "@/lib/i18n/config";
 
 const productInclude = {
@@ -66,6 +67,7 @@ export function presentProduct(product: ProductRecord, locale: StoreLocale, pric
       name: categoryTranslation?.name ?? product.category.name,
       slug: product.category.slug,
     },
+    applications: product.vehicleApplications.map((slug) => ({ slug, name: vehicleApplicationName(slug) })),
     images: product.images.map((image) => ({
       url: image.url,
       alt: image.altText,
@@ -103,7 +105,7 @@ async function getStorefrontPricing() {
 }
 
 export const getNavigationData = cache(async (locale: StoreLocale) => {
-  const [categories, brands] = await Promise.all([
+  const [categories, brands, applicationProducts] = await Promise.all([
     db.category.findMany({
       where: { status: PublicationStatus.ACTIVE },
       include: { translations: true },
@@ -113,8 +115,10 @@ export const getNavigationData = cache(async (locale: StoreLocale) => {
       where: { status: PublicationStatus.ACTIVE },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     }),
+    db.product.findMany({ where: { status: PublicationStatus.ACTIVE }, select: { vehicleApplications: true } }),
   ]);
   const dbLocale = localeToDb[locale];
+  const usedApplications = new Set(applicationProducts.flatMap((product) => product.vehicleApplications));
   return {
     categories: categories.map((category) => ({
       slug: category.slug,
@@ -122,6 +126,7 @@ export const getNavigationData = cache(async (locale: StoreLocale) => {
       description: category.translations.find((item) => item.locale === dbLocale)?.description ?? category.description,
     })),
     brands: brands.map(({ slug, name, logoUrl }) => ({ slug, name, logoUrl })),
+    applications: VEHICLE_APPLICATIONS.filter((application) => usedApplications.has(application.slug)),
   };
 });
 
@@ -169,6 +174,7 @@ export type CatalogFilters = {
   q?: string;
   category?: string;
   brand?: string;
+  application?: string;
   availability?: "in" | "out";
   sort?: "newest" | "price-asc" | "price-desc";
   page?: number;
@@ -195,6 +201,7 @@ export async function getCatalog(locale: StoreLocale, filters: CatalogFilters) {
       : {}),
     ...(category ? { category: { slug: category } } : {}),
     ...(filters.brand ? { brand: { slug: filters.brand } } : {}),
+    ...(filters.application ? { vehicleApplications: { has: filters.application } } : {}),
     ...(filters.availability
       ? {
           variants: {

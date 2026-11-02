@@ -17,6 +17,7 @@ import {
   UnitOfSale,
 } from "@/generated/prisma/client";
 import { db } from "@/lib/db/client";
+import { VEHICLE_APPLICATION_SLUGS } from "@/lib/catalog/applications";
 
 const slug = z.string().trim().min(2).max(120).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const required = z.string().trim().min(1).max(500);
@@ -34,12 +35,6 @@ function moneyMinor(value: string) {
   const amount = new Decimal(value || "0");
   if (!amount.isFinite() || amount.isNegative() || amount.decimalPlaces() > 2) throw new Error("Price must be a non-negative amount with at most two decimals");
   return BigInt(amount.mul(100).toFixed(0));
-}
-
-function validatePriceRelationship(standardPriceMinor: bigint, loyaltyPriceMinor: bigint | null) {
-  if (loyaltyPriceMinor == null) return;
-  if (standardPriceMinor === 0n) throw new Error("Set a standard retail price before adding a loyalty price");
-  if (loyaltyPriceMinor > standardPriceMinor) throw new Error("Loyalty price cannot exceed the standard price");
 }
 
 function revalidateCommerce(slug?: string) {
@@ -78,9 +73,8 @@ export async function saveProductAction(form: FormData) {
     unitOfSale: text(form, "unitOfSale"),
   });
   const standardPriceMinor = moneyMinor(text(form, "standardPrice"));
-  const loyaltyPrice = text(form, "loyaltyPrice");
-  const loyaltyPriceMinor = loyaltyPrice ? moneyMinor(loyaltyPrice) : null;
-  validatePriceRelationship(standardPriceMinor, loyaltyPriceMinor);
+  const loyaltyPriceMinor = null;
+  const vehicleApplications = z.array(z.enum(VEHICLE_APPLICATION_SLUGS)).parse(form.getAll("vehicleApplications"));
   const translations = [Locale.SI, Locale.TA].flatMap((locale) => {
     const prefix = locale.toLowerCase();
     const name = text(form, `${prefix}Name`);
@@ -104,6 +98,7 @@ export async function saveProductAction(form: FormData) {
       brandId: parsed.brandId ?? null,
       standardPriceMinor,
       loyaltyPriceMinor,
+      vehicleApplications,
       status: parsed.status,
       type: parsed.type,
       unitOfSale: parsed.unitOfSale,
@@ -184,10 +179,8 @@ export async function updateProductPriceAction(form: FormData) {
   const productId = z.string().min(1).parse(form.get("productId"));
   const expectedUpdatedAt = z.coerce.date().parse(form.get("expectedUpdatedAt"));
   const standardPriceMinor = moneyMinor(text(form, "standardPrice"));
-  const loyaltyPrice = text(form, "loyaltyPrice");
-  const loyaltyPriceMinor = loyaltyPrice ? moneyMinor(loyaltyPrice) : null;
+  const loyaltyPriceMinor = null;
   const reason = z.string().trim().min(3).max(240).parse(form.get("priceReason"));
-  validatePriceRelationship(standardPriceMinor, loyaltyPriceMinor);
 
   const product = await db.$transaction(async (tx) => {
     const before = await tx.product.findUniqueOrThrow({
@@ -263,7 +256,6 @@ export async function saveVariantAction(form: FormData) {
   const productId = z.string().min(1).parse(form.get("productId"));
   const variantId = text(form, "variantId") || undefined;
   const override = text(form, "priceOverride");
-  const loyalty = text(form, "variantLoyaltyPrice");
   const attributes = optionalJson(text(form, "attributes"));
   const data = {
     productId,
@@ -271,7 +263,7 @@ export async function saveVariantAction(form: FormData) {
     name: required.parse(form.get("variantName")),
     attributes,
     priceOverrideMinor: override ? moneyMinor(override) : null,
-    loyaltyPriceMinor: loyalty ? moneyMinor(loyalty) : null,
+    loyaltyPriceMinor: null,
     minQuantity: text(form, "variantMinQuantity") || "1",
     quantityStep: text(form, "variantQuantityStep") || "1",
     sortOrder: Number(text(form, "variantSortOrder") || 0),
