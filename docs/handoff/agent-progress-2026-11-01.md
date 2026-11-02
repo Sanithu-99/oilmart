@@ -1,8 +1,9 @@
 # Saranankara Oil Mart — AI agent handoff
 
-Snapshot date: 1 November 2026  
-Repository: `github.com/Sanithu-99/oilmart`  
-Production site: `https://saranankara-oil-mart.netlify.app/en`  
+Snapshot date: 1 November 2026
+Repository: `github.com/Sanithu-99/oilmart`
+Previous host: `https://saranankara-oil-mart.netlify.app/en`
+Deployment target: Vercel (project connection pending)
 Primary branch: `main`
 
 ## Executive status
@@ -17,7 +18,7 @@ It is not ready for a public transactional launch because checkout/order submiss
 
 - Next.js 16.4, React 19.3, strict TypeScript and Tailwind CSS 4.
 - PostgreSQL with Prisma ORM 7, normalized relational schema, migrations, generated client and repeatable seeding.
-- Node.js 22 and pnpm 10 pinned for local/Netlify builds.
+- Node.js 22 and pnpm 10 pinned for local and Vercel builds.
 - Exact monetary values use `BigInt` minor units; measured quantities use exact decimal columns.
 - Central environment validation, structured redacted logging, security headers and store configuration.
 - Vitest unit tests, Playwright browser tests, lint, typecheck, coverage and production build scripts.
@@ -29,6 +30,10 @@ It is not ready for a public transactional launch because checkout/order submiss
 - English, Sinhala and Tamil route shells, translated core UI and English fallback disclosure for untranslated products.
 - Server-rendered product search, category/brand/availability filters, sorting and pagination with URL state.
 - Database-backed homepage categories, brands, featured products, new arrivals and promotions.
+- Products without a verified product photo use a large local brand-logo fallback on catalogue cards and product detail pages.
+- A prominent hero delivery label and a persistent multilingual Oil Match helper open focused, prefilled WhatsApp conversations.
+- The footer uses the animated oil-filled word treatment without a separate footer logo mark.
+- The storefront starts in the classic green palette and includes a persistent switch to the automotive graphite/red palette.
 - Product gallery, technical specifications, current stock, exact quantity steps and related products.
 - Local Business/Product structured data, route metadata, alternate locales, sitemap, robots, error/loading/not-found states.
 - Guest cart uses a random HttpOnly token whose database identifier is SHA-256 hashed.
@@ -64,8 +69,8 @@ It is not ready for a public transactional launch because checkout/order submiss
 - The application itself currently keeps its established NextAuth/Prisma identity flow; provisioned Neon Auth is not the application identity provider.
 - Neon-compatible S3 object storage is wired into the product image upload service.
 - Realtime and AI Gateway environment support is present, but they are not required by the current storefront and are not represented as active user features.
-- Netlify builds use Node.js 22 and `pnpm build`; public service URLs are excluded from secret-scan false positives while credentials remain protected.
-- GitHub `main` auto-publishes to Netlify.
+- The repository now uses Vercel's native zero-configuration Next.js build path with Node.js 22, pnpm 10 and `pnpm build`.
+- GitHub `main` is ready to connect to Vercel; the previous Netlify-specific build configuration has been removed.
 
 ### 6. Inventory Details Report import
 

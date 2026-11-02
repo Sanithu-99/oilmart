@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
 
 import { getSitemapProducts } from "@/features/catalog/queries";
+import { resolveAppUrl } from "@/lib/config/app-url";
 import { locales } from "@/lib/i18n/config";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.APP_URL ?? "http://localhost:3000";
+  const base = resolveAppUrl();
   const products = await getSitemapProducts();
   const staticRoutes = locales.flatMap((locale) => [
     { url: `${base}/${locale}`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: locale === "en" ? 1 : .8 },

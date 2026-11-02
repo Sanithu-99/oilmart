@@ -7,6 +7,7 @@ import { z } from "zod";
 import { writeAudit } from "@/features/admin/audit";
 import { dispatchCustomerEmail } from "@/features/customer/verification/email";
 import { ConsentType, Locale } from "@/generated/prisma/client";
+import { resolveAppUrl } from "@/lib/config/app-url";
 import { db } from "@/lib/db/client";
 import { localeToDb, type StoreLocale } from "@/lib/i18n/config";
 import { assertPersistentRateLimit } from "@/lib/security/admin-rate-limit";
@@ -29,7 +30,7 @@ function fields(form: FormData) {
 }
 
 function baseUrl() {
-  return process.env.NEXTAUTH_URL ?? process.env.APP_URL ?? "http://localhost:3000";
+  return resolveAppUrl();
 }
 
 export async function registerCustomerAction(_state: AuthFormState, form: FormData): Promise<AuthFormState> {

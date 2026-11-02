@@ -43,6 +43,32 @@ export function productConfirmationWhatsAppUrl(product: ProductConfirmation) {
   return whatsappUrl(details.join("\n"));
 }
 
+export function deliveryQuoteWhatsAppUrl() {
+  return whatsappUrl([
+    "Hello Saranankara Oil Mart,",
+    "",
+    "I would like a delivery quote for an order.",
+    "My delivery area is: ",
+    "The products I need are: ",
+    "",
+    "Please confirm delivery availability and the estimated charge. Thank you.",
+  ].join("\n"));
+}
+
+export function oilMatchWhatsAppUrl() {
+  return whatsappUrl([
+    "Hello Saranankara Oil Mart,",
+    "",
+    "I need help choosing the correct oil for my vehicle.",
+    "Vehicle make and model: ",
+    "Year: ",
+    "Engine / fuel type: ",
+    "Preferred oil grade (if known): ",
+    "",
+    "Please recommend a suitable product from your current stock. Thank you.",
+  ].join("\n"));
+}
+
 export function cartOrderWhatsAppUrl(cart: {
   items: CartOrderItem[];
   totalMinor: string;

@@ -15,8 +15,8 @@ Node.js 22 runtime, PostgreSQL 15+, shared rate-limit store, S3-compatible priva
 
 Set `APP_URL`, `AUTH_SECRET`, and `DATABASE_URL`. Configure provider variables only when those integrations are enabled. Enforce TLS, secure cookies, restricted database networking, and private bucket ACLs.
 
-## Netlify
+## Vercel
 
-The repository pins Node.js 22 in `netlify.toml`. The production build generates the ignored Prisma client before compiling Next.js, so clean Netlify clones do not depend on a developer's local generated files.
+Connect `Sanithu-99/oilmart` to Vercel and keep the framework preset on Next.js. Vercel auto-detects pnpm from the repository's `packageManager` field, Node.js 22 from `engines`, and the `pnpm build` script; no custom output directory or host-specific build override is required. The production build generates the ignored Prisma client before compiling Next.js, so clean deployments do not depend on a developer's local generated files.
 
-Configure `NEXTAUTH_URL`, `AUTH_SECRET`, and a network-accessible production `DATABASE_URL` in Netlify before deployment. `APP_URL` is optional on Netlify because the application falls back to Netlify's canonical `URL`; set it explicitly when using a custom domain. A local Docker database URL such as `localhost:55432` cannot be reached from Netlify. Apply migrations with `pnpm db:migrate:deploy` against the production database before serving traffic.
+Configure `APP_URL`, `NEXTAUTH_URL`, `AUTH_SECRET`, `DATABASE_URL`, and the required Neon/object-storage variables in Vercel before deployment. Set both URL variables to the final HTTPS production domain. A local Docker database URL such as `localhost:55432` cannot be reached from Vercel. Apply migrations with `pnpm db:migrate:deploy` against the production database before serving traffic; do not run production migrations automatically in preview deployments.

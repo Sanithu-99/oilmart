@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 
+import { resolveAppUrl } from "@/lib/config/app-url";
+
 export default function robots(): MetadataRoute.Robots {
-  const base = process.env.APP_URL ?? "http://localhost:3000";
+  const base = resolveAppUrl();
   return { rules: { userAgent: "*", allow: "/", disallow: ["/api/", "/*/cart"] }, sitemap: `${base}/sitemap.xml` };
 }

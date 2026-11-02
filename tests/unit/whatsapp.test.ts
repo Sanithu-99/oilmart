@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { cartOrderWhatsAppUrl, productConfirmationWhatsAppUrl } from "@/lib/contact/whatsapp";
+import { cartOrderWhatsAppUrl, deliveryQuoteWhatsAppUrl, oilMatchWhatsAppUrl, productConfirmationWhatsAppUrl } from "@/lib/contact/whatsapp";
 
 function decodedMessage(value: string) {
   const url = new URL(value);
@@ -39,5 +39,15 @@ describe("WhatsApp order links", () => {
     expect(message).toContain("Price: Please confirm");
     expect(message).toContain("Priced-item subtotal");
     expect(message).toContain("Some items require price confirmation.");
+  });
+
+  it("prefills delivery and oil-matching support requests", () => {
+    const delivery = decodedMessage(deliveryQuoteWhatsAppUrl());
+    const oilMatch = decodedMessage(oilMatchWhatsAppUrl());
+
+    expect(delivery).toContain("I would like a delivery quote");
+    expect(delivery).toContain("My delivery area is:");
+    expect(oilMatch).toContain("help choosing the correct oil");
+    expect(oilMatch).toContain("Vehicle make and model:");
   });
 });

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { CartProvider } from "@/components/storefront/cart-provider";
 import { SiteFooter } from "@/components/storefront/site-footer";
 import { SiteHeader } from "@/components/storefront/site-header";
+import { WhatsAppAssistant } from "@/components/storefront/whatsapp-assistant";
 import { locales, requireLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 
@@ -21,5 +22,5 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function StorefrontLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
   const locale = requireLocale((await params).locale);
   const dictionary = getDictionary(locale);
-  return <CartProvider><SiteHeader locale={locale} dictionary={dictionary}/><main>{children}</main><SiteFooter locale={locale} dictionary={dictionary}/></CartProvider>;
+  return <CartProvider><SiteHeader locale={locale} dictionary={dictionary}/><main>{children}</main><SiteFooter locale={locale} dictionary={dictionary}/><WhatsAppAssistant dictionary={dictionary}/></CartProvider>;
 }

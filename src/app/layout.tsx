@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Noto_Sans, Noto_Sans_Sinhala, Noto_Sans_Tamil } from "next/font/google";
 import { headers } from "next/headers";
 
+import { resolveAppUrl } from "@/lib/config/app-url";
 import { storeConfig } from "@/lib/config/store";
 
 import "./globals.css";
@@ -35,12 +36,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.APP_URL ||
-      process.env.URL ||
-      process.env.DEPLOY_PRIME_URL ||
-      "http://localhost:3000",
-  ),
+  metadataBase: new URL(resolveAppUrl()),
   title: {
     default: storeConfig.name,
     template: `%s | ${storeConfig.name}`,

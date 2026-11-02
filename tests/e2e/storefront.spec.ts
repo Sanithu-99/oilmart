@@ -7,9 +7,26 @@ test("redirects to the English storefront and renders database content", async (
   await expect(page).toHaveURL(/\/en$/);
   await expect(page).toHaveTitle(/Saranankara Oil Mart/i);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Premium lubricants");
+  const deliveryQuote = page.getByRole("link", { name: /We deliver/ });
+  await expect(deliveryQuote).toBeVisible();
+  await expect(deliveryQuote).toHaveAttribute("href", /^https:\/\/wa\.me\/94715716717\?text=/);
   await expect(page.getByRole("heading", { name: "Featured products" })).toBeVisible();
   await expect(page.locator(".product-card").first()).not.toContainText("Sample");
+  const mobilFallback = page.locator(".product-card").filter({ hasText: "Mobil CVTF Multi-Vehicle 1 L" });
+  await expect(mobilFallback.getByAltText("Mobil logo")).toBeVisible();
+  await expect(page.locator(".footer-small-brand-mark")).toHaveCount(0);
   expect(consoleErrors).toEqual([]);
+});
+
+test("oil-match helper opens an honest prefilled WhatsApp conversation", async ({ page }) => {
+  await page.goto("/en");
+  const assistant = page.locator("details.whatsapp-assistant");
+  await assistant.locator("summary").click();
+  await expect(assistant.getByRole("heading", { name: "Not sure which oil fits?" })).toBeVisible();
+  const whatsapp = assistant.getByRole("link", { name: "Start WhatsApp chat" });
+  await expect(whatsapp).toHaveAttribute("href", /^https:\/\/wa\.me\/94715716717\?text=/);
+  const message = new URL((await whatsapp.getAttribute("href"))!).searchParams.get("text");
+  expect(message).toContain("Vehicle make and model:");
 });
 
 test("catalog filters are URL-driven and server rendered", async ({ page }) => {
@@ -104,6 +121,6 @@ test("storefront stays within all required responsive widths", async ({ page }) 
 
   await page.setViewportSize({ width: 320, height: 700 });
   await page.goto("/en");
-  await page.locator("details summary").click();
-  await expect(page.locator("details").getByRole("link", { name: "Shop", exact: true })).toBeVisible();
+  await page.locator(".mobile-menu > summary").click();
+  await expect(page.locator(".mobile-menu").getByRole("link", { name: "Shop", exact: true })).toBeVisible();
 });

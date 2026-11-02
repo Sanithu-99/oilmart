@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Truck } from "lucide-react";
 
 import { BrandLogoWall } from "@/components/storefront/brand-logo-wall";
 import { ProductCard } from "@/components/storefront/product-card";
 import { getHomepageData } from "@/features/catalog/queries";
 import { storeConfig } from "@/lib/config/store";
+import { deliveryQuoteWhatsAppUrl } from "@/lib/contact/whatsapp";
 import { requireLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 
@@ -51,10 +52,10 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}/>
     <section className="hero-market"><div className="site-container hero-market-grid">
       <section className="hero-section">
-        <Image src="/images/storefront/hero-lubricants.png" alt="Brand-neutral lubricant bottle and amber oil on a sunlit stone plinth" fill priority sizes="(max-width: 1023px) 100vw, 72vw" className="hero-image"/>
+        <Image src="/images/storefront/hero-lubricants.png" alt="Brand-neutral lubricant bottle and amber oil on a sunlit stone plinth" fill preload sizes="(max-width: 1023px) 100vw, 72vw" className="hero-image"/>
         <div className="hero-wash"/>
         <div className="hero-content relative z-10 flex min-h-[560px] items-center px-8 py-14 lg:min-h-[560px] xl:px-14">
-          <div className="max-w-3xl"><p className="eyebrow">{d.home.eyebrow}</p><h1 className="hero-title"><span>{heroParts[0] ?? d.home.titleA}</span><em>{heroParts[1] ?? (data.hero?.title && heroParts.length === 1 ? "" : d.home.titleB)}</em></h1><p className="mt-7 max-w-xl text-lg leading-8 text-slate-600">{data.hero?.body ?? d.home.body}</p><div className="mt-9 flex flex-wrap gap-3"><Link className="button-primary" href={`/${locale}/products`}>{d.home.primary}<ArrowRight size={17}/></Link><Link className="button-secondary" href={`/${locale}/products?category=loose-oils`}>{d.home.secondary}<ArrowRight size={17}/></Link></div></div>
+          <div className="max-w-3xl"><p className="eyebrow">{d.home.eyebrow}</p><h1 className="hero-title"><span>{heroParts[0] ?? d.home.titleA}</span><em>{heroParts[1] ?? (data.hero?.title && heroParts.length === 1 ? "" : d.home.titleB)}</em></h1><p className="mt-7 max-w-xl text-lg leading-8 text-slate-600">{data.hero?.body ?? d.home.body}</p><a className="hero-delivery-callout" href={deliveryQuoteWhatsAppUrl()} target="_blank" rel="noreferrer"><span className="hero-delivery-icon" aria-hidden="true"><Truck size={28} strokeWidth={2.1}/></span><span className="hero-delivery-copy"><strong>{d.home.deliveryKicker}</strong><small>{d.home.deliveryBody}</small></span><ArrowRight className="hero-delivery-arrow" aria-hidden="true" size={20}/></a><div className="mt-7 flex flex-wrap gap-3"><Link className="button-primary" href={`/${locale}/products`}>{d.home.primary}<ArrowRight size={17}/></Link><Link className="button-secondary" href={`/${locale}/products?category=loose-oils`}>{d.home.secondary}<ArrowRight size={17}/></Link></div></div>
         </div>
       </section>
       <aside className="hero-side-stack" aria-label="Store services">

@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { resolveAppUrl } from "@/lib/config/app-url";
+
 const emptyToUndefined = (value: unknown) => (value === "" ? undefined : value);
 
 const envSchema = z.object({
@@ -44,11 +46,7 @@ export function getEnv(): AppEnv {
 
   const result = envSchema.safeParse({
     ...process.env,
-    APP_URL:
-      process.env.APP_URL ||
-      process.env.URL ||
-      process.env.DEPLOY_PRIME_URL ||
-      "http://localhost:3000",
+    APP_URL: resolveAppUrl(),
   });
   if (!result.success) {
     const fields = result.error.issues.map((issue) => issue.path.join(".")).join(", ");

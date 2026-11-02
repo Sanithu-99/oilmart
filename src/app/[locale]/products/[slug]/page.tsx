@@ -7,6 +7,7 @@ import { ArrowLeft, Box, CheckCircle2, Info, MessageCircle, PackageCheck, Phone,
 import { ProductCard } from "@/components/storefront/product-card";
 import { ProductPurchase } from "@/components/storefront/product-purchase";
 import { getProductBySlug, getProductSlugRedirect } from "@/features/catalog/queries";
+import { getBrandLogoPath } from "@/lib/catalog/brand-logos";
 import { storeConfig } from "@/lib/config/store";
 import { productConfirmationWhatsAppUrl } from "@/lib/contact/whatsapp";
 import { requireLocale } from "@/lib/i18n/config";
@@ -40,6 +41,7 @@ export default async function ProductPage({ params }: Props) {
   }
   const { product, related } = result;
   const image = product.images[0];
+  const brandLogo = getBrandLogoPath(product.brand?.slug);
   const priceLocale = locale === "en" ? "en-LK" : `${locale}-LK`;
   const hasPrice = product.priceMinor > 0n;
   const whatsappHref = productConfirmationWhatsAppUrl({ name: product.name, sku: product.sku, brand: product.brand?.name });
@@ -51,7 +53,7 @@ export default async function ProductPage({ params }: Props) {
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}/>
     <div className="site-container py-8"><Link href={`/${locale}/products`} className="text-link"><ArrowLeft size={16}/>{d.nav.shop}</Link></div>
     <section className="site-container grid gap-10 pb-16 lg:grid-cols-[1.1fr_.9fr]">
-      <div><div className="product-gallery-main group">{image ? <Image src={image.url} alt={image.alt} fill loading="eager" fetchPriority="high" sizes="(max-width: 1024px) 100vw, 55vw" className="object-contain p-4 transition duration-500 group-hover:scale-105"/> : <div className="flex h-full items-center justify-center bg-gradient-to-br from-[#f1ece3] to-white p-10 text-center"><span className="text-lg font-bold uppercase tracking-[.14em] text-[#17483b]">{product.brand?.name ?? product.category.name}</span></div>}</div></div>
+      <div><div className="product-gallery-main group">{image ? <Image src={image.url} alt={image.alt} fill loading="eager" fetchPriority="high" sizes="(max-width: 1024px) 100vw, 55vw" className="object-contain p-4 transition duration-500 group-hover:scale-105"/> : <div className="product-brand-fallback product-brand-fallback-detail">{brandLogo ? <Image src={brandLogo} alt={`${product.brand?.name ?? product.category.name} logo`} fill sizes="(max-width: 1024px) 70vw, 36vw" unoptimized className="product-brand-fallback-logo"/> : <span>{product.brand?.name ?? product.category.name}</span>}</div>}</div></div>
       <div className="self-center"><p className="eyebrow">{product.brand?.name ?? product.category.name}</p><h1 className="mt-3 font-display text-5xl leading-[1.02] tracking-[-.035em] sm:text-6xl">{product.name}</h1><p className="mt-3 text-slate-600">{product.shortDescription}</p><div className="mt-5 flex flex-wrap gap-4 border-y py-4 text-sm text-slate-600"><span className="flex items-center gap-2"><Box size={16}/>{d.product.sku}: {product.sku}</span><span className="flex items-center gap-2"><CheckCircle2 size={16}/>{product.category.name}</span></div><div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-1">{hasPrice ? <p className="font-display text-4xl text-[#1f6b55]">{formatLkr(product.priceMinor, priceLocale)}</p> : <p className="font-display text-4xl text-[#1f6b55]">{d.common.contactForPrice}</p>}{discounted && <p className="text-sm text-slate-500 line-through">{d.common.standardPrice} {formatLkr(product.standardPriceMinor, priceLocale)}</p>}{priceLabel && <span className="w-full text-xs font-bold uppercase tracking-[.13em] text-[#1f6b55]">{priceLabel}</span>}</div><p className={`mt-3 text-sm font-medium ${product.inStock ? "text-emerald-700" : "text-red-700"}`}><span className="mr-2 inline-block h-2 w-2 rounded-full bg-current"/>{product.inStock ? `${d.common.stock} · ${product.available}` : d.common.unavailable}</p>
         {hasPrice ? <ProductPurchase variantId={product.variant?.id} available={product.available} minQuantity={product.variant?.minQuantity ?? "1"} quantityStep={product.variant?.quantityStep ?? "1"} label={d.common.add}/> : <div className="product-detail-confirm-actions">
           <a className="product-confirm-button product-confirm-call" href={`tel:${storeConfig.phone.replace(/\s/g, "")}`}><Phone size={17}/><span>{d.common.contactStore}</span></a>
