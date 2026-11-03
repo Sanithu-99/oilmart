@@ -14,7 +14,6 @@ import {
   Search,
   ShieldCheck,
   ShoppingBag,
-  Sparkles,
   Truck,
   X,
   Zap,
@@ -130,18 +129,19 @@ const vehicleCategories: Record<string, string[]> = {
 
 const labels = {
   en: {
-    eyebrow: "Independent lubricant specialists · Dehiwala",
-    title: "THE RIGHT OIL.",
-    titleAccent: "RIGHT NOW.",
-    body: "Search a live catalogue built for Sri Lankan drivers, mechanics and fleets—then confirm today's stock directly with our Dehiwala team.",
-    shopStock: "Shop live stock",
-    askWhatsApp: "Ask on WhatsApp",
+    eyebrow: "Oil matched to the way Sri Lanka drives",
+    title: "The right oil",
+    titleAccent: "for every drive.",
+    body: "Find the right grade, see current availability, and order directly from our Dehiwala team.",
+    shopStock: "Find your oil",
+    askWhatsApp: "Chat with us",
     catalogueProducts: "catalogue products",
     catalogueBrands: "trusted brands",
     status: "Open Today · Hill St, Dehiwala",
     directions: "1-Tap Directions",
     selector: "Quick Oil Selector",
     selectorHint: "Match by vehicle and grade in seconds.",
+    selectorAction: "Show {count} products",
     vehicle: "Vehicle Type",
     grade: "Preferred Viscosity / Grade",
     anyGrade: "Any grade",
@@ -197,6 +197,7 @@ const labels = {
     directions: "මාර්ගය බලන්න",
     selector: "ඉක්මන් තෙල් තේරීම",
     selectorHint: "වාහනය සහ ශ්‍රේණිය අනුව තත්පර කිහිපයකින් තෝරන්න.",
+    selectorAction: "නිෂ්පාදන {count} බලන්න",
     vehicle: "වාහන වර්ගය",
     grade: "කැමති ශ්‍රේණිය",
     anyGrade: "ඕනෑම ශ්‍රේණියක්",
@@ -252,6 +253,7 @@ const labels = {
     directions: "வழியைப் பார்க்க",
     selector: "விரைவு எண்ணெய் தேர்வு",
     selectorHint: "வாகனம் மற்றும் தரத்தின் மூலம் சில வினாடிகளில் பொருத்துங்கள்.",
+    selectorAction: "{count} தயாரிப்புகளைப் பார்க்க",
     vehicle: "வாகன வகை",
     grade: "விருப்ப பிசுபிசுப்பு / தரம்",
     anyGrade: "எந்த தரமும்",
@@ -427,7 +429,7 @@ function CategorySpotlight({ products, activeIndex, copy, onChange, onChoose }: 
               onClick={() => index === activeIndex ? onChoose(item.id) : onChange(index)}
               aria-label={index === activeIndex ? `${copy.spotlightExplore}: ${item.title}` : `Show ${item.title}`}
               aria-pressed={index === activeIndex}
-              tabIndex={position === "is-hidden" ? -1 : 0}
+              tabIndex={index === activeIndex ? 0 : -1}
             >
               <span className="category-spotlight-art"><Image src={item.image} alt="" fill sizes="(max-width: 639px) 80vw, 430px"/></span>
               <span className="category-spotlight-shade"/>
@@ -500,7 +502,7 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
   const [grade, setGrade] = useState(initialFilters.grade ?? "");
   const [stock, setStock] = useState(initialFilters.availability === "in" ? "in" : "");
   const [sort, setSort] = useState(initialFilters.sort ?? "recommended");
-  const [visible, setVisible] = useState(24);
+  const [visible, setVisible] = useState(showHero ? 12 : 24);
   const [inquiryIds, setInquiryIds] = useState<string[]>([]);
   const [spotlightIndex, setSpotlightIndex] = useState(0);
   const searchInput = useRef<HTMLInputElement>(null);
@@ -559,7 +561,7 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
   const minimumRemaining = Math.max(0, 3 - inquiryProducts.length);
 
   function resetVisible() {
-    setVisible(24);
+    setVisible(showHero ? 12 : 24);
   }
 
   function chooseGroup(nextGroup: string) {
@@ -602,26 +604,30 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
 
   return <>
     {showHero && <section className="discovery-hero">
-      <div className="discovery-hero-video-shell" aria-hidden="true">
-        <ViewportVideo src="/videos/hero-supercar.mp4" poster="/images/storefront/hero-supercar-poster.jpg" className="discovery-hero-video"/>
-      </div>
-      <div className="site-container discovery-hero-grid">
-        <div className="discovery-hero-copy">
-          <p className="discovery-eyebrow"><Sparkles size={14}/>{copy.eyebrow.replace("313", String(products.length))}</p>
-          <h1><span>{copy.title}</span><em>{copy.titleAccent}</em></h1>
-          <p className="discovery-hero-body">{copy.body}</p>
-          <div className="hero-conversion-actions">
-            <a className="halo-action halo-action-primary" href="#catalog-grid"><span className="halo-action-icon"><ShoppingBag size={18}/></span><span>{copy.shopStock}</span><ArrowRight size={16}/></a>
-            <a className="halo-action halo-action-secondary" href={oilMatchWhatsAppUrl()} target="_blank" rel="noreferrer"><span className="halo-action-icon"><MessageCircle size={18}/></span><span>{copy.askWhatsApp}</span></a>
+      <div className="site-container">
+        <div className="discovery-hero-shell">
+          <div className="discovery-hero-frame">
+            <div className="discovery-hero-video-shell" aria-hidden="true">
+              <ViewportVideo src="/videos/hero-supercar.mp4" poster="/images/storefront/hero-supercar-poster.jpg" className="discovery-hero-video"/>
+            </div>
+            <div className="discovery-hero-grid">
+              <div className="discovery-hero-copy">
+                <p className="discovery-eyebrow">{copy.eyebrow.replace("313", String(products.length))}</p>
+                <h1><span>{copy.title}</span><em>{copy.titleAccent}</em></h1>
+                <p className="discovery-hero-body">{copy.body}</p>
+                <div className="hero-conversion-actions">
+                  <a className="halo-action halo-action-primary" href="#catalog-grid"><span>{copy.shopStock}</span><ArrowRight size={16}/></a>
+                  <a className="halo-action halo-action-secondary" href={oilMatchWhatsAppUrl()} target="_blank" rel="noreferrer"><MessageCircle size={17}/><span>{copy.askWhatsApp}</span></a>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="hero-catalogue-proof"><span><strong>{products.length}</strong>{copy.catalogueProducts}</span><span><strong>{brands.length}</strong>{copy.catalogueBrands}</span></div>
-        </div>
-        <div className="quick-selector-card" id="quick-oil-selector">
-          <div className="quick-selector-heading"><div><span>01</span><h2>{copy.selector}</h2></div><p>{copy.selectorHint}</p></div>
-          <label><span>{copy.vehicle}</span><div className="selector-control"><select value={vehicle} onChange={(event) => { setVehicle(event.target.value); setGrade(""); }}><option value="">{vehicleOptions[0].label}</option>{vehicleOptions.slice(1).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><ChevronDown size={17}/></div></label>
-          <label><span>{copy.grade}</span><div className="selector-control"><select value={grade} onChange={(event) => setGrade(event.target.value)}><option value="">{copy.anyGrade}</option>{gradeOptions.map((item) => <option value={item} key={item}>{item}</option>)}</select><ChevronDown size={17}/></div></label>
-          <button type="button" onClick={applySelector}><span className="selector-button-icon"><Search size={17}/></span>Filter {products.length} Products<ArrowRight size={17}/></button>
-          <a className="selector-location" href={storeConfig.mapsUrl} target="_blank" rel="noreferrer"><span className="status-dot"/><span>{copy.status}</span><strong><MapPin size={13}/>{copy.directions}</strong></a>
+          <div className="quick-selector-card" id="quick-oil-selector">
+            <div className="quick-selector-heading"><div><h2>{copy.selector}</h2></div><p>{copy.selectorHint}</p><a className="selector-location" href={storeConfig.mapsUrl} target="_blank" rel="noreferrer"><span className="status-dot"/><span>{copy.status}</span><strong><MapPin size={13}/>{copy.directions}</strong></a></div>
+            <label><span>{copy.vehicle}</span><div className="selector-control"><select value={vehicle} onChange={(event) => { setVehicle(event.target.value); setGrade(""); }}><option value="">{vehicleOptions[0].label}</option>{vehicleOptions.slice(1).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><ChevronDown size={17}/></div></label>
+            <label><span>{copy.grade}</span><div className="selector-control"><select value={grade} onChange={(event) => setGrade(event.target.value)}><option value="">{copy.anyGrade}</option>{gradeOptions.map((item) => <option value={item} key={item}>{item}</option>)}</select><ChevronDown size={17}/></div></label>
+            <button type="button" onClick={applySelector}><span>{copy.selectorAction.replace("{count}", String(products.length))}</span><ArrowRight size={17}/></button>
+          </div>
         </div>
       </div>
     </section>}

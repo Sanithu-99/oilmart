@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronDown, Droplet, MapPin, Menu, Phone, Search, UserRound } from "lucide-react";
+import { Droplet, MapPin, Menu, Phone, Search, UserRound } from "lucide-react";
 
 import { storeConfig } from "@/lib/config/store";
 import type { StoreLocale } from "@/lib/i18n/config";
@@ -17,15 +17,39 @@ export function SiteHeader({ locale, dictionary }: { locale: StoreLocale; dictio
     [dictionary.nav.contact, `/${locale}#contact`],
   ];
   return <header className="site-header">
-    <div className="market-topbar"><div className="site-container"><span className="market-topbar-message">Quality lubricants for Sri Lanka</span><div className="header-utility-links"><a href={`tel:${storeConfig.phone.replace(/\s/g, "")}`}><Phone size={13}/><span>{storeConfig.phone}</span></a><a href={storeConfig.mapsUrl} target="_blank" rel="noreferrer"><MapPin size={13}/><span>Hill St, Dehiwala</span></a></div><nav className="header-language-links" aria-label="Language selector"><LanguageSwitcher locale={locale}/></nav></div></div>
-    <div className="site-container header-main-row flex h-20 items-center gap-4 lg:h-24">
-      <Link href={`/${locale}`} className="brand-lockup shrink-0" aria-label="Saranankara Oil Mart home"><span className="brand-mark"><Droplet size={30} strokeWidth={1.8}/></span><span><strong>Saranankara</strong><small>Oil Mart</small></span></Link>
-      <form action={`/${locale}/products`} className="ml-8 hidden max-w-xl flex-1 lg:flex xl:ml-16"><label className="search-field header-search-field w-full"><input name="q" placeholder={dictionary.nav.search} aria-label={dictionary.nav.search}/><button className="header-search-button" type="submit" aria-label={dictionary.nav.search}><Search size={19}/></button></label></form>
-      <span className="ml-auto"/>
-      <Link className="icon-button hidden sm:grid" href={`/${locale}/account`} aria-label="Account"><UserRound size={21}/></Link>
-      <CartButton />
-      <details className="mobile-menu lg:hidden"><summary className="icon-button list-none"><Menu size={22}/><span className="sr-only">{dictionary.nav.menu}</span></summary><div className="mobile-menu-panel fixed left-3 right-3 top-[6.5rem] rounded-2xl border p-4 shadow-xl"><form action={`/${locale}/products`}><label className="search-field header-search-field"><input name="q" placeholder={dictionary.nav.search}/><button className="header-search-button" type="submit" aria-label={dictionary.nav.search}><Search size={18}/></button></label></form><nav className="mt-3 grid">{nav.map(([label, href]) => <Link className="border-b px-2 py-3" href={href} key={href}>{label}</Link>)}</nav><div className="mt-4 flex flex-wrap items-center gap-2"><LanguageSwitcher locale={locale} compact/></div></div></details>
+    <div className="site-container header-main-row">
+      <Link href={`/${locale}`} className="brand-lockup" aria-label="Saranankara Oil Mart home">
+        <span className="brand-mark"><Droplet size={24} strokeWidth={1.8}/></span>
+        <span><strong>Saranankara</strong><small>Oil Mart</small></span>
+      </Link>
+
+      <nav className="desktop-primary-nav" aria-label="Primary navigation">
+        {nav.map(([label, href]) => <Link className="nav-link" href={href} key={href}>{label}</Link>)}
+      </nav>
+
+      <form action={`/${locale}/products`} className="header-search-form">
+        <label className="header-search-field"><Search size={16}/><input name="q" placeholder={dictionary.nav.search} aria-label={dictionary.nav.search}/></label>
+      </form>
+
+      <div className="header-actions">
+        <a className="header-quick-link" href={`tel:${storeConfig.phone.replace(/\s/g, "")}`} aria-label={`Call ${storeConfig.phone}`} title={storeConfig.phone}><Phone size={18}/></a>
+        <a className="header-quick-link" href={storeConfig.mapsUrl} target="_blank" rel="noreferrer" aria-label="Open Hill Street store in Google Maps" title="Hill St, Dehiwala"><MapPin size={18}/></a>
+        <nav className="header-language-links" aria-label="Language selector"><LanguageSwitcher locale={locale}/></nav>
+        <Link className="icon-button account-button" href={`/${locale}/account`} aria-label="Account"><UserRound size={19}/></Link>
+        <CartButton/>
+        <details className="mobile-menu">
+          <summary className="icon-button"><Menu size={20}/><span className="sr-only">{dictionary.nav.menu}</span></summary>
+          <div className="mobile-menu-panel">
+            <form action={`/${locale}/products`}><label className="header-search-field"><Search size={16}/><input name="q" placeholder={dictionary.nav.search} aria-label={dictionary.nav.search}/></label></form>
+            <nav className="mobile-primary-nav" aria-label="Mobile navigation">{nav.map(([label, href]) => <Link href={href} key={href}>{label}</Link>)}</nav>
+            <div className="mobile-menu-utilities">
+              <a href={`tel:${storeConfig.phone.replace(/\s/g, "")}`}><Phone size={16}/><span>{storeConfig.phone}</span></a>
+              <a href={storeConfig.mapsUrl} target="_blank" rel="noreferrer"><MapPin size={16}/><span>Hill St, Dehiwala</span></a>
+            </div>
+            <nav className="mobile-language-links" aria-label="Language selector"><LanguageSwitcher locale={locale}/></nav>
+          </div>
+        </details>
+      </div>
     </div>
-    <div className="header-nav-row hidden lg:block"><div className="site-container flex h-14 items-center justify-center gap-10"><nav className="flex items-center gap-9" aria-label="Primary navigation">{nav.map(([label, href], index) => <Link className={`nav-link ${index === 0 ? "active" : ""}`} href={href} key={href}>{label}{index === 1 && <ChevronDown size={14}/>}</Link>)}</nav></div></div>
   </header>;
 }

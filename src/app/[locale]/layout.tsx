@@ -22,5 +22,5 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function StorefrontLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
   const locale = requireLocale((await params).locale);
   const dictionary = getDictionary(locale);
-  return <CartProvider><SiteHeader locale={locale} dictionary={dictionary}/><main>{children}</main><SiteFooter locale={locale} dictionary={dictionary}/><WhatsAppAssistant dictionary={dictionary}/></CartProvider>;
+  return <CartProvider><div className="storefront-shell"><SiteHeader locale={locale} dictionary={dictionary}/><main>{children}</main><SiteFooter locale={locale} dictionary={dictionary}/><WhatsAppAssistant dictionary={dictionary}/></div></CartProvider>;
 }
