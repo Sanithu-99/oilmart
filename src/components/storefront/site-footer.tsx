@@ -3,6 +3,7 @@ import Link from "next/link";
 import { storeConfig } from "@/lib/config/store";
 import type { StoreLocale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { ViewportVideo } from "./viewport-video";
 
 export function SiteFooter({ locale, dictionary }: { locale: StoreLocale; dictionary: Dictionary }) {
   return <footer className="storefront-footer" id="contact">
@@ -26,9 +27,7 @@ export function SiteFooter({ locale, dictionary }: { locale: StoreLocale; dictio
         <span className="footer-oil-caption">Automotive oils · Dehiwala</span>
         <span className="footer-wordmark-stage" aria-hidden="true">
           <span className="footer-video-wordmark">
-            <video autoPlay loop muted playsInline preload="metadata" poster="/images/storefront/footer-oil-flow-poster.webp">
-              <source src="/videos/footer-oil-flow.mp4" type="video/mp4"/>
-            </video>
+            <ViewportVideo src="/videos/footer-oil-flow.mp4" poster="/images/storefront/footer-oil-flow-poster.webp"/>
           </span>
           <span className="footer-oil-fallback"><span>Saranankara</span><span>Oil Mart</span></span>
         </span>

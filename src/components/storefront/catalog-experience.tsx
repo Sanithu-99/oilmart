@@ -21,10 +21,11 @@ import {
 import type { ClientCatalogBrand, ClientCatalogProduct } from "@/features/catalog/queries";
 import { getBrandLogoPath } from "@/lib/catalog/brand-logos";
 import { storeConfig } from "@/lib/config/store";
-import { inquiryListWhatsAppUrl, productConfirmationWhatsAppUrl } from "@/lib/contact/whatsapp";
+import { inquiryListWhatsAppUrl, oilMatchWhatsAppUrl, productConfirmationWhatsAppUrl } from "@/lib/contact/whatsapp";
 import type { StoreLocale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { AddToCart } from "./add-to-cart";
+import { ViewportVideo } from "./viewport-video";
 
 type InitialFilters = {
   q?: string;
@@ -127,6 +128,11 @@ const labels = {
     trayHint: "Choose 3–5 items for one combined WhatsApp inquiry.",
     traySend: "Send combined list",
     trayMinimum: "Add {count} more",
+    performanceKicker: "Protection under pressure",
+    performanceTitle: "The right oil keeps hard-working engines moving.",
+    performanceBody: "From daily Dehiwala traffic to demanding workshop and fleet use, match the grade to the engine and confirm today's live stock with our team.",
+    performanceCta: "Ask us to match your oil",
+    performanceProof: "Daily drivers · workshops · fleets",
   },
   si: {
     eyebrow: "සජීවී නිෂ්පාදන නාමාවලිය",
@@ -167,6 +173,11 @@ const labels = {
     trayHint: "එක් WhatsApp විමසීමකට භාණ්ඩ 3–5 තෝරන්න.",
     traySend: "ලැයිස්තුව යවන්න",
     trayMinimum: "තවත් {count} එක් කරන්න",
+    performanceKicker: "පීඩනය යටතේ ආරක්ෂාව",
+    performanceTitle: "නිවැරදි තෙල් දැඩිව ක්‍රියා කරන එන්ජින් ඉදිරියට ගෙන යයි.",
+    performanceBody: "දෛනික දෙහිවල ගමනාගමනයේ සිට වැඩපොළ සහ වාහන සමූහ භාවිතය දක්වා, නිවැරදි ශ්‍රේණිය තෝරා අද තොගය අපගේ කණ්ඩායමෙන් තහවුරු කරගන්න.",
+    performanceCta: "නිවැරදි තෙල් තෝරාගැනීමට අසන්න",
+    performanceProof: "දෛනික රියදුරන් · වැඩපොළ · වාහන සමූහ",
   },
   ta: {
     eyebrow: "நேரடி தயாரிப்புப் பட்டியல்",
@@ -207,6 +218,11 @@ const labels = {
     trayHint: "ஒரே WhatsApp விசாரணைக்கு 3–5 பொருட்களைத் தேர்ந்தெடுக்கவும்.",
     traySend: "பட்டியலை அனுப்பவும்",
     trayMinimum: "மேலும் {count} சேர்க்கவும்",
+    performanceKicker: "அழுத்தத்திலும் பாதுகாப்பு",
+    performanceTitle: "சரியான எண்ணெய் கடினமாக உழைக்கும் இயந்திரங்களை இயக்குகிறது.",
+    performanceBody: "தினசரி தெஹிவளை போக்குவரத்து முதல் பணிமனை மற்றும் வாகனப்படை பயன்பாடு வரை, சரியான தரத்தைத் தேர்ந்தெடுத்து இன்றைய இருப்பை எங்கள் குழுவிடம் உறுதிப்படுத்துங்கள்.",
+    performanceCta: "சரியான எண்ணெயைத் தேர்ந்தெடுக்க கேளுங்கள்",
+    performanceProof: "தினசரி ஓட்டுநர்கள் · பணிமனைகள் · வாகனப்படைகள்",
   },
 } as const;
 
@@ -278,6 +294,23 @@ function ProductTile({ product, locale, copy, selected, onToggle }: {
       <button className={`catalog-quote-button ${selected ? "is-selected" : ""}`} type="button" onClick={onToggle} aria-pressed={selected}><span>{selected ? <Check size={16}/> : <ClipboardList size={16}/>}</span>{selected ? copy.quoted : copy.quote}</button>
     </div>
   </article>;
+}
+
+function PerformanceFilm({ copy }: { copy: DiscoveryCopy }) {
+  return <section className="performance-film" aria-labelledby="performance-film-title">
+    <div className="performance-film-media">
+      <ViewportVideo src="/videos/track-performance.mp4" poster="/images/storefront/track-performance-poster.jpg" className="performance-film-video" controls/>
+      <span className="performance-film-index">02 / Performance</span>
+      <span className="performance-film-caption">Closed-course footage · Visualising protection under load</span>
+    </div>
+    <div className="performance-film-copy">
+      <p>{copy.performanceKicker}</p>
+      <h2 id="performance-film-title">{copy.performanceTitle}</h2>
+      <span>{copy.performanceBody}</span>
+      <small>{copy.performanceProof}</small>
+      <a href={oilMatchWhatsAppUrl()} target="_blank" rel="noreferrer"><MessageCircle size={17}/>{copy.performanceCta}<ArrowRight size={16}/></a>
+    </div>
+  </section>;
 }
 
 export function CatalogExperience({ products, brands, locale, dictionary, initialFilters = {}, showHero = false, syncUrl = false }: CatalogExperienceProps) {
@@ -391,9 +424,7 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
   return <>
     {showHero && <section className="discovery-hero">
       <div className="discovery-hero-video-shell" aria-hidden="true">
-        <video className="discovery-hero-video" autoPlay loop muted playsInline preload="metadata" poster="/images/storefront/hero-oil-pour-poster.jpg" tabIndex={-1}>
-          <source src="/videos/hero-oil-pour.mp4" type="video/mp4"/>
-        </video>
+        <ViewportVideo src="/videos/hero-oil-pour.mp4" poster="/images/storefront/hero-oil-pour-poster.jpg" className="discovery-hero-video"/>
       </div>
       <div className="site-container discovery-hero-grid">
         <div className="discovery-hero-copy">
@@ -444,7 +475,7 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
 
         <div className="catalog-result-heading" id="catalog-grid"><div><strong>{filtered.length}</strong><span>{copy.results}</span></div>{(query || group !== "all" || brand || vehicle || application || grade || stock || sort !== "recommended") && <button type="button" onClick={clearFilters}><X size={15}/>{copy.reset}</button>}</div>
 
-        {filtered.length ? <><div className="discovery-product-grid">{filtered.slice(0, visible).map((product) => <ProductTile key={product.id} product={product} locale={locale} copy={copy} selected={inquiryIds.includes(product.id)} onToggle={() => toggleInquiry(product.id)}/>)}</div>{visible < filtered.length && <button className="catalog-load-more" type="button" onClick={() => setVisible((current) => current + 24)}>{copy.more}<span>{Math.min(24, filtered.length - visible)}</span></button>}</> : <div className="catalog-empty"><Search size={30}/><p>{copy.empty}</p><button type="button" onClick={clearFilters}>{copy.reset}</button></div>}
+        {filtered.length ? <><div className="discovery-product-grid">{filtered.slice(0, Math.min(8, visible)).map((product) => <ProductTile key={product.id} product={product} locale={locale} copy={copy} selected={inquiryIds.includes(product.id)} onToggle={() => toggleInquiry(product.id)}/>)}{showHero && filtered.length >= 8 && <PerformanceFilm copy={copy}/>} {filtered.slice(8, visible).map((product) => <ProductTile key={product.id} product={product} locale={locale} copy={copy} selected={inquiryIds.includes(product.id)} onToggle={() => toggleInquiry(product.id)}/>)}</div>{visible < filtered.length && <button className="catalog-load-more" type="button" onClick={() => setVisible((current) => current + 24)}>{copy.more}<span>{Math.min(24, filtered.length - visible)}</span></button>}</> : <div className="catalog-empty"><Search size={30}/><p>{copy.empty}</p><button type="button" onClick={clearFilters}>{copy.reset}</button></div>}
       </div>
     </section>
 
