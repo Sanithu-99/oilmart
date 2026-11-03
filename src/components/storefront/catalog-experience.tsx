@@ -4,11 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import {
+  ArrowLeft,
   ArrowRight,
   Check,
   ChevronDown,
   ClipboardList,
   MessageCircle,
+  MapPin,
   Search,
   ShieldCheck,
   ShoppingBag,
@@ -57,6 +59,44 @@ const groups = [
   { id: "loose", label: "Loose Oils" },
 ] as const;
 
+const spotlightCategories = [
+  {
+    id: "engine",
+    title: "Engine Oils",
+    eyebrow: "Passenger & petrol",
+    description: "Everyday protection for cars, hybrids and light vehicles.",
+    image: "/images/storefront/categories/havoline-prods-eco.jpg",
+  },
+  {
+    id: "motorcycle",
+    title: "Motorcycle 4T",
+    eyebrow: "Two wheels",
+    description: "Smooth clutch feel and reliable protection for daily rides.",
+    image: "/images/storefront/categories/servo-4t-xtra.png",
+  },
+  {
+    id: "diesel",
+    title: "Diesel Heavy",
+    eyebrow: "Vans, lorries & fleets",
+    description: "Heavy-duty oils selected for work vehicles and commercial use.",
+    image: "/images/storefront/categories/castrol-crb-turbomax.png",
+  },
+  {
+    id: "transmission",
+    title: "Transmission & Gear",
+    eyebrow: "ATF, CVT & manual",
+    description: "Fluids for smooth shifts, differentials and gear systems.",
+    image: "/images/storefront/categories/castrol-transmax.png",
+  },
+  {
+    id: "loose",
+    title: "Loose Oils",
+    eyebrow: "Workshop quantities",
+    description: "Practical quantities for mechanics, workshops and regular servicing.",
+    image: "/images/storefront/categories/shell-spirax-s2g.jpg",
+  },
+] as const;
+
 const vehicleOptions = [
   { value: "", label: "Select vehicle type" },
   { value: "motorcycle", label: "Motorcycle 4T" },
@@ -90,12 +130,18 @@ const vehicleCategories: Record<string, string[]> = {
 
 const labels = {
   en: {
-    eyebrow: "Engineered protection for every engine",
-    title: "EVERY DROP MATTERS.",
-    body: "Precision-grade lubricants for daily drivers, workshops and fleets. Search live Dehiwala stock by grade, vehicle type or brand.",
+    eyebrow: "Independent lubricant specialists · Dehiwala",
+    title: "THE RIGHT OIL.",
+    titleAccent: "RIGHT NOW.",
+    body: "Search a live catalogue built for Sri Lankan drivers, mechanics and fleets—then confirm today's stock directly with our Dehiwala team.",
+    shopStock: "Shop live stock",
+    askWhatsApp: "Ask on WhatsApp",
+    catalogueProducts: "catalogue products",
+    catalogueBrands: "trusted brands",
     status: "Open Today · Hill St, Dehiwala",
     directions: "1-Tap Directions",
     selector: "Quick Oil Selector",
+    selectorHint: "Match by vehicle and grade in seconds.",
     vehicle: "Vehicle Type",
     grade: "Preferred Viscosity / Grade",
     anyGrade: "Any grade",
@@ -133,14 +179,24 @@ const labels = {
     performanceBody: "From daily Dehiwala traffic to demanding workshop and fleet use, match the grade to the engine and confirm today's live stock with our team.",
     performanceCta: "Ask us to match your oil",
     performanceProof: "Daily drivers · workshops · fleets",
+    spotlightEyebrow: "Start with what you drive",
+    spotlightTitle: "What are you protecting?",
+    spotlightBody: "Choose a category to jump directly into matching products without searching through the full catalogue.",
+    spotlightExplore: "Explore category",
   },
   si: {
-    eyebrow: "සජීවී නිෂ්පාදන නාමාවලිය",
-    title: "සෑම එන්ජිමකටම නිවැරදි ආරක්ෂාව",
+    eyebrow: "ස්වාධීන ලිහිසි තෙල් විශේෂඥයින් · දෙහිවල",
+    title: "නිවැරදි තෙල්.",
+    titleAccent: "දැන්ම.",
     body: "වාහන වර්ගය, ශ්‍රේණිය හෝ වෙළඳ නාමය අනුව තෙල් සොයා අද තොගය දෙහිවල කණ්ඩායමෙන් තහවුරු කරගන්න.",
+    shopStock: "සජීවී තොගය බලන්න",
+    askWhatsApp: "WhatsApp හරහා අසන්න",
+    catalogueProducts: "නාමාවලි නිෂ්පාදන",
+    catalogueBrands: "විශ්වාසනීය වෙළඳ නාම",
     status: "අද විවෘතයි · හිල් වීදිය, දෙහිවල",
     directions: "මාර්ගය බලන්න",
     selector: "ඉක්මන් තෙල් තේරීම",
+    selectorHint: "වාහනය සහ ශ්‍රේණිය අනුව තත්පර කිහිපයකින් තෝරන්න.",
     vehicle: "වාහන වර්ගය",
     grade: "කැමති ශ්‍රේණිය",
     anyGrade: "ඕනෑම ශ්‍රේණියක්",
@@ -178,14 +234,24 @@ const labels = {
     performanceBody: "දෛනික දෙහිවල ගමනාගමනයේ සිට වැඩපොළ සහ වාහන සමූහ භාවිතය දක්වා, නිවැරදි ශ්‍රේණිය තෝරා අද තොගය අපගේ කණ්ඩායමෙන් තහවුරු කරගන්න.",
     performanceCta: "නිවැරදි තෙල් තෝරාගැනීමට අසන්න",
     performanceProof: "දෛනික රියදුරන් · වැඩපොළ · වාහන සමූහ",
+    spotlightEyebrow: "ඔබ ධාවනය කරන වාහනයෙන් ආරම්භ කරන්න",
+    spotlightTitle: "ඔබ ආරක්ෂා කරන්නේ කුමක්ද?",
+    spotlightBody: "සම්පූර්ණ නාමාවලිය පිරික්සීමකින් තොරව ගැළපෙන නිෂ්පාදන වෙත යාමට කාණ්ඩයක් තෝරන්න.",
+    spotlightExplore: "කාණ්ඩය බලන්න",
   },
   ta: {
-    eyebrow: "நேரடி தயாரிப்புப் பட்டியல்",
-    title: "ஒவ்வொரு இயந்திரத்திற்கும் துல்லியமான பாதுகாப்பு",
+    eyebrow: "சுயாதீன மசகு எண்ணெய் நிபுணர்கள் · தெஹிவளை",
+    title: "சரியான எண்ணெய்.",
+    titleAccent: "இப்போதே.",
     body: "வாகன வகை, தரம் அல்லது பிராண்ட் மூலம் எண்ணெயைக் கண்டறிந்து இன்றைய இருப்பை தெஹிவளை குழுவிடம் உறுதிப்படுத்துங்கள்.",
+    shopStock: "நேரடி இருப்பைப் பார்க்க",
+    askWhatsApp: "WhatsApp-ல் கேளுங்கள்",
+    catalogueProducts: "பட்டியல் தயாரிப்புகள்",
+    catalogueBrands: "நம்பகமான பிராண்டுகள்",
     status: "இன்று திறந்திருக்கும் · ஹில் ஸ்ட்ரீட், தெஹிவளை",
     directions: "வழியைப் பார்க்க",
     selector: "விரைவு எண்ணெய் தேர்வு",
+    selectorHint: "வாகனம் மற்றும் தரத்தின் மூலம் சில வினாடிகளில் பொருத்துங்கள்.",
     vehicle: "வாகன வகை",
     grade: "விருப்ப பிசுபிசுப்பு / தரம்",
     anyGrade: "எந்த தரமும்",
@@ -223,6 +289,10 @@ const labels = {
     performanceBody: "தினசரி தெஹிவளை போக்குவரத்து முதல் பணிமனை மற்றும் வாகனப்படை பயன்பாடு வரை, சரியான தரத்தைத் தேர்ந்தெடுத்து இன்றைய இருப்பை எங்கள் குழுவிடம் உறுதிப்படுத்துங்கள்.",
     performanceCta: "சரியான எண்ணெயைத் தேர்ந்தெடுக்க கேளுங்கள்",
     performanceProof: "தினசரி ஓட்டுநர்கள் · பணிமனைகள் · வாகனப்படைகள்",
+    spotlightEyebrow: "நீங்கள் ஓட்டுவதிலிருந்து தொடங்குங்கள்",
+    spotlightTitle: "நீங்கள் எதைப் பாதுகாக்கிறீர்கள்?",
+    spotlightBody: "முழுப் பட்டியலையும் தேடாமல் பொருத்தமான தயாரிப்புகளுக்குச் செல்ல ஒரு வகையைத் தேர்ந்தெடுக்கவும்.",
+    spotlightExplore: "வகையைப் பார்க்க",
   },
 } as const;
 
@@ -313,6 +383,112 @@ function PerformanceFilm({ copy }: { copy: DiscoveryCopy }) {
   </section>;
 }
 
+function categorySpotlightPosition(index: number, activeIndex: number, total: number) {
+  let offset = index - activeIndex;
+  if (offset > total / 2) offset -= total;
+  if (offset < -total / 2) offset += total;
+  if (offset === 0) return "is-active";
+  if (offset === -1) return "is-prev";
+  if (offset === 1) return "is-next";
+  if (offset === -2) return "is-prev-far";
+  if (offset === 2) return "is-next-far";
+  return "is-hidden";
+}
+
+function CategorySpotlight({ products, activeIndex, copy, onChange, onChoose }: {
+  products: ClientCatalogProduct[];
+  activeIndex: number;
+  copy: DiscoveryCopy;
+  onChange(index: number): void;
+  onChoose(group: string): void;
+}) {
+  const total = spotlightCategories.length;
+
+  function move(direction: number) {
+    onChange((activeIndex + direction + total) % total);
+  }
+
+  return <section className="category-spotlight" id="category-spotlight" aria-labelledby="category-spotlight-title">
+    <div className="site-container">
+      <header className="category-spotlight-heading">
+        <div><p>{copy.spotlightEyebrow}</p><h2 id="category-spotlight-title">{copy.spotlightTitle}</h2></div>
+        <span>{copy.spotlightBody}</span>
+      </header>
+      <div className="category-spotlight-viewport">
+        <div className="category-spotlight-stage">
+          {spotlightCategories.map((item, index) => {
+            const position = categorySpotlightPosition(index, activeIndex, total);
+            const categorySlugs = groupCategories[item.id] ?? [];
+            const count = products.filter((product) => categorySlugs.includes(product.category.slug)).length;
+            return <button
+              type="button"
+              className={`category-spotlight-card ${position}`}
+              key={item.id}
+              onClick={() => index === activeIndex ? onChoose(item.id) : onChange(index)}
+              aria-label={index === activeIndex ? `${copy.spotlightExplore}: ${item.title}` : `Show ${item.title}`}
+              aria-pressed={index === activeIndex}
+              tabIndex={position === "is-hidden" ? -1 : 0}
+            >
+              <span className="category-spotlight-art"><Image src={item.image} alt="" fill sizes="(max-width: 639px) 80vw, 430px"/></span>
+              <span className="category-spotlight-shade"/>
+              <span className="category-spotlight-copy"><small>{item.eyebrow}</small><strong>{item.title}</strong><em>{item.description}</em><span>{count} products <ArrowRight size={14}/></span></span>
+            </button>;
+          })}
+        </div>
+        <button className="spotlight-control spotlight-control-prev" type="button" onClick={() => move(-1)} aria-label="Previous category"><ArrowLeft size={21}/></button>
+        <button className="spotlight-control spotlight-control-next" type="button" onClick={() => move(1)} aria-label="Next category"><ArrowRight size={21}/></button>
+      </div>
+      <div className="spotlight-pagination" aria-label="Choose a category">{spotlightCategories.map((item, index) => <button type="button" className={index === activeIndex ? "active" : ""} onClick={() => onChange(index)} aria-label={`Show ${item.title}`} aria-current={index === activeIndex ? "true" : undefined} key={item.id}/>)}</div>
+    </div>
+  </section>;
+}
+
+function BrandFilterButton({ item, active, duplicate = false, onSelect }: {
+  item: ClientCatalogBrand;
+  active: boolean;
+  duplicate?: boolean;
+  onSelect(slug: string): void;
+}) {
+  const logo = getBrandLogoPath(item.slug, item.logoUrl);
+  return <button
+    type="button"
+    className={`brand-marquee-card ${active ? "active" : ""}`}
+    onClick={() => onSelect(item.slug)}
+    aria-label={duplicate ? undefined : `Filter by ${item.name}`}
+    aria-pressed={duplicate ? undefined : active}
+    tabIndex={duplicate ? -1 : 0}
+  >
+    {logo ? <span className="brand-marquee-logo"><Image src={logo} alt={duplicate ? "" : `${item.name} logo`} fill sizes="150px" unoptimized/></span> : <span className="brand-marquee-name">{item.name}</span>}
+    <strong>{item.count}<span>SKUs</span></strong>
+  </button>;
+}
+
+function BrandFilterRow({ items, activeBrand, reverse = false, onSelect }: {
+  items: ClientCatalogBrand[];
+  activeBrand: string;
+  reverse?: boolean;
+  onSelect(slug: string): void;
+}) {
+  return <div className={`brand-marquee-row${reverse ? " reverse" : ""}`}>
+    <div className="brand-marquee-track">
+      <div className="brand-marquee-group">{items.map((item) => <BrandFilterButton item={item} active={activeBrand === item.slug} onSelect={onSelect} key={item.slug}/>)}</div>
+      <div className="brand-marquee-group" aria-hidden="true">{items.map((item) => <BrandFilterButton item={item} active={activeBrand === item.slug} duplicate onSelect={onSelect} key={`${item.slug}-duplicate`}/>)}</div>
+    </div>
+  </div>;
+}
+
+function BrandFilterMarquee({ brands, activeBrand, onSelect }: {
+  brands: ClientCatalogBrand[];
+  activeBrand: string;
+  onSelect(slug: string): void;
+}) {
+  const splitAt = Math.ceil(brands.length / 2);
+  return <div className="brand-filter-marquee brand-marquee" aria-label="Available brands">
+    <BrandFilterRow items={brands.slice(0, splitAt)} activeBrand={activeBrand} onSelect={onSelect}/>
+    <BrandFilterRow items={brands.slice(splitAt).reverse()} activeBrand={activeBrand} reverse onSelect={onSelect}/>
+  </div>;
+}
+
 export function CatalogExperience({ products, brands, locale, dictionary, initialFilters = {}, showHero = false, syncUrl = false }: CatalogExperienceProps) {
   const copy: DiscoveryCopy = labels[locale];
   const [query, setQuery] = useState(initialFilters.q ?? "");
@@ -326,6 +502,7 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
   const [sort, setSort] = useState(initialFilters.sort ?? "recommended");
   const [visible, setVisible] = useState(24);
   const [inquiryIds, setInquiryIds] = useState<string[]>([]);
+  const [spotlightIndex, setSpotlightIndex] = useState(0);
   const searchInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -401,6 +578,12 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
     window.setTimeout(() => document.getElementById("catalog-grid")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
   }
 
+  function chooseBrand(nextBrand: string) {
+    setBrand((current) => current === nextBrand ? "" : nextBrand);
+    resetVisible();
+    window.setTimeout(() => document.getElementById("catalog-grid")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+  }
+
   function toggleInquiry(id: string) {
     setInquiryIds((current) => current.includes(id) ? current.filter((item) => item !== id) : current.length < 5 ? [...current, id] : current);
   }
@@ -417,47 +600,43 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
     resetVisible();
   }
 
-  const heroTitleWords = copy.title.trim().split(/\s+/);
-  const heroTitleAccent = heroTitleWords.pop() ?? "";
-  const heroTitleLead = heroTitleWords.join(" ");
-
   return <>
     {showHero && <section className="discovery-hero">
       <div className="discovery-hero-video-shell" aria-hidden="true">
-        <ViewportVideo src="/videos/hero-oil-pour.mp4" poster="/images/storefront/hero-oil-pour-poster.jpg" className="discovery-hero-video"/>
+        <ViewportVideo src="/videos/hero-supercar.mp4" poster="/images/storefront/hero-supercar-poster.jpg" className="discovery-hero-video"/>
       </div>
       <div className="site-container discovery-hero-grid">
         <div className="discovery-hero-copy">
           <p className="discovery-eyebrow"><Sparkles size={14}/>{copy.eyebrow.replace("313", String(products.length))}</p>
-          <h1><span>{heroTitleLead}</span>{" "}<em>{heroTitleAccent}</em></h1>
+          <h1><span>{copy.title}</span><em>{copy.titleAccent}</em></h1>
           <p className="discovery-hero-body">{copy.body}</p>
-          <a className="store-status-pill" href={storeConfig.mapsUrl} target="_blank" rel="noreferrer"><span className="status-dot"/><span>{copy.status}</span><strong>{copy.directions}<ArrowRight size={14}/></strong></a>
+          <div className="hero-conversion-actions">
+            <a className="halo-action halo-action-primary" href="#catalog-grid"><span className="halo-action-icon"><ShoppingBag size={18}/></span><span>{copy.shopStock}</span><ArrowRight size={16}/></a>
+            <a className="halo-action halo-action-secondary" href={oilMatchWhatsAppUrl()} target="_blank" rel="noreferrer"><span className="halo-action-icon"><MessageCircle size={18}/></span><span>{copy.askWhatsApp}</span></a>
+          </div>
+          <div className="hero-catalogue-proof"><span><strong>{products.length}</strong>{copy.catalogueProducts}</span><span><strong>{brands.length}</strong>{copy.catalogueBrands}</span></div>
         </div>
-        <p className="discovery-footage-note">Real workshop footage <span>01 / Oil service</span></p>
         <div className="quick-selector-card" id="quick-oil-selector">
-          <div className="quick-selector-heading"><div><span>01</span><h2>{copy.selector}</h2></div><p>{products.length} live products</p></div>
+          <div className="quick-selector-heading"><div><span>01</span><h2>{copy.selector}</h2></div><p>{copy.selectorHint}</p></div>
           <label><span>{copy.vehicle}</span><div className="selector-control"><select value={vehicle} onChange={(event) => { setVehicle(event.target.value); setGrade(""); }}><option value="">{vehicleOptions[0].label}</option>{vehicleOptions.slice(1).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><ChevronDown size={17}/></div></label>
           <label><span>{copy.grade}</span><div className="selector-control"><select value={grade} onChange={(event) => setGrade(event.target.value)}><option value="">{copy.anyGrade}</option>{gradeOptions.map((item) => <option value={item} key={item}>{item}</option>)}</select><ChevronDown size={17}/></div></label>
-          <button type="button" onClick={applySelector}>Filter {products.length} Products<ArrowRight size={18}/></button>
+          <button type="button" onClick={applySelector}><span className="selector-button-icon"><Search size={17}/></span>Filter {products.length} Products<ArrowRight size={17}/></button>
+          <a className="selector-location" href={storeConfig.mapsUrl} target="_blank" rel="noreferrer"><span className="status-dot"/><span>{copy.status}</span><strong><MapPin size={13}/>{copy.directions}</strong></a>
         </div>
       </div>
     </section>}
 
-    <nav className="category-pill-rail" aria-label="Product categories"><div className="site-container"><div className="category-pill-scroll">{groups.map((item) => <button key={item.id} type="button" className={group === item.id ? "active" : ""} onClick={() => chooseGroup(item.id)}>{item.label}</button>)}</div></div></nav>
+    {showHero
+      ? <CategorySpotlight products={products} activeIndex={spotlightIndex} copy={copy} onChange={setSpotlightIndex} onChoose={chooseGroup}/>
+      : <nav className="category-pill-rail" aria-label="Product categories"><div className="site-container"><div className="category-pill-scroll">{groups.map((item) => <button key={item.id} type="button" className={group === item.id ? "active" : ""} onClick={() => chooseGroup(item.id)}>{item.label}</button>)}</div></div></nav>}
 
     <section className="discovery-catalog" id="catalog-filters">
       <div className="site-container">
         {!showHero && <header className="catalog-discovery-heading"><p className="discovery-eyebrow">{copy.eyebrow.replace("313", String(products.length))}</p><h1>{dictionary.catalog.title}</h1><p>{dictionary.catalog.body}</p></header>}
 
         <section className="brand-filter-section" id="brands" aria-labelledby="brand-filter-title">
-          <div className="brand-filter-heading"><div><p>Trusted catalogue</p><h2 id="brand-filter-title">{copy.brands}</h2></div><span>{copy.brandBody}</span></div>
-          <div className="brand-filter-rail">
-            <button type="button" className={`brand-filter-card ${brand === "" ? "active" : ""}`} onClick={() => { setBrand(""); resetVisible(); }}><span className="brand-filter-all"><ShoppingBag size={22}/>{copy.allBrands}</span><strong>{products.length}</strong></button>
-            {brands.slice(0, 12).map((item) => {
-              const logo = getBrandLogoPath(item.slug, item.logoUrl);
-              return <button type="button" key={item.slug} className={`brand-filter-card ${brand === item.slug ? "active" : ""}`} onClick={() => { setBrand((current) => current === item.slug ? "" : item.slug); resetVisible(); }} aria-pressed={brand === item.slug}>{logo ? <span className="brand-filter-logo"><Image src={logo} alt={`${item.name} logo`} fill sizes="150px" unoptimized/></span> : <span className="brand-filter-name">{item.name}</span>}<strong>{item.count} SKUs</strong></button>;
-            })}
-          </div>
+          <div className="brand-filter-heading"><div><p>Trusted catalogue</p><h2 id="brand-filter-title">{copy.brands}</h2></div><span>{copy.brandBody}</span><button type="button" className={`brand-filter-all-control ${brand === "" ? "active" : ""}`} onClick={() => chooseBrand("")}><ShoppingBag size={19}/><span>{copy.allBrands}</span><strong>{products.length}</strong></button></div>
+          <BrandFilterMarquee brands={brands} activeBrand={brand} onSelect={chooseBrand}/>
         </section>
 
         <section className="catalog-trust-bar" aria-label="Store service promises">

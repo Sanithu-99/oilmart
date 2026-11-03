@@ -3,6 +3,7 @@ import Link from "next/link";
 import { storeConfig } from "@/lib/config/store";
 import type { StoreLocale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { ParticleWordmark } from "./particle-wordmark";
 import { ViewportVideo } from "./viewport-video";
 
 export function SiteFooter({ locale, dictionary }: { locale: StoreLocale; dictionary: Dictionary }) {
@@ -29,6 +30,7 @@ export function SiteFooter({ locale, dictionary }: { locale: StoreLocale; dictio
           <span className="footer-video-wordmark">
             <ViewportVideo src="/videos/footer-oil-flow.mp4" poster="/images/storefront/footer-oil-flow-poster.webp"/>
           </span>
+          <ParticleWordmark/>
           <span className="footer-oil-fallback"><span>Saranankara</span><span>Oil Mart</span></span>
         </span>
       </span>

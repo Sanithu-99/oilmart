@@ -5,7 +5,6 @@ import { storeConfig } from "@/lib/config/store";
 import type { StoreLocale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { CartButton } from "./cart-provider";
-import { ColorThemeSwitch } from "./color-theme-switch";
 import { LanguageSwitcher } from "./language-switcher";
 
 export function SiteHeader({ locale, dictionary }: { locale: StoreLocale; dictionary: Dictionary }) {
@@ -23,10 +22,9 @@ export function SiteHeader({ locale, dictionary }: { locale: StoreLocale; dictio
       <Link href={`/${locale}`} className="brand-lockup shrink-0" aria-label="Saranankara Oil Mart home"><span className="brand-mark"><Droplet size={30} strokeWidth={1.8}/></span><span><strong>Saranankara</strong><small>Oil Mart</small></span></Link>
       <form action={`/${locale}/products`} className="ml-8 hidden max-w-xl flex-1 lg:flex xl:ml-16"><label className="search-field header-search-field w-full"><input name="q" placeholder={dictionary.nav.search} aria-label={dictionary.nav.search}/><button className="header-search-button" type="submit" aria-label={dictionary.nav.search}><Search size={19}/></button></label></form>
       <span className="ml-auto"/>
-      <ColorThemeSwitch className="hidden sm:inline-flex"/>
       <Link className="icon-button hidden sm:grid" href={`/${locale}/account`} aria-label="Account"><UserRound size={21}/></Link>
       <CartButton />
-      <details className="mobile-menu lg:hidden"><summary className="icon-button list-none"><Menu size={22}/><span className="sr-only">{dictionary.nav.menu}</span></summary><div className="mobile-menu-panel fixed left-3 right-3 top-[6.5rem] rounded-2xl border p-4 shadow-xl"><form action={`/${locale}/products`}><label className="search-field header-search-field"><input name="q" placeholder={dictionary.nav.search}/><button className="header-search-button" type="submit" aria-label={dictionary.nav.search}><Search size={18}/></button></label></form><nav className="mt-3 grid">{nav.map(([label, href]) => <Link className="border-b px-2 py-3" href={href} key={href}>{label}</Link>)}</nav><div className="mt-4 flex flex-wrap items-center gap-2"><LanguageSwitcher locale={locale} compact/><ColorThemeSwitch compact className="inline-flex w-full"/></div></div></details>
+      <details className="mobile-menu lg:hidden"><summary className="icon-button list-none"><Menu size={22}/><span className="sr-only">{dictionary.nav.menu}</span></summary><div className="mobile-menu-panel fixed left-3 right-3 top-[6.5rem] rounded-2xl border p-4 shadow-xl"><form action={`/${locale}/products`}><label className="search-field header-search-field"><input name="q" placeholder={dictionary.nav.search}/><button className="header-search-button" type="submit" aria-label={dictionary.nav.search}><Search size={18}/></button></label></form><nav className="mt-3 grid">{nav.map(([label, href]) => <Link className="border-b px-2 py-3" href={href} key={href}>{label}</Link>)}</nav><div className="mt-4 flex flex-wrap items-center gap-2"><LanguageSwitcher locale={locale} compact/></div></div></details>
     </div>
     <div className="header-nav-row hidden lg:block"><div className="site-container flex h-14 items-center justify-center gap-10"><nav className="flex items-center gap-9" aria-label="Primary navigation">{nav.map(([label, href], index) => <Link className={`nav-link ${index === 0 ? "active" : ""}`} href={href} key={href}>{label}{index === 1 && <ChevronDown size={14}/>}</Link>)}</nav></div></div>
   </header>;
