@@ -57,7 +57,7 @@ const groups = [
 ] as const;
 
 const vehicleOptions = [
-  { value: "", label: "Choose vehicle / oil type" },
+  { value: "", label: "Select vehicle type" },
   { value: "motorcycle", label: "Motorcycle 4T" },
   { value: "passenger", label: "Passenger Car" },
   { value: "diesel", label: "Diesel Van & Lorry" },
@@ -89,9 +89,9 @@ const vehicleCategories: Record<string, string[]> = {
 
 const labels = {
   en: {
-    eyebrow: "313-SKU live catalogue",
-    title: "ENGINEERED PROTECTION FOR EVERY ENGINE",
-    body: "Find the right oil by vehicle class, grade or brand—then confirm today's stock with the Dehiwala team.",
+    eyebrow: "Engineered protection for every engine",
+    title: "EVERY DROP MATTERS.",
+    body: "Precision-grade lubricants for daily drivers, workshops and fleets. Search live Dehiwala stock by grade, vehicle type or brand.",
     status: "Open Today · Hill St, Dehiwala",
     directions: "1-Tap Directions",
     selector: "Quick Oil Selector",
@@ -384,15 +384,25 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
     resetVisible();
   }
 
+  const heroTitleWords = copy.title.trim().split(/\s+/);
+  const heroTitleAccent = heroTitleWords.pop() ?? "";
+  const heroTitleLead = heroTitleWords.join(" ");
+
   return <>
     {showHero && <section className="discovery-hero">
+      <div className="discovery-hero-video-shell" aria-hidden="true">
+        <video className="discovery-hero-video" autoPlay loop muted playsInline preload="metadata" poster="/images/storefront/hero-oil-pour-poster.jpg" tabIndex={-1}>
+          <source src="/videos/hero-oil-pour.mp4" type="video/mp4"/>
+        </video>
+      </div>
       <div className="site-container discovery-hero-grid">
         <div className="discovery-hero-copy">
           <p className="discovery-eyebrow"><Sparkles size={14}/>{copy.eyebrow.replace("313", String(products.length))}</p>
-          <h1>{copy.title}</h1>
+          <h1><span>{heroTitleLead}</span>{" "}<em>{heroTitleAccent}</em></h1>
           <p className="discovery-hero-body">{copy.body}</p>
           <a className="store-status-pill" href={storeConfig.mapsUrl} target="_blank" rel="noreferrer"><span className="status-dot"/><span>{copy.status}</span><strong>{copy.directions}<ArrowRight size={14}/></strong></a>
         </div>
+        <p className="discovery-footage-note">Real workshop footage <span>01 / Oil service</span></p>
         <div className="quick-selector-card" id="quick-oil-selector">
           <div className="quick-selector-heading"><div><span>01</span><h2>{copy.selector}</h2></div><p>{products.length} live products</p></div>
           <label><span>{copy.vehicle}</span><div className="selector-control"><select value={vehicle} onChange={(event) => { setVehicle(event.target.value); setGrade(""); }}><option value="">{vehicleOptions[0].label}</option>{vehicleOptions.slice(1).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><ChevronDown size={17}/></div></label>

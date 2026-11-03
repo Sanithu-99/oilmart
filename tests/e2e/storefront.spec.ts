@@ -6,7 +6,7 @@ test("redirects to the English storefront and renders database content", async (
   await page.goto("/");
   await expect(page).toHaveURL(/\/en$/);
   await expect(page).toHaveTitle(/Saranankara Oil Mart/i);
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("ENGINEERED PROTECTION FOR EVERY ENGINE");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("EVERY DROP MATTERS.");
   const directions = page.getByRole("link", { name: /1-Tap Directions/ });
   await expect(directions).toBeVisible();
   await expect(directions).toHaveAttribute("href", /^https:\/\/www\.google\.com\/maps/);
