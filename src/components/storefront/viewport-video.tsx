@@ -8,9 +8,10 @@ type ViewportVideoProps = {
   poster: string;
   className?: string;
   controls?: boolean;
+  playbackRate?: number;
 };
 
-export function ViewportVideo({ src, poster, className, controls = false }: ViewportVideoProps) {
+export function ViewportVideo({ src, poster, className, controls = false, playbackRate = 1 }: ViewportVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const sourceRef = useRef<HTMLSourceElement>(null);
   const loadedRef = useRef(false);
@@ -21,6 +22,8 @@ export function ViewportVideo({ src, poster, className, controls = false }: View
     const video = videoRef.current;
     const source = sourceRef.current;
     if (!video || !source || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    video.defaultPlaybackRate = playbackRate;
+    video.playbackRate = playbackRate;
 
     const loadVideo = () => {
       if (loadedRef.current) return;
@@ -51,7 +54,7 @@ export function ViewportVideo({ src, poster, className, controls = false }: View
       observer.disconnect();
       video.pause();
     };
-  }, []);
+  }, [playbackRate]);
 
   function togglePlayback() {
     const video = videoRef.current;
@@ -84,6 +87,7 @@ export function ViewportVideo({ src, poster, className, controls = false }: View
       poster={poster}
       tabIndex={-1}
       aria-hidden="true"
+      onLoadedMetadata={(event) => { event.currentTarget.defaultPlaybackRate = playbackRate; event.currentTarget.playbackRate = playbackRate; }}
       onPlay={() => setPlaying(true)}
       onPause={() => setPlaying(false)}
     >
