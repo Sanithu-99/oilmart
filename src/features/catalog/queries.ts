@@ -29,6 +29,99 @@ function decimalNumber(value: { toString(): string } | null | undefined): number
 
 export type StoreProduct = ReturnType<typeof presentProduct>;
 
+export type ClientCatalogProduct = {
+  id: string;
+  slug: string;
+  sku: string;
+  name: string;
+  shortDescription: string | null;
+  priceMinor: string;
+  standardPriceMinor: string;
+  priceSource: "STANDARD" | "LOYALTY" | "PROMOTION";
+  currency: string;
+  brand: { name: string; slug: string } | null;
+  category: { name: string; slug: string };
+  applications: Array<{ slug: string; name: string }>;
+  images: Array<{ url: string; alt: string; width: number; height: number }>;
+  variant: { id: string; available: number } | null;
+  available: number;
+  inStock: boolean;
+  grade: string | null;
+  packSize: string | null;
+  searchText: string;
+};
+
+export type ClientCatalogBrand = {
+  slug: string;
+  name: string;
+  logoUrl: string | null;
+  count: number;
+};
+
+function stringSpec(specs: Record<string, unknown> | null, names: string[]) {
+  if (!specs) return null;
+  const wanted = new Set(names.map((name) => name.toLowerCase()));
+  for (const [key, value] of Object.entries(specs)) {
+    if (wanted.has(key.toLowerCase()) && (typeof value === "string" || typeof value === "number")) return String(value).trim();
+  }
+  return null;
+}
+
+function productPackSize(product: StoreProduct) {
+  const fromSpecs = stringSpec(product.technicalSpecs, ["Pack", "Pack size", "Supplier pack size", "Volume", "Size"]);
+  if (fromSpecs) return fromSpecs;
+  const source = `${product.name} ${product.shortDescription ?? ""}`;
+  return source.match(/\b\d+(?:\.\d+)?\s*(?:ml|l|lt|litre|liter|kg|g|gal)\b/i)?.[0]?.replace(/\blt\b/i, "L") ?? null;
+}
+
+function productGrade(product: StoreProduct) {
+  const fromSpecs = stringSpec(product.technicalSpecs, ["Grade", "Viscosity", "SAE grade", "Supplier specification"]);
+  const source = `${fromSpecs ?? ""} ${product.name} ${product.shortDescription ?? ""}`;
+  const viscosity = source.match(/\b(?:0|5|10|15|20|25)\s*w\s*[- ]?\s*\d{2}\b/i)?.[0];
+  if (viscosity) return viscosity.replace(/\s+/g, "").replace(/w-?/i, "W-");
+  const atf = source.match(/\b(?:ATF\s*)?(?:DEXRON|DEX)\s*(?:II|III|IV|VI|2|3|4|6)\b/i)?.[0];
+  if (atf) return atf.toUpperCase().replace(/^DEX\s*/, "DEXRON ").replace(/\s+/g, " ");
+  const specialist = source.match(/\b(?:CVTF|CVT|DCTF|ATF|DOT\s*[345]|SAE\s*\d{2,3})\b/i)?.[0];
+  return specialist?.toUpperCase().replace(/\s+/g, " ") ?? null;
+}
+
+function clientProduct(product: StoreProduct): ClientCatalogProduct {
+  const grade = productGrade(product);
+  const packSize = productPackSize(product);
+  const searchText = [
+    product.name,
+    product.sku,
+    product.brand?.name,
+    product.category.name,
+    grade,
+    packSize,
+    ...product.applications.flatMap((application) => [application.name, application.slug]),
+    grade?.replace(/[^a-z0-9]/gi, ""),
+  ].filter(Boolean).join(" ").toLocaleLowerCase("en").replace(/[^a-z0-9]+/g, " ").trim();
+
+  return {
+    id: product.id,
+    slug: product.slug,
+    sku: product.sku,
+    name: product.name,
+    shortDescription: product.shortDescription,
+    priceMinor: product.priceMinor.toString(),
+    standardPriceMinor: product.standardPriceMinor.toString(),
+    priceSource: product.priceSource,
+    currency: product.currency,
+    brand: product.brand,
+    category: product.category,
+    applications: product.applications,
+    images: product.images,
+    variant: product.variant ? { id: product.variant.id, available: product.variant.available } : null,
+    available: product.available,
+    inStock: product.inStock,
+    grade,
+    packSize,
+    searchText,
+  };
+}
+
 export function presentProduct(product: ProductRecord, locale: StoreLocale, pricing: { loyaltyEligible: boolean; promotions: readonly ApplicablePromotion[] } = { loyaltyEligible: false, promotions: [] }) {
   const dbLocale = localeToDb[locale];
   const translation = product.translations.find((item) => item.locale === dbLocale);
@@ -170,6 +263,20 @@ export async function getHomepageData(locale: StoreLocale) {
   };
 }
 
+export const getHomepagePromotion = cache(async () => {
+  const now = new Date();
+  return db.promotion.findFirst({
+    where: {
+      active: true,
+      AND: [
+        { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
+        { OR: [{ endsAt: null }, { endsAt: { gte: now } }] },
+      ],
+    },
+    orderBy: { startsAt: "desc" },
+  });
+});
+
 export type CatalogFilters = {
   q?: string;
   category?: string;
@@ -237,6 +344,35 @@ export async function getCatalog(locale: StoreLocale, filters: CatalogFilters) {
     page,
     pageCount: Math.max(1, Math.ceil(total / pageSize)),
   };
+}
+
+export async function getCatalogExperienceData(locale: StoreLocale) {
+  const [records, navigation, pricing] = await Promise.all([
+    db.product.findMany({
+      where: { status: PublicationStatus.ACTIVE },
+      include: productInclude,
+      orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+    }),
+    getNavigationData(locale),
+    getStorefrontPricing(),
+  ]);
+  const products = records.map((record) => clientProduct(presentProduct(record, locale, pricing)));
+  const counts = new Map<string, number>();
+  for (const product of products) {
+    if (product.brand) counts.set(product.brand.slug, (counts.get(product.brand.slug) ?? 0) + 1);
+  }
+  const preferred = ["caltex", "mobil", "valvoline", "castrol", "laugfs", "toyota"];
+  const brands: ClientCatalogBrand[] = navigation.brands
+    .map((brand) => ({ ...brand, count: counts.get(brand.slug) ?? 0 }))
+    .filter((brand) => brand.count > 0)
+    .sort((a, b) => {
+      const left = preferred.indexOf(a.slug);
+      const right = preferred.indexOf(b.slug);
+      if (left >= 0 || right >= 0) return (left < 0 ? preferred.length : left) - (right < 0 ? preferred.length : right);
+      return b.count - a.count || a.name.localeCompare(b.name);
+    });
+
+  return { products, brands, categories: navigation.categories, total: products.length };
 }
 
 export const getProductBySlug = cache(async (slug: string, locale: StoreLocale) => {

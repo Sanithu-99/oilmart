@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { cartOrderWhatsAppUrl, deliveryQuoteWhatsAppUrl, oilMatchWhatsAppUrl, productConfirmationWhatsAppUrl } from "@/lib/contact/whatsapp";
+import { cartOrderWhatsAppUrl, deliveryQuoteWhatsAppUrl, inquiryListWhatsAppUrl, oilMatchWhatsAppUrl, productConfirmationWhatsAppUrl } from "@/lib/contact/whatsapp";
 
 function decodedMessage(value: string) {
   const url = new URL(value);
@@ -15,12 +15,23 @@ describe("WhatsApp order links", () => {
       name: "Laugfs Revtron Gold 4T 10W30 1 L",
       sku: "LAUGFS-4T-1L",
       brand: "Laugfs",
+      packSize: "1 L",
     }));
 
-    expect(message).toContain("Please confirm the current price and availability");
-    expect(message).toContain("Product: Laugfs Revtron Gold 4T 10W30 1 L");
-    expect(message).toContain("Brand: Laugfs");
-    expect(message).toContain("SKU: LAUGFS-4T-1L");
+    expect(message).toContain("today's price for Laugfs Revtron Gold 4T 10W30 1 L");
+    expect(message).toContain("stock at the Dehiwala shop");
+  });
+
+  it("combines a capped product list into one quote request", () => {
+    const message = decodedMessage(inquiryListWhatsAppUrl([
+      { name: "Caltex Delo Gold", packSize: "5 L", sku: "DELO-5L" },
+      { name: "Mobil ATF", packSize: "1 L" },
+      { name: "Valvoline MaxLife", packSize: "4 L" },
+    ]));
+
+    expect(message).toContain("combined quote");
+    expect(message).toContain("1. Caltex Delo Gold (5 L) · DELO-5L");
+    expect(message).toContain("3. Valvoline MaxLife (4 L)");
   });
 
   it("prefills every cart line, quantity, price state and subtotal", () => {

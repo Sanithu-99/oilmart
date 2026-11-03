@@ -4,7 +4,10 @@ type ProductConfirmation = {
   name: string;
   sku: string;
   brand?: string | null;
+  packSize?: string | null;
 };
+
+type InquiryProduct = { name: string; packSize?: string | null; sku?: string };
 
 type CartOrderItem = {
   name: string;
@@ -28,19 +31,27 @@ export function whatsappUrl(message: string) {
   return `https://wa.me/${storeConfig.whatsapp}?text=${encodeURIComponent(message)}`;
 }
 
-export function productConfirmationWhatsAppUrl(product: ProductConfirmation) {
-  const details = [
-    "Hello Saranankara Oil Mart,",
-    "",
-    "Please confirm the current price and availability for this product:",
-    `Product: ${product.name}`,
-    product.brand ? `Brand: ${product.brand}` : null,
-    `SKU: ${product.sku}`,
-    "",
-    "Please also confirm store pickup or delivery options. Thank you.",
-  ].filter((line): line is string => line !== null);
+function nameWithPack(product: InquiryProduct) {
+  if (!product.packSize) return product.name;
+  const normalizedName = product.name.toLocaleLowerCase("en").replace(/[^a-z0-9]/g, "");
+  const normalizedPack = product.packSize.toLocaleLowerCase("en").replace(/[^a-z0-9]/g, "");
+  return normalizedPack && normalizedName.endsWith(normalizedPack) ? product.name : `${product.name} (${product.packSize})`;
+}
 
-  return whatsappUrl(details.join("\n"));
+export function productConfirmationWhatsAppUrl(product: ProductConfirmation) {
+  return whatsappUrl(`Hi Saranankara Oil Mart, I am inquiring about availability and today's price for ${nameWithPack(product)}. Do you have stock at the Dehiwala shop?`);
+}
+
+export function inquiryListWhatsAppUrl(products: InquiryProduct[]) {
+  const lines = products.slice(0, 5).map((product, index) => `${index + 1}. ${nameWithPack(product)}${product.sku ? ` · ${product.sku}` : ""}`);
+  return whatsappUrl([
+    "Hi Saranankara Oil Mart,",
+    "",
+    "Please send me today's price and stock availability for this inquiry list:",
+    ...lines,
+    "",
+    "I would like to collect from the Dehiwala shop or arrange delivery. Please send a combined quote. Thank you.",
+  ].join("\n"));
 }
 
 export function deliveryQuoteWhatsAppUrl() {

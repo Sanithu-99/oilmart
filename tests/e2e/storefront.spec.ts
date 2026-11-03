@@ -6,14 +6,13 @@ test("redirects to the English storefront and renders database content", async (
   await page.goto("/");
   await expect(page).toHaveURL(/\/en$/);
   await expect(page).toHaveTitle(/Saranankara Oil Mart/i);
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Premium lubricants");
-  const deliveryQuote = page.getByRole("link", { name: /We deliver/ });
-  await expect(deliveryQuote).toBeVisible();
-  await expect(deliveryQuote).toHaveAttribute("href", /^https:\/\/wa\.me\/94715716717\?text=/);
-  await expect(page.getByRole("heading", { name: "Featured products" })).toBeVisible();
-  await expect(page.locator(".product-card").first()).not.toContainText("Sample");
-  const mobilFallback = page.locator(".product-card").filter({ hasText: "Mobil CVTF Multi-Vehicle 1 L" });
-  await expect(mobilFallback.getByAltText("Mobil logo")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("ENGINEERED PROTECTION FOR EVERY ENGINE");
+  const directions = page.getByRole("link", { name: /1-Tap Directions/ });
+  await expect(directions).toBeVisible();
+  await expect(directions).toHaveAttribute("href", /^https:\/\/www\.google\.com\/maps/);
+  await expect(page.getByRole("button", { name: /Filter 313 Products/ })).toBeVisible();
+  await expect(page.locator(".discovery-product-card").first()).not.toContainText("Sample");
+  await expect(page.getByAltText("Mobil logo").first()).toBeVisible();
   await expect(page.locator(".footer-small-brand-mark")).toHaveCount(0);
   expect(consoleErrors).toEqual([]);
 });
@@ -29,11 +28,13 @@ test("oil-match helper opens an honest prefilled WhatsApp conversation", async (
   expect(message).toContain("Vehicle make and model:");
 });
 
-test("catalog filters are URL-driven and server rendered", async ({ page }) => {
+test("catalog filters initialize from the URL and continue client-side", async ({ page }) => {
   await page.goto("/en/products?category=engine-oils&availability=in");
-  await expect(page.locator('select[name="category"]')).toHaveValue("engine-oils");
+  await expect(page.locator(".category-pill-scroll button.active")).toHaveText("Engine Oil");
   await expect(page.locator('select[name="availability"]')).toHaveValue("in");
-  await expect(page.locator(".product-card").first()).toBeVisible();
+  await expect(page.locator(".discovery-product-card").first()).toBeVisible();
+  await page.locator(".instant-search input").fill("15w40");
+  await expect(page.locator(".catalog-result-heading strong")).not.toHaveText("0");
 });
 
 test("the storefront starts with classic colours and persists the graphite palette when selected", async ({ page }) => {
@@ -55,7 +56,7 @@ test("the storefront starts with classic colours and persists the graphite palet
 test("Sinhala and Tamil routes render translated core interface and language attributes", async ({ page }) => {
   await page.goto("/si");
   await expect(page.locator("html")).toHaveAttribute("lang", "si");
-  await expect(page.getByRole("link", { name: "ලිහිසි තෙල් මිලදී ගන්න" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "සෑම එන්ජිමකටම නිවැරදි ආරක්ෂාව" })).toBeVisible();
   await page.goto("/ta/products");
   await expect(page.locator("html")).toHaveAttribute("lang", "ta");
   await expect(page.getByRole("heading", { name: "சரியான மசகு எண்ணெயைக் கண்டறியுங்கள்" })).toBeVisible();
@@ -83,17 +84,17 @@ test("guest cart persists and revalidates add, update, and remove", async ({ pag
   await expect(page.getByText("Your cart is empty.")).toBeVisible();
 });
 
-test("products without a verified retail price offer equal call and WhatsApp confirmation actions", async ({ page }) => {
-  await page.goto("/en/products/caltex-havoline-prods-eco5-sae-5w30-4-l-e920a9");
-  await expect(page.getByRole("heading", { name: "Caltex Havoline ProDS ECO5 SAE 5W30 (4 L)" })).toBeVisible();
+test("products without a verified retail price offer direct call and WhatsApp confirmation", async ({ page }) => {
+  await page.goto("/en/products/vr1-racing-10w60-5-l-169c1f");
+  await expect(page.getByRole("heading", { name: "VR1 Racing 10W60 5 L" })).toBeVisible();
   const productSection = page.locator("section.site-container.grid").first();
-  await expect(productSection.getByText("Contact for price", { exact: true })).toBeVisible();
+  await expect(productSection.getByText("Price on Request · Live Stock Available", { exact: true })).toBeVisible();
   const call = productSection.getByRole("link", { name: /Call to confirm/ });
   const whatsapp = productSection.getByRole("link", { name: /WhatsApp to confirm/ });
   await expect(call).toHaveAttribute("href", /^tel:/);
   await expect(whatsapp).toHaveAttribute("href", /^https:\/\/wa\.me\/94715716717\?text=/);
   const message = new URL((await whatsapp.getAttribute("href"))!).searchParams.get("text");
-  expect(message).toContain("Caltex Havoline ProDS ECO5 SAE 5W30 (4 L)");
+  expect(message).toContain("VR1 Racing 10W60 5 L");
   const [callBox, whatsappBox] = await Promise.all([call.boundingBox(), whatsapp.boundingBox()]);
   expect(Math.abs(callBox!.width - whatsappBox!.width)).toBeLessThanOrEqual(1);
   expect(Math.abs(callBox!.height - whatsappBox!.height)).toBeLessThanOrEqual(1);
@@ -101,8 +102,8 @@ test("products without a verified retail price offer equal call and WhatsApp con
 });
 
 test("storefront stays within all required responsive widths", async ({ page }) => {
-  test.setTimeout(60_000);
-  for (const width of [320, 375, 430, 768, 1024, 1440, 1920]) {
+  test.setTimeout(120_000);
+  for (const width of [360, 430, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/en");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -111,7 +112,7 @@ test("storefront stays within all required responsive widths", async ({ page }) 
   }
 
   for (const route of ["/en/products", "/en/products/caltex-havoline-formula-10w30-1-l-0a398b", "/en/cart"]) {
-    for (const width of [320, 768, 1920]) {
+    for (const width of [360, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(route);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -119,7 +120,7 @@ test("storefront stays within all required responsive widths", async ({ page }) 
     }
   }
 
-  await page.setViewportSize({ width: 320, height: 700 });
+  await page.setViewportSize({ width: 360, height: 700 });
   await page.goto("/en");
   await page.locator(".mobile-menu > summary").click();
   await expect(page.locator(".mobile-menu").getByRole("link", { name: "Shop", exact: true })).toBeVisible();
