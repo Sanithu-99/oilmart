@@ -608,7 +608,7 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
         <div className="discovery-hero-shell">
           <div className="discovery-hero-frame">
             <div className="discovery-hero-video-shell" aria-hidden="true">
-              <ViewportVideo src="/videos/hero-supercar.mp4" poster="/images/storefront/hero-supercar-poster.jpg" className="discovery-hero-video" playbackRate={.8}/>
+              <ViewportVideo src="/videos/hero-supercar.mp4" poster="/images/storefront/hero-supercar-poster.jpg" className="discovery-hero-video" playbackRate={.7}/>
             </div>
             <div className="discovery-hero-grid">
               <div className="discovery-hero-copy">
