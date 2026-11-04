@@ -11,6 +11,8 @@ import {
   ClipboardList,
   MessageCircle,
   MapPin,
+  Pause,
+  Play,
   Search,
   ShieldCheck,
   ShoppingBag,
@@ -405,18 +407,89 @@ function CategorySpotlight({ products, activeIndex, copy, onChange, onChoose }: 
   onChoose(group: string): void;
 }) {
   const total = spotlightCategories.length;
+  const sectionRef = useRef<HTMLElement>(null);
+  const swipeStartRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
+  const suppressClickUntilRef = useRef(0);
+  const [inView, setInView] = useState(false);
+  const [pageVisible, setPageVisible] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [interacting, setInteracting] = useState(false);
+  const [autoplayPaused, setAutoplayPaused] = useState(false);
 
   function move(direction: number) {
     onChange((activeIndex + direction + total) % total);
   }
 
-  return <section className="category-spotlight" id="category-spotlight" aria-labelledby="category-spotlight-title">
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: .28 });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotionPreference = () => {
+      setReducedMotion(motionQuery.matches);
+      if (motionQuery.matches) setAutoplayPaused(true);
+    };
+    const updatePageVisibility = () => setPageVisible(document.visibilityState === "visible");
+    updateMotionPreference();
+    updatePageVisibility();
+    motionQuery.addEventListener("change", updateMotionPreference);
+    document.addEventListener("visibilitychange", updatePageVisibility);
+    return () => {
+      motionQuery.removeEventListener("change", updateMotionPreference);
+      document.removeEventListener("visibilitychange", updatePageVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!inView || !pageVisible || reducedMotion || interacting || autoplayPaused) return;
+    const timer = window.setTimeout(() => onChange((activeIndex + 1) % total), 5500);
+    return () => window.clearTimeout(timer);
+  }, [activeIndex, autoplayPaused, inView, interacting, onChange, pageVisible, reducedMotion, total]);
+
+  return <section
+    ref={sectionRef}
+    className="category-spotlight"
+    id="category-spotlight"
+    aria-labelledby="category-spotlight-title"
+    aria-roledescription="carousel"
+    onPointerEnter={(event) => { if (event.pointerType !== "touch") setInteracting(true); }}
+    onPointerLeave={(event) => { if (event.pointerType !== "touch") setInteracting(false); }}
+    onFocusCapture={() => setInteracting(true)}
+    onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setInteracting(false); }}
+  >
     <div className="site-container">
       <header className="category-spotlight-heading">
         <div><p>{copy.spotlightEyebrow}</p><h2 id="category-spotlight-title">{copy.spotlightTitle}</h2></div>
         <span>{copy.spotlightBody}</span>
       </header>
-      <div className="category-spotlight-viewport">
+      <div
+        className="category-spotlight-viewport"
+        onPointerDown={(event) => {
+          if (event.pointerType !== "touch") return;
+          swipeStartRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
+          setInteracting(true);
+        }}
+        onPointerUp={(event) => {
+          const start = swipeStartRef.current;
+          if (!start || event.pointerId !== start.pointerId) return;
+          const deltaX = event.clientX - start.x;
+          const deltaY = event.clientY - start.y;
+          swipeStartRef.current = null;
+          setInteracting(false);
+          if (Math.abs(deltaX) < 45 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
+          suppressClickUntilRef.current = performance.now() + 450;
+          move(deltaX > 0 ? -1 : 1);
+        }}
+        onPointerCancel={() => {
+          swipeStartRef.current = null;
+          setInteracting(false);
+        }}
+      >
         <div className="category-spotlight-stage">
           {spotlightCategories.map((item, index) => {
             const position = categorySpotlightPosition(index, activeIndex, total);
@@ -426,7 +499,11 @@ function CategorySpotlight({ products, activeIndex, copy, onChange, onChoose }: 
               type="button"
               className={`category-spotlight-card ${position}`}
               key={item.id}
-              onClick={() => index === activeIndex ? onChoose(item.id) : onChange(index)}
+              onClick={() => {
+                if (performance.now() < suppressClickUntilRef.current) return;
+                if (index === activeIndex) onChoose(item.id);
+                else onChange(index);
+              }}
               aria-label={index === activeIndex ? `${copy.spotlightExplore}: ${item.title}` : `Show ${item.title}`}
               aria-pressed={index === activeIndex}
               tabIndex={index === activeIndex ? 0 : -1}
@@ -440,7 +517,18 @@ function CategorySpotlight({ products, activeIndex, copy, onChange, onChoose }: 
         <button className="spotlight-control spotlight-control-prev" type="button" onClick={() => move(-1)} aria-label="Previous category"><ArrowLeft size={21}/></button>
         <button className="spotlight-control spotlight-control-next" type="button" onClick={() => move(1)} aria-label="Next category"><ArrowRight size={21}/></button>
       </div>
-      <div className="spotlight-pagination" aria-label="Choose a category">{spotlightCategories.map((item, index) => <button type="button" className={index === activeIndex ? "active" : ""} onClick={() => onChange(index)} aria-label={`Show ${item.title}`} aria-current={index === activeIndex ? "true" : undefined} key={item.id}/>)}</div>
+      <div className="spotlight-navigation">
+        <div className="spotlight-pagination" aria-label="Choose a category">{spotlightCategories.map((item, index) => <button type="button" className={index === activeIndex ? "active" : ""} onClick={() => onChange(index)} aria-label={`Show ${item.title}`} aria-current={index === activeIndex ? "true" : undefined} key={item.id}/>)}</div>
+        <button
+          className="spotlight-autoplay-control"
+          type="button"
+          onClick={() => setAutoplayPaused((current) => !current)}
+          aria-pressed={autoplayPaused}
+          aria-label={autoplayPaused ? "Resume automatic category rotation" : "Pause automatic category rotation"}
+        >
+          {autoplayPaused ? <Play size={12} fill="currentColor"/> : <Pause size={12} fill="currentColor"/>}
+        </button>
+      </div>
     </div>
   </section>;
 }
@@ -608,7 +696,14 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
         <div className="discovery-hero-shell">
           <div className="discovery-hero-frame">
             <div className="discovery-hero-video-shell" aria-hidden="true">
-              <ViewportVideo src="/videos/hero-supercar.mp4" poster="/images/storefront/hero-supercar-poster.jpg" className="discovery-hero-video" playbackRate={.7}/>
+              <ViewportVideo
+                src="/videos/hero-supercar.mp4"
+                poster="/images/storefront/hero-supercar-poster.jpg"
+                className="discovery-hero-video"
+                playbackRate={.7}
+                introPlaybackRate={.48}
+                introDuration={3.4}
+              />
             </div>
             <div className="discovery-hero-grid">
               <div className="discovery-hero-copy">

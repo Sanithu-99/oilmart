@@ -1094,7 +1094,7 @@ a, button, input, select { transition: color var(--duration-base) var(--ease-sta
 .storefront-shell .category-spotlight-heading p,.storefront-shell .brand-filter-heading p { color: #86868b; font-size: 10px; font-weight: 600; letter-spacing: .08em; }
 .storefront-shell .category-spotlight-heading h2 { margin-top: 10px; font-family: var(--storefront-font); font-size: clamp(42px,4.3vw,58px); font-weight: 650; letter-spacing: -.05em; line-height: 1; }
 .storefront-shell .category-spotlight-heading > span { color: #6e6e73; font-size: 13px; line-height: 1.6; }
-.storefront-shell .category-spotlight-viewport { margin-top: 40px; }
+.storefront-shell .category-spotlight-viewport { margin-top: 40px; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 .storefront-shell .category-spotlight-stage { height: 388px; }
 .storefront-shell .category-spotlight-card { width: min(34vw,430px); height: 372px; border-color: #d2d2d7; border-radius: 26px; background: #e8e8ed; box-shadow: 0 12px 35px rgb(0 0 0 / .08); }
 .storefront-shell .category-spotlight-card.is-prev { opacity: .62; filter: saturate(.72); transform: translateX(calc(-50% - 320px)) scale(.84); }
@@ -1113,6 +1113,10 @@ a, button, input, select { transition: color var(--duration-base) var(--ease-sta
 .storefront-shell .spotlight-control:hover { color: var(--store-accent); transform: translateY(-50%); }
 .storefront-shell .spotlight-pagination button { background: #c7c7cc; }
 .storefront-shell .spotlight-pagination button.active { background: #1d1d1f; }
+.storefront-shell .spotlight-navigation { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 15px; }
+.storefront-shell .spotlight-navigation .spotlight-pagination { margin-top: 0; }
+.storefront-shell .spotlight-autoplay-control { display: grid; width: 26px; height: 26px; place-items: center; border: 1px solid #d2d2d7; border-radius: 50%; background: rgb(255 255 255 / .86); color: #6e6e73; }
+.storefront-shell .spotlight-autoplay-control:hover,.storefront-shell .spotlight-autoplay-control:focus-visible { border-color: #98989d; color: #1d1d1f; outline: 0; }
 
 .storefront-shell .discovery-catalog { background: #fff; padding-top: clamp(56px,6vw,84px); }
 .storefront-shell .brand-filter-section { border-color: #e1e1e5; border-radius: 24px; background: #f5f5f7; box-shadow: none; }
@@ -1154,7 +1158,8 @@ a, button, input, select { transition: color var(--duration-base) var(--ease-sta
 
 .storefront-shell .storefront-footer { border-top: 1px solid #d2d2d7; background: #f5f5f7; }
 .storefront-shell .footer-video-wordmark,.storefront-shell .footer-oil-fallback { display: none !important; }
-.storefront-shell .footer-particle-wordmark { z-index: 1; filter: drop-shadow(0 8px 24px rgb(0 0 0 / .18)); mix-blend-mode: normal; pointer-events: auto; touch-action: pan-y; }
+.storefront-shell .footer-particle-wordmark { z-index: 1; filter: drop-shadow(0 0 1px rgb(255 255 255 / .28)) drop-shadow(0 8px 24px rgb(0 0 0 / .18)); mix-blend-mode: normal; pointer-events: auto; touch-action: pan-y; }
+.storefront-shell .footer-particle-texture-source { position: absolute; width: 1px; height: 1px; opacity: 0; inset: 50% auto auto 50%; pointer-events: none; }
 .storefront-shell .footer-wordmark-stage { cursor: crosshair; }
 
 @media (max-width: 1180px) {
@@ -1178,6 +1183,7 @@ a, button, input, select { transition: color var(--duration-base) var(--ease-sta
 @media (max-width: 720px) {
   .storefront-shell .site-container { width: min(100% - 28px,1280px); }
   .storefront-shell .header-main-row { height: 64px; gap: 8px; }
+  .storefront-shell .header-actions { justify-content: flex-end; margin-left: auto; }
   .storefront-shell .brand-lockup strong { font-size: 17px; }
   .storefront-shell .brand-lockup small { font-size: 6px; }
   .header-search-form,.storefront-shell .header-language-links,.storefront-shell .site-header .account-button { display: none; }

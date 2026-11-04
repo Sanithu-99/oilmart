@@ -13,6 +13,7 @@ type Particle = {
   size: number;
   alpha: number;
   color: readonly [number, number, number];
+  outline: boolean;
 };
 
 type PointerState = {
@@ -24,19 +25,44 @@ type PointerState = {
 };
 
 const oilPalette = [
-  [168, 57, 27],
-  [217, 91, 28],
-  [240, 139, 34],
-  [248, 186, 58],
-  [255, 222, 132],
+  [194, 67, 29],
+  [230, 99, 29],
+  [247, 143, 34],
+  [255, 194, 67],
+  [255, 232, 158],
 ] as const;
+
+function drawVideoCover(context: CanvasRenderingContext2D, video: HTMLVideoElement, width: number, height: number) {
+  const videoWidth = video.videoWidth;
+  const videoHeight = video.videoHeight;
+  if (!videoWidth || !videoHeight || !width || !height) return;
+
+  const videoRatio = videoWidth / videoHeight;
+  const destinationRatio = width / height;
+  let sourceX = 0;
+  let sourceY = 0;
+  let sourceWidth = videoWidth;
+  let sourceHeight = videoHeight;
+
+  if (videoRatio > destinationRatio) {
+    sourceWidth = videoHeight * destinationRatio;
+    sourceX = (videoWidth - sourceWidth) / 2;
+  } else {
+    sourceHeight = videoWidth / destinationRatio;
+    sourceY = (videoHeight - sourceHeight) / 2;
+  }
+
+  context.drawImage(video, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, width, height);
+}
 
 export function ParticleWordmark() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const textureVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const textureVideo = textureVideoRef.current;
+    if (!canvas || !textureVideo) return;
 
     const context = canvas.getContext("2d");
     if (!context) return;
@@ -47,23 +73,50 @@ export function ParticleWordmark() {
     let animationFrame = 0;
     let visible = false;
     let inViewport = false;
+    let textureRequested = false;
     let logicalWidth = 0;
     let logicalHeight = 0;
     let lastDrawTime = 0;
     let resizeFrame = 0;
     const pointer: PointerState = { x: 0, y: 0, active: false, pressed: false, lastSeen: 0 };
 
+    const requestTexture = () => {
+      if (textureRequested || reducedMotion.matches) return;
+      textureVideo.src = textureVideo.dataset.src ?? "";
+      textureVideo.load();
+      textureRequested = true;
+    };
+
+    const syncTexturePlayback = () => {
+      if (visible && !reducedMotion.matches) {
+        requestTexture();
+        void textureVideo.play().catch(() => undefined);
+      } else {
+        textureVideo.pause();
+      }
+    };
+
+    const drawParticle = (particle: Particle, size: number) => {
+      context.beginPath();
+      context.arc(particle.x, particle.y, size, 0, Math.PI * 2);
+      context.fill();
+    };
+
     const draw = (time = 0) => {
-      if (!reducedMotion.matches && time - lastDrawTime < 26) {
+      const minimumFrameTime = logicalWidth < 520 ? 36 : 29;
+      if (!reducedMotion.matches && time - lastDrawTime < minimumFrameTime) {
         if (visible) animationFrame = window.requestAnimationFrame(draw);
         return;
       }
       lastDrawTime = time;
       context.clearRect(0, 0, logicalWidth, logicalHeight);
-      context.globalCompositeOperation = "lighter";
+      context.globalAlpha = 1;
+      context.globalCompositeOperation = "source-over";
+      context.filter = "none";
 
       if (pointer.active && time - pointer.lastSeen > 720) pointer.active = false;
       const waveCenter = reducedMotion.matches ? -1000 : (time * .045) % (logicalWidth + 220) - 110;
+
       for (const particle of particles) {
         if (reducedMotion.matches) {
           particle.x = particle.homeX;
@@ -92,18 +145,58 @@ export function ParticleWordmark() {
           particle.x += particle.velocityX;
           particle.y += particle.velocityY;
         }
-
-        const distanceFromWave = Math.abs(particle.homeX - waveCenter);
-        const wave = distanceFromWave < 86 ? Math.sin((86 - distanceFromWave) / 86 * Math.PI) : 0;
-        const shimmer = reducedMotion.matches ? 1 : .78 + Math.sin(time * .0017 + particle.phase) * .13 + wave * .28;
-        const [red, green, blue] = particle.color;
-
-        context.beginPath();
-        context.fillStyle = `rgb(${red} ${green} ${blue} / ${Math.min(1, particle.alpha * shimmer)})`;
-        context.arc(particle.x, particle.y, particle.size + wave * .38, 0, Math.PI * 2);
-        context.fill();
       }
+
+      const textureReady = !reducedMotion.matches && textureVideo.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && textureVideo.videoWidth > 0;
+
+      if (textureReady) {
+        context.fillStyle = "white";
+        for (const particle of particles) {
+          const distanceFromWave = Math.abs(particle.homeX - waveCenter);
+          const wave = distanceFromWave < 86 ? Math.sin((86 - distanceFromWave) / 86 * Math.PI) : 0;
+          const shimmer = .84 + Math.sin(time * .0017 + particle.phase) * .1 + wave * .2;
+          context.globalAlpha = Math.min(1, particle.alpha * shimmer);
+          drawParticle(particle, particle.size + wave * .34);
+        }
+
+        context.globalAlpha = 1;
+        context.globalCompositeOperation = "source-in";
+        context.filter = "brightness(1.62) saturate(1.3) contrast(1.06)";
+        drawVideoCover(context, textureVideo, logicalWidth, logicalHeight);
+        context.filter = "none";
+        context.globalCompositeOperation = "lighter";
+        context.fillStyle = "rgb(255 218 143)";
+
+        for (const particle of particles) {
+          const shimmer = .8 + Math.sin(time * .0014 + particle.phase) * .1;
+          context.globalAlpha = Math.min(.24, particle.alpha * shimmer * .2);
+          drawParticle(particle, particle.size * .82);
+        }
+      } else {
+        context.globalCompositeOperation = "lighter";
+        for (const particle of particles) {
+          const distanceFromWave = Math.abs(particle.homeX - waveCenter);
+          const wave = distanceFromWave < 86 ? Math.sin((86 - distanceFromWave) / 86 * Math.PI) : 0;
+          const shimmer = reducedMotion.matches ? 1 : .86 + Math.sin(time * .0017 + particle.phase) * .1 + wave * .24;
+          const [red, green, blue] = particle.color;
+          context.fillStyle = `rgb(${red} ${green} ${blue})`;
+          context.globalAlpha = Math.min(1, particle.alpha * shimmer);
+          drawParticle(particle, particle.size + wave * .34);
+        }
+      }
+
       context.globalCompositeOperation = "source-over";
+      context.fillStyle = "rgb(255 255 255)";
+      for (const particle of particles) {
+        if (!particle.outline) continue;
+        const outlinePulse = reducedMotion.matches ? 1 : .92 + Math.sin(time * .0012 + particle.phase) * .08;
+        context.globalAlpha = Math.min(.96, (.82 + particle.alpha * .14) * outlinePulse);
+        drawParticle(particle, particle.size + .32);
+      }
+
+      context.globalAlpha = 1;
+      context.globalCompositeOperation = "source-over";
+      context.filter = "none";
 
       if (visible && !reducedMotion.matches) animationFrame = window.requestAnimationFrame(draw);
     };
@@ -127,16 +220,26 @@ export function ParticleWordmark() {
       maskContext.drawImage(source, 0, 0, logicalWidth, logicalHeight);
       const pixels = maskContext.getImageData(0, 0, logicalWidth, logicalHeight).data;
       const step = logicalWidth < 520 ? 3 : 4;
+      const edgeRadius = Math.max(2, Math.round(step * 1.35));
       const nextParticles: Particle[] = [];
+      const alphaAt = (x: number, y: number) => {
+        if (x < 0 || y < 0 || x >= logicalWidth || y >= logicalHeight) return 0;
+        return pixels[(Math.round(y) * logicalWidth + Math.round(x)) * 4 + 3];
+      };
 
       for (let y = 0; y < logicalHeight; y += step) {
         for (let x = 0; x < logicalWidth; x += step) {
-          const maskAlpha = pixels[(y * logicalWidth + x) * 4 + 3];
+          const maskAlpha = alphaAt(x, y);
           if (maskAlpha < 72) continue;
           const seed = (x * 13 + y * 7) % 101;
           const homeX = x + (seed % 3) - 1;
           const homeY = y + ((seed * 3) % 3) - 1;
           const colorPosition = Math.min(oilPalette.length - 1, Math.floor(((x / Math.max(1, logicalWidth)) * .64 + (y / Math.max(1, logicalHeight)) * .36) * oilPalette.length));
+          const outline = [
+            [-edgeRadius, 0], [edgeRadius, 0], [0, -edgeRadius], [0, edgeRadius],
+            [-edgeRadius, -edgeRadius], [edgeRadius, -edgeRadius], [-edgeRadius, edgeRadius], [edgeRadius, edgeRadius],
+          ].some(([offsetX, offsetY]) => alphaAt(x + offsetX, y + offsetY) < 72);
+
           nextParticles.push({
             x: reducedMotion.matches ? homeX : homeX + ((seed % 17) - 8) * 1.4,
             y: reducedMotion.matches ? homeY : homeY + (((seed * 5) % 17) - 8) * 1.1,
@@ -146,8 +249,9 @@ export function ParticleWordmark() {
             velocityY: 0,
             phase: seed * .27,
             size: seed % 11 === 0 ? 1.85 : .92 + (seed % 5) * .11,
-            alpha: (.62 + (seed % 31) / 100) * (maskAlpha / 255),
+            alpha: (.68 + (seed % 29) / 100) * (maskAlpha / 255),
             color: oilPalette[colorPosition],
+            outline,
           });
         }
       }
@@ -191,6 +295,7 @@ export function ParticleWordmark() {
     const intersectionObserver = new IntersectionObserver(([entry]) => {
       inViewport = entry.isIntersecting;
       visible = inViewport && document.visibilityState === "visible";
+      syncTexturePlayback();
       window.cancelAnimationFrame(animationFrame);
       if (visible) animationFrame = window.requestAnimationFrame(draw);
     }, { rootMargin: "160px 0px", threshold: .01 });
@@ -198,17 +303,22 @@ export function ParticleWordmark() {
 
     const onVisibilityChange = () => {
       visible = inViewport && document.visibilityState === "visible";
+      syncTexturePlayback();
       window.cancelAnimationFrame(animationFrame);
       if (visible) animationFrame = window.requestAnimationFrame(draw);
     };
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     const onMotionChange = () => {
+      syncTexturePlayback();
       window.cancelAnimationFrame(animationFrame);
       draw(performance.now());
       if (visible && !reducedMotion.matches) animationFrame = window.requestAnimationFrame(draw);
     };
     reducedMotion.addEventListener("change", onMotionChange);
+
+    const onTextureReady = () => draw(performance.now());
+    textureVideo.addEventListener("loadeddata", onTextureReady);
 
     return () => {
       source.removeEventListener("load", rebuild);
@@ -216,6 +326,10 @@ export function ParticleWordmark() {
       intersectionObserver.disconnect();
       document.removeEventListener("visibilitychange", onVisibilityChange);
       reducedMotion.removeEventListener("change", onMotionChange);
+      textureVideo.removeEventListener("loadeddata", onTextureReady);
+      textureVideo.pause();
+      textureVideo.removeAttribute("src");
+      textureVideo.load();
       canvas.removeEventListener("pointerdown", updatePointer);
       canvas.removeEventListener("pointermove", updatePointer);
       canvas.removeEventListener("pointerup", releasePointer);
@@ -226,5 +340,18 @@ export function ParticleWordmark() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="footer-particle-wordmark" aria-hidden="true"/>;
+  return <>
+    <video
+      ref={textureVideoRef}
+      className="footer-particle-texture-source"
+      data-src="/videos/footer-oil-flow.mp4"
+      muted
+      loop
+      playsInline
+      preload="none"
+      tabIndex={-1}
+      aria-hidden="true"
+    />
+    <canvas ref={canvasRef} className="footer-particle-wordmark" aria-hidden="true"/>
+  </>;
 }

@@ -9,9 +9,26 @@ type ViewportVideoProps = {
   className?: string;
   controls?: boolean;
   playbackRate?: number;
+  introPlaybackRate?: number;
+  introDuration?: number;
 };
 
-export function ViewportVideo({ src, poster, className, controls = false, playbackRate = 1 }: ViewportVideoProps) {
+function resolvePlaybackRate(currentTime: number, playbackRate: number, introPlaybackRate: number, introDuration: number) {
+  if (introDuration <= 0 || introPlaybackRate === playbackRate || currentTime >= introDuration) return playbackRate;
+  const progress = Math.max(0, Math.min(1, currentTime / introDuration));
+  const easedProgress = progress * progress * (3 - 2 * progress);
+  return introPlaybackRate + (playbackRate - introPlaybackRate) * easedProgress;
+}
+
+export function ViewportVideo({
+  src,
+  poster,
+  className,
+  controls = false,
+  playbackRate = 1,
+  introPlaybackRate = playbackRate,
+  introDuration = 0,
+}: ViewportVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const sourceRef = useRef<HTMLSourceElement>(null);
   const loadedRef = useRef(false);
@@ -23,7 +40,7 @@ export function ViewportVideo({ src, poster, className, controls = false, playba
     const source = sourceRef.current;
     if (!video || !source || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     video.defaultPlaybackRate = playbackRate;
-    video.playbackRate = playbackRate;
+    video.playbackRate = resolvePlaybackRate(video.currentTime, playbackRate, introPlaybackRate, introDuration);
 
     const loadVideo = () => {
       if (loadedRef.current) return;
@@ -54,7 +71,7 @@ export function ViewportVideo({ src, poster, className, controls = false, playba
       observer.disconnect();
       video.pause();
     };
-  }, [playbackRate]);
+  }, [introDuration, introPlaybackRate, playbackRate]);
 
   function togglePlayback() {
     const video = videoRef.current;
@@ -87,7 +104,13 @@ export function ViewportVideo({ src, poster, className, controls = false, playba
       poster={poster}
       tabIndex={-1}
       aria-hidden="true"
-      onLoadedMetadata={(event) => { event.currentTarget.defaultPlaybackRate = playbackRate; event.currentTarget.playbackRate = playbackRate; }}
+      onLoadedMetadata={(event) => {
+        event.currentTarget.defaultPlaybackRate = playbackRate;
+        event.currentTarget.playbackRate = resolvePlaybackRate(event.currentTarget.currentTime, playbackRate, introPlaybackRate, introDuration);
+      }}
+      onTimeUpdate={(event) => {
+        event.currentTarget.playbackRate = resolvePlaybackRate(event.currentTarget.currentTime, playbackRate, introPlaybackRate, introDuration);
+      }}
       onPlay={() => setPlaying(true)}
       onPause={() => setPlaying(false)}
     >
