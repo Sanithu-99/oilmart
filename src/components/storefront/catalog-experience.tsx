@@ -447,7 +447,7 @@ function CategorySpotlight({ products, activeIndex, copy, onChange, onChoose }: 
 
   useEffect(() => {
     if (!inView || !pageVisible || reducedMotion || interacting || autoplayPaused) return;
-    const timer = window.setTimeout(() => onChange((activeIndex + 1) % total), 5500);
+    const timer = window.setTimeout(() => onChange((activeIndex + 1) % total), 3250);
     return () => window.clearTimeout(timer);
   }, [activeIndex, autoplayPaused, inView, interacting, onChange, pageVisible, reducedMotion, total]);
 
