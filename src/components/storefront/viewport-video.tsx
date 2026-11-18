@@ -1,13 +1,11 @@
 "use client";
 
-import { Pause, Play } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 type ViewportVideoProps = {
   src: string;
   poster: string;
   className?: string;
-  controls?: boolean;
   playbackRate?: number;
   introPlaybackRate?: number;
   introDuration?: number;
@@ -24,7 +22,6 @@ export function ViewportVideo({
   src,
   poster,
   className,
-  controls = false,
   playbackRate = 1,
   introPlaybackRate = playbackRate,
   introDuration = 0,
@@ -32,8 +29,6 @@ export function ViewportVideo({
   const videoRef = useRef<HTMLVideoElement>(null);
   const sourceRef = useRef<HTMLSourceElement>(null);
   const loadedRef = useRef(false);
-  const manuallyPausedRef = useRef(false);
-  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -50,9 +45,8 @@ export function ViewportVideo({
     };
 
     const playVideo = () => {
-      if (manuallyPausedRef.current) return;
       loadVideo();
-      void video.play().catch(() => setPlaying(false));
+      void video.play().catch(() => undefined);
     };
 
     if (!("IntersectionObserver" in window)) {
@@ -73,28 +67,7 @@ export function ViewportVideo({
     };
   }, [introDuration, introPlaybackRate, playbackRate]);
 
-  function togglePlayback() {
-    const video = videoRef.current;
-    const source = sourceRef.current;
-    if (!video || !source) return;
-
-    if (!loadedRef.current) {
-      source.src = source.dataset.src ?? "";
-      video.load();
-      loadedRef.current = true;
-    }
-
-    if (video.paused) {
-      manuallyPausedRef.current = false;
-      void video.play();
-    } else {
-      manuallyPausedRef.current = true;
-      video.pause();
-    }
-  }
-
-  return <>
-    <video
+  return <video
       ref={videoRef}
       className={className}
       muted
@@ -111,13 +84,7 @@ export function ViewportVideo({
       onTimeUpdate={(event) => {
         event.currentTarget.playbackRate = resolvePlaybackRate(event.currentTarget.currentTime, playbackRate, introPlaybackRate, introDuration);
       }}
-      onPlay={() => setPlaying(true)}
-      onPause={() => setPlaying(false)}
     >
       <source ref={sourceRef} data-src={src} type="video/mp4"/>
-    </video>
-    {controls && <button className="viewport-video-control" type="button" onClick={togglePlayback} aria-label={playing ? "Pause background video" : "Play background video"}>
-      {playing ? <Pause size={13}/> : <Play size={13}/>}<span>{playing ? "Pause" : "Play"}</span>
-    </button>}
-  </>;
+    </video>;
 }

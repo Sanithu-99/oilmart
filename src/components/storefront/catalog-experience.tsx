@@ -11,8 +11,6 @@ import {
   ClipboardList,
   MessageCircle,
   MapPin,
-  Pause,
-  Play,
   Search,
   ShieldCheck,
   ShoppingBag,
@@ -167,7 +165,7 @@ const labels = {
     requestUnavailable: "Price on Request · Confirm Stock",
     from: "From",
     trustPickup: "Instant Store Pickup",
-    trustPickupBody: "70/5B, Dhammalankara Mawatha, Hill St, Dehiwala",
+    trustPickupBody: "70/5B. Dhammalankara Mawatha, Hill St, Dehiwala-Mount Lavinia 10350, Sri Lanka",
     trustDelivery: "Islandwide Delivery",
     trustDeliveryBody: "Courier dispatch within 24–48 hours after confirmation",
     trustGenuine: "Genuine Product Assurance",
@@ -373,7 +371,7 @@ function ProductTile({ product, locale, copy, selected, onToggle }: {
 function PerformanceFilm({ copy }: { copy: DiscoveryCopy }) {
   return <section className="performance-film" aria-labelledby="performance-film-title">
     <div className="performance-film-media">
-      <ViewportVideo src="/videos/track-performance.mp4" poster="/images/storefront/track-performance-poster.jpg" className="performance-film-video" controls/>
+      <ViewportVideo src="/videos/track-performance.mp4" poster="/images/storefront/track-performance-poster.jpg" className="performance-film-video"/>
       <span className="performance-film-index">02 / Performance</span>
       <span className="performance-film-caption">Closed-course footage · Visualising protection under load</span>
     </div>
@@ -414,7 +412,6 @@ function CategorySpotlight({ products, activeIndex, copy, onChange, onChoose }: 
   const [pageVisible, setPageVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [interacting, setInteracting] = useState(false);
-  const [autoplayPaused, setAutoplayPaused] = useState(false);
 
   function move(direction: number) {
     onChange((activeIndex + direction + total) % total);
@@ -430,10 +427,7 @@ function CategorySpotlight({ products, activeIndex, copy, onChange, onChoose }: 
 
   useEffect(() => {
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updateMotionPreference = () => {
-      setReducedMotion(motionQuery.matches);
-      if (motionQuery.matches) setAutoplayPaused(true);
-    };
+    const updateMotionPreference = () => setReducedMotion(motionQuery.matches);
     const updatePageVisibility = () => setPageVisible(document.visibilityState === "visible");
     updateMotionPreference();
     updatePageVisibility();
@@ -446,10 +440,10 @@ function CategorySpotlight({ products, activeIndex, copy, onChange, onChoose }: 
   }, []);
 
   useEffect(() => {
-    if (!inView || !pageVisible || reducedMotion || interacting || autoplayPaused) return;
+    if (!inView || !pageVisible || reducedMotion || interacting) return;
     const timer = window.setTimeout(() => onChange((activeIndex + 1) % total), 3250);
     return () => window.clearTimeout(timer);
-  }, [activeIndex, autoplayPaused, inView, interacting, onChange, pageVisible, reducedMotion, total]);
+  }, [activeIndex, inView, interacting, onChange, pageVisible, reducedMotion, total]);
 
   return <section
     ref={sectionRef}
@@ -517,18 +511,7 @@ function CategorySpotlight({ products, activeIndex, copy, onChange, onChoose }: 
         <button className="spotlight-control spotlight-control-prev" type="button" onClick={() => move(-1)} aria-label="Previous category"><ArrowLeft size={21}/></button>
         <button className="spotlight-control spotlight-control-next" type="button" onClick={() => move(1)} aria-label="Next category"><ArrowRight size={21}/></button>
       </div>
-      <div className="spotlight-navigation">
-        <div className="spotlight-pagination" aria-label="Choose a category">{spotlightCategories.map((item, index) => <button type="button" className={index === activeIndex ? "active" : ""} onClick={() => onChange(index)} aria-label={`Show ${item.title}`} aria-current={index === activeIndex ? "true" : undefined} key={item.id}/>)}</div>
-        <button
-          className="spotlight-autoplay-control"
-          type="button"
-          onClick={() => setAutoplayPaused((current) => !current)}
-          aria-pressed={autoplayPaused}
-          aria-label={autoplayPaused ? "Resume automatic category rotation" : "Pause automatic category rotation"}
-        >
-          {autoplayPaused ? <Play size={12} fill="currentColor"/> : <Pause size={12} fill="currentColor"/>}
-        </button>
-      </div>
+      <div className="spotlight-pagination" aria-label="Choose a category">{spotlightCategories.map((item, index) => <button type="button" className={index === activeIndex ? "active" : ""} onClick={() => onChange(index)} aria-label={`Show ${item.title}`} aria-current={index === activeIndex ? "true" : undefined} key={item.id}/>)}</div>
     </div>
   </section>;
 }

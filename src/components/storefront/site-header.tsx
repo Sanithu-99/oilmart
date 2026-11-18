@@ -8,6 +8,7 @@ import { CartButton } from "./cart-provider";
 import { LanguageSwitcher } from "./language-switcher";
 
 export function SiteHeader({ locale, dictionary }: { locale: StoreLocale; dictionary: Dictionary }) {
+  const fullStoreAddress = `${storeConfig.address.line1}, ${storeConfig.address.line2}, ${storeConfig.address.city} ${storeConfig.address.postalCode}, ${storeConfig.address.country}`;
   const nav = [
     [dictionary.nav.shop, `/${locale}/products`],
     [dictionary.nav.categories, `/${locale}/products#catalog-filters`],
@@ -33,7 +34,7 @@ export function SiteHeader({ locale, dictionary }: { locale: StoreLocale; dictio
 
       <div className="header-actions">
         <a className="header-quick-link" href={`tel:${storeConfig.phone.replace(/\s/g, "")}`} aria-label={`Call ${storeConfig.phone}`} title={storeConfig.phone}><Phone size={18}/></a>
-        <a className="header-quick-link" href={storeConfig.mapsUrl} target="_blank" rel="noreferrer" aria-label="Open Hill Street store in Google Maps" title="Hill St, Dehiwala"><MapPin size={18}/></a>
+        <a className="header-quick-link" href={storeConfig.mapsUrl} target="_blank" rel="noreferrer" aria-label={`Open ${fullStoreAddress} in Google Maps`} title={fullStoreAddress}><MapPin size={18}/></a>
         <nav className="header-language-links" aria-label="Language selector"><LanguageSwitcher locale={locale}/></nav>
         <Link className="icon-button account-button" href={`/${locale}/account`} aria-label="Account"><UserRound size={19}/></Link>
         <CartButton/>
@@ -44,7 +45,7 @@ export function SiteHeader({ locale, dictionary }: { locale: StoreLocale; dictio
             <nav className="mobile-primary-nav" aria-label="Mobile navigation">{nav.map(([label, href]) => <Link href={href} key={href}>{label}</Link>)}</nav>
             <div className="mobile-menu-utilities">
               <a href={`tel:${storeConfig.phone.replace(/\s/g, "")}`}><Phone size={16}/><span>{storeConfig.phone}</span></a>
-              <a href={storeConfig.mapsUrl} target="_blank" rel="noreferrer"><MapPin size={16}/><span>Hill St, Dehiwala</span></a>
+              <a href={storeConfig.mapsUrl} target="_blank" rel="noreferrer" aria-label={`Open ${fullStoreAddress} in Google Maps`}><MapPin size={16}/><span>70/5B, Hill St</span></a>
             </div>
             <nav className="mobile-language-links" aria-label="Language selector"><LanguageSwitcher locale={locale}/></nav>
           </div>

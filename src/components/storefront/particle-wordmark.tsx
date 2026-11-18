@@ -190,8 +190,8 @@ export function ParticleWordmark() {
       for (const particle of particles) {
         if (!particle.outline) continue;
         const outlinePulse = reducedMotion.matches ? 1 : .92 + Math.sin(time * .0012 + particle.phase) * .08;
-        context.globalAlpha = Math.min(.96, (.82 + particle.alpha * .14) * outlinePulse);
-        drawParticle(particle, particle.size + .32);
+        context.globalAlpha = Math.min(.5, (.34 + particle.alpha * .12) * outlinePulse);
+        drawParticle(particle, particle.size + .08);
       }
 
       context.globalAlpha = 1;
@@ -220,7 +220,7 @@ export function ParticleWordmark() {
       maskContext.drawImage(source, 0, 0, logicalWidth, logicalHeight);
       const pixels = maskContext.getImageData(0, 0, logicalWidth, logicalHeight).data;
       const step = logicalWidth < 520 ? 3 : 4;
-      const edgeRadius = Math.max(2, Math.round(step * 1.35));
+      const edgeRadius = Math.max(2, step);
       const nextParticles: Particle[] = [];
       const alphaAt = (x: number, y: number) => {
         if (x < 0 || y < 0 || x >= logicalWidth || y >= logicalHeight) return 0;
