@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   experimental: {
+    agentUpgrade: "security",
     serverActions: {
       // Keep the app-level limit below the hosting request ceiling so the admin
       // receives a predictable upload error instead of a platform-level 413.
