@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { CatalogExperience } from "@/components/storefront/catalog-experience";
+import { CustomerReviews } from "@/components/storefront/customer-reviews";
 import { StoreProof } from "@/components/storefront/store-proof";
 import { getCatalogExperienceData, getHomepagePromotion } from "@/features/catalog/queries";
 import { storeConfig } from "@/lib/config/store";
@@ -30,6 +31,7 @@ export default async function LocaleHome({ params }: { params: Promise<{ locale:
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}/>
     <CatalogExperience products={catalog.products} brands={catalog.brands} locale={locale} dictionary={dictionary} showHero/>
+    <CustomerReviews locale={locale}/>
     <StoreProof locale={locale}/>
     {promotion && <section className="automotive-offer" id="offers"><div className="site-container"><p>{dictionary.nav.offers}</p><h2>{promotion.name}</h2>{promotion.description && <span>{promotion.description}</span>}</div></section>}
   </>;
