@@ -5681,17 +5681,19 @@
     "name": "Caltex Lanka Shock Absorber H (500 ml)",
     "brand": "Caltex",
     "category": "suspension-fluids",
-    "shortDescription": "Suspension fluid · 500 ml",
-    "description": "Available from Saranankara Oil Mart. Please confirm the current price, packaging and vehicle compatibility before purchase.",
+    "shortDescription": "Heavy-duty hydraulic shock absorber fluid · 500 ml",
+    "description": "Purpose-formulated hydraulic fluid for motorcycle front forks, hydraulic shock units and twin-tube dampers. Designed to support consistent damping with anti-foaming performance, seal conditioning and thermal stability.",
     "specifications": {
-      "Pack": "500 ml",
-      "Stock unit": "can"
+      "Fluid Type": "Heavy-duty hydraulic shock absorber fluid",
+      "Volume": "500 ml",
+      "Suitable For": "Motorcycle front forks, hydraulic shock units, twin-tube dampers",
+      "Key Benefits": "Anti-foaming, seal-conditioning, thermal stability"
     },
     "priceMinor": 0,
     "quantity": "5",
     "unitOfSale": "BOTTLE",
     "type": "STANDARD",
-    "image": null,
+    "image": "/images/products/inventory/caltex-shock-absorber-oil-h.png",
     "featured": false
   },
   {

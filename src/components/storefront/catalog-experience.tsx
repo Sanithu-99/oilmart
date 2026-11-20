@@ -339,7 +339,6 @@ function ProductTile({ product, locale, copy, selected, onToggle }: {
   const badge = [product.grade, product.packSize].filter(Boolean).filter((value, index, list) => list.indexOf(value) === index).join(" · ");
   const whatsappHref = productConfirmationWhatsAppUrl({
     name: product.name,
-    sku: product.sku,
     brand: product.brand?.name,
     packSize: product.packSize,
   });
@@ -348,7 +347,7 @@ function ProductTile({ product, locale, copy, selected, onToggle }: {
     <Link href={`/${locale}/products/${product.slug}`} className="discovery-product-link">
       <div className="discovery-product-media">
         {badge && <span className="product-grade-badge">{badge}</span>}
-        {image ? <Image src={image.url} alt={image.alt} fill sizes="(max-width: 639px) calc(100vw - 42px), (max-width: 1023px) 42vw, 22vw" className="discovery-product-image"/> : <div className="product-brand-fallback">{brandLogo ? <Image src={brandLogo} alt={`${product.brand?.name ?? product.category.name} logo`} fill sizes="220px" unoptimized className="product-brand-fallback-logo"/> : <span>{product.brand?.name ?? product.category.name}</span>}</div>}
+        {image ? <Image src={image.url} alt={image.alt} fill sizes="(max-width: 639px) calc(100vw - 42px), (max-width: 1023px) 42vw, 22vw" unoptimized className="discovery-product-image"/> : <div className="product-brand-fallback">{brandLogo ? <Image src={brandLogo} alt={`${product.brand?.name ?? product.category.name} logo`} fill sizes="220px" unoptimized className="product-brand-fallback-logo"/> : <span>{product.brand?.name ?? product.category.name}</span>}</div>}
       </div>
       <div className="discovery-product-copy">
         <p className="discovery-product-brand">{product.brand?.name ?? product.category.name}</p>
@@ -745,7 +744,7 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
     {inquiryProducts.length > 0 && <aside className="quick-quote-tray" aria-label={copy.trayTitle} aria-live="polite">
       <div className="quick-quote-summary"><span className="quick-quote-count">{inquiryProducts.length}/5</span><div><strong>{copy.trayTitle}</strong><small>{copy.trayHint}</small></div></div>
       <div className="quick-quote-items">{inquiryProducts.map((product) => <button type="button" onClick={() => toggleInquiry(product.id)} key={product.id} title={`Remove ${product.name}`}><span>{product.brand?.name ?? product.category.name}</span><X size={13}/></button>)}</div>
-      {minimumRemaining > 0 ? <button type="button" className="quick-quote-send" disabled>{copy.trayMinimum.replace("{count}", String(minimumRemaining))}</button> : <a className="quick-quote-send" href={inquiryListWhatsAppUrl(inquiryProducts.map((product) => ({ name: product.name, packSize: product.packSize, sku: product.sku })))} target="_blank" rel="noreferrer"><MessageCircle size={17}/>{copy.traySend}</a>}
+      {minimumRemaining > 0 ? <button type="button" className="quick-quote-send" disabled>{copy.trayMinimum.replace("{count}", String(minimumRemaining))}</button> : <a className="quick-quote-send" href={inquiryListWhatsAppUrl(inquiryProducts.map((product) => ({ name: product.name, packSize: product.packSize })))} target="_blank" rel="noreferrer"><MessageCircle size={17}/>{copy.traySend}</a>}
     </aside>}
   </>;
 }

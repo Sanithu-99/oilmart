@@ -13,7 +13,6 @@ describe("WhatsApp order links", () => {
   it("prefills a product price-confirmation request", () => {
     const message = decodedMessage(productConfirmationWhatsAppUrl({
       name: "Laugfs Revtron Gold 4T 10W30 1 L",
-      sku: "LAUGFS-4T-1L",
       brand: "Laugfs",
       packSize: "1 L",
     }));
@@ -24,13 +23,13 @@ describe("WhatsApp order links", () => {
 
   it("combines a capped product list into one quote request", () => {
     const message = decodedMessage(inquiryListWhatsAppUrl([
-      { name: "Caltex Delo Gold", packSize: "5 L", sku: "DELO-5L" },
+      { name: "Caltex Delo Gold", packSize: "5 L" },
       { name: "Mobil ATF", packSize: "1 L" },
       { name: "Valvoline MaxLife", packSize: "4 L" },
     ]));
 
     expect(message).toContain("combined quote");
-    expect(message).toContain("1. Caltex Delo Gold (5 L) · DELO-5L");
+    expect(message).toContain("1. Caltex Delo Gold (5 L)");
     expect(message).toContain("3. Valvoline MaxLife (4 L)");
   });
 
@@ -45,7 +44,7 @@ describe("WhatsApp order links", () => {
     }));
 
     expect(message).toContain("2 × Valvoline MaxLife ATF 4 L");
-    expect(message).toContain("SKU: VAL-ATF-4L");
+    expect(message).not.toContain("SKU:");
     expect(message).toContain("1 × Laugfs Revtron Gold 4T");
     expect(message).toContain("Price: Please confirm");
     expect(message).toContain("Priced-item subtotal");

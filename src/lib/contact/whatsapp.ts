@@ -2,12 +2,11 @@ import { storeConfig } from "@/lib/config/store";
 
 type ProductConfirmation = {
   name: string;
-  sku: string;
   brand?: string | null;
   packSize?: string | null;
 };
 
-type InquiryProduct = { name: string; packSize?: string | null; sku?: string };
+type InquiryProduct = { name: string; packSize?: string | null };
 
 type CartOrderItem = {
   name: string;
@@ -43,7 +42,7 @@ export function productConfirmationWhatsAppUrl(product: ProductConfirmation) {
 }
 
 export function inquiryListWhatsAppUrl(products: InquiryProduct[]) {
-  const lines = products.slice(0, 5).map((product, index) => `${index + 1}. ${nameWithPack(product)}${product.sku ? ` · ${product.sku}` : ""}`);
+  const lines = products.slice(0, 5).map((product, index) => `${index + 1}. ${nameWithPack(product)}`);
   return whatsappUrl([
     "Hi Saranankara Oil Mart,",
     "",
@@ -87,7 +86,6 @@ export function cartOrderWhatsAppUrl(cart: {
 }) {
   const lines = cart.items.flatMap((item, index) => [
     `${index + 1}. ${item.quantity} × ${item.name}`,
-    item.sku ? `   SKU: ${item.sku}` : null,
     item.priceAvailable ? `   Unit price: ${lkr(item.unitPriceMinor)}` : "   Price: Please confirm",
     item.priceAvailable ? `   Line total: ${lkr(item.lineTotalMinor)}` : null,
     "",

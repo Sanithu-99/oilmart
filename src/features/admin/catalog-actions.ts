@@ -15,6 +15,7 @@ import {
   PromotionType,
   PublicationStatus,
   UnitOfSale,
+  type Prisma,
 } from "@/generated/prisma/client";
 import { db } from "@/lib/db/client";
 import { VEHICLE_APPLICATION_SLUGS } from "@/lib/catalog/applications";
@@ -28,7 +29,22 @@ function optionalJson(value: string) {
   if (!value) return undefined;
   const parsed: unknown = JSON.parse(value);
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("Technical specifications must be a JSON object");
-  return parsed;
+  return parsed as Prisma.InputJsonObject;
+}
+
+function technicalSpecsFromForm(form: FormData): Prisma.InputJsonObject | undefined {
+  const advanced = optionalJson(text(form, "technicalSpecsAdvanced")) ?? {};
+  const publicFields = [
+    ["Fluid Type", text(form, "specFluidType")],
+    ["Volume", text(form, "specVolume")],
+    ["Suitable For", text(form, "specSuitableFor")],
+    ["Key Benefits", text(form, "specKeyBenefits")],
+  ] as const;
+  const technicalSpecs = {
+    ...advanced,
+    ...Object.fromEntries(publicFields.filter(([, value]) => Boolean(value))),
+  };
+  return Object.keys(technicalSpecs).length ? technicalSpecs : undefined;
 }
 
 function moneyMinor(value: string) {
@@ -91,7 +107,7 @@ export async function saveProductAction(form: FormData) {
       name: parsed.name,
       shortDescription: optional(form, "shortDescription"),
       description: optional(form, "description"),
-      technicalSpecs: optionalJson(text(form, "technicalSpecs")),
+      technicalSpecs: technicalSpecsFromForm(form),
       seoTitle: optional(form, "seoTitle"),
       seoDescription: optional(form, "seoDescription"),
       categoryId: parsed.categoryId,

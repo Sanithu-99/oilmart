@@ -185,19 +185,10 @@ async function main() {
         ...(priceListItem ? [priceListItem.applicationSlug] : []),
       ]),
     ];
-    const technicalSpecs = {
-      ...item.specifications,
-      ...(priceListItem
-        ? {
-            "Supplier material code": priceListItem.materialCode,
-            "Supplier application group": priceListItem.applicationGroup,
-            "Supplier pack size": priceListItem.packSize,
-            ...(priceListItem.productSpecification ? { "Supplier specification": priceListItem.productSpecification } : {}),
-            "Retail price effective": caltexRetailPriceList.source.effectiveDate,
-            "Retail price includes VAT": "Yes",
-          }
-        : {}),
-    };
+    // Public product specifications stay customer-facing. Supplier material codes,
+    // source rows and effective dates remain available through SourceCatalogueItem
+    // in the admin dashboard instead of leaking into the storefront specification table.
+    const technicalSpecs = item.specifications;
     const retailPriceMinor = BigInt(priceListItem?.retailPriceMinor ?? item.priceMinor);
     const product = await db.product.upsert({
       where: { sku: item.sku },
@@ -395,7 +386,7 @@ async function main() {
     [
       "store.address",
       {
-        line1: "70/5B, Dhammalankara Maratha",
+        line1: "70/5B. Dhammalankara Mawatha",
         line2: "Hill St",
         city: "Dehiwala-Mount Lavinia",
         postalCode: "10350",
