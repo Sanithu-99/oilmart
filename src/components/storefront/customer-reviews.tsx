@@ -1,4 +1,5 @@
-import { ArrowUpRight, MessageSquareQuote, PenLine, Star } from "lucide-react";
+import Image from "next/image";
+import { ArrowUpRight, PenLine, Star } from "lucide-react";
 
 import { storeConfig } from "@/lib/config/store";
 import type { StoreLocale } from "@/lib/i18n/config";
@@ -10,7 +11,9 @@ const copy = {
     body: "Read independent feedback before you order, then share your own experience after visiting our Dehiwala store.",
     quote: "An efficient motor oil retailer.",
     author: "Rikaz Sheriff",
-    attribution: "Public customer review · May 2017",
+    attribution: "Public Google-linked review",
+    date: "11 May 2017",
+    viewReview: "View source",
     liveTitle: "See the latest feedback",
     liveBody: "Ratings and new comments can change. Open our live Google listing for the most current, unedited customer feedback.",
     liveAction: "Read all Google reviews",
@@ -24,7 +27,9 @@ const copy = {
     body: "ඇණවුම් කිරීමට පෙර ස්වාධීන අදහස් කියවා, දෙහිවල වෙළඳසැලට පැමිණීමෙන් පසු ඔබගේ අත්දැකීම බෙදාගන්න.",
     quote: "An efficient motor oil retailer.",
     author: "Rikaz Sheriff",
-    attribution: "පොදු පාරිභෝගික සමාලෝචනය · 2017 මැයි",
+    attribution: "පොදු Google-සම්බන්ධිත සමාලෝචනය",
+    date: "2017 මැයි 11",
+    viewReview: "මූලාශ්‍රය බලන්න",
     liveTitle: "නවතම අදහස් බලන්න",
     liveBody: "ඇගයීම් සහ අදහස් වෙනස් විය හැක. නවතම, සංස්කරණය නොකළ අදහස් සඳහා සජීවී Google ලැයිස්තුව විවෘත කරන්න.",
     liveAction: "Google සමාලෝචන බලන්න",
@@ -38,7 +43,9 @@ const copy = {
     body: "ஆர்டர் செய்வதற்கு முன் சுயாதீன கருத்துகளைப் படியுங்கள்; தெஹிவளை கடைக்கு வந்த பிறகு உங்கள் அனுபவத்தையும் பகிருங்கள்.",
     quote: "An efficient motor oil retailer.",
     author: "Rikaz Sheriff",
-    attribution: "பொது வாடிக்கையாளர் மதிப்புரை · மே 2017",
+    attribution: "பொது Google-இணைக்கப்பட்ட மதிப்புரை",
+    date: "11 மே 2017",
+    viewReview: "மூலத்தைப் பார்க்கவும்",
     liveTitle: "சமீபத்திய கருத்துகளைப் பாருங்கள்",
     liveBody: "மதிப்பீடுகளும் புதிய கருத்துகளும் மாறலாம். சமீபத்திய, திருத்தப்படாத கருத்துகளுக்கு நேரடி Google பட்டியலைத் திறக்கவும்.",
     liveAction: "Google மதிப்புரைகளைப் படிக்கவும்",
@@ -60,9 +67,13 @@ export function CustomerReviews({ locale }: { locale: StoreLocale }) {
       </header>
       <div className="customer-reviews-grid">
         <blockquote className="customer-review-featured">
-          <MessageSquareQuote aria-hidden="true"/>
+          <header className="google-review-header">
+            <span className="google-review-avatar" aria-hidden="true">RS</span>
+            <span className="google-review-person"><strong>{text.author}</strong><small>{text.date}</small></span>
+            <span className="google-review-brand" aria-label="Google review"><Image src="/images/brands/google-g.svg" alt="" width={30} height={30}/><strong>Google</strong></span>
+          </header>
           <p>“{text.quote}”</p>
-          <footer><strong>{text.author}</strong><span>{text.attribution}</span></footer>
+          <footer><span>{text.attribution}</span><a href={storeConfig.mapsUrl} target="_blank" rel="noreferrer">{text.viewReview}<ArrowUpRight aria-hidden="true"/></a></footer>
         </blockquote>
         <article className="customer-review-action">
           <div className="customer-review-action-icon"><Star aria-hidden="true"/></div>
