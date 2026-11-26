@@ -2,6 +2,8 @@
 
 ## Not launch-ready
 
+The 25 November continuation implements the manual order/payment lifecycle, pre-order continuation, quotation-service fee acceptance, owner payment settings, QR payment links and the private SMSGate adapter. See `docs/operations/payments-and-sms.md`. Production activation still requires verified receiving accounts, merchant onboarding, message delivery configuration and isolated database integration testing.
+
 Phases 1–4, the Inventory Details Report import and the Caltex retail-price/application import are complete. The storefront, multilingual catalogue, vehicle/application filtering, guest/customer carts, customer authentication, loyalty workflows, secure administrative authentication/RBAC, document source register, catalogue/content management, transactional inventory, promotion infrastructure, audit trail and persistent database-backed abuse limits are implemented and tested. Remaining launch blockers are verified retail prices for unmatched products, supplier approval of imagery/specifications, checkout/order submission, notification delivery, production provider credentials, the temporary-to-handoff Neon migration, credential rotation, MFA policy, legal/content approval and final accessibility/security/performance verification.
 
 ## External dependencies

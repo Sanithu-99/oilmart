@@ -6,13 +6,15 @@ import { PublicationStatus, type Prisma } from "@/generated/prisma/client";
 import { getCustomerPricingContext } from "@/features/customer/auth/authorization";
 import { resolvePromotionUnitPrice, type ApplicablePromotion } from "@/features/pricing/promotions";
 import { db } from "@/lib/db/client";
-import { VEHICLE_APPLICATIONS, vehicleApplicationName } from "@/lib/catalog/applications";
+import { catalogueSections, offerTitle, productFamilyKey } from "@/lib/catalog/product-options";
+import { manufacturerContent, withoutCompatibilityCopy } from "@/lib/catalog/manufacturer-content";
 import { localeToDb, type StoreLocale } from "@/lib/i18n/config";
 
 const productInclude = {
   brand: true,
   category: { include: { translations: true } },
   translations: true,
+  sourceCatalogueItems: { select: { sourceCategory: true } },
   images: { orderBy: [{ primary: "desc" }, { sortOrder: "asc" }] },
   variants: {
     where: { active: true },
@@ -41,7 +43,8 @@ export type ClientCatalogProduct = {
   currency: string;
   brand: { name: string; slug: string } | null;
   category: { name: string; slug: string };
-  applications: Array<{ slug: string; name: string }>;
+  catalogueSections: string[];
+  variantCount: number;
   images: Array<{ url: string; alt: string; width: number; height: number }>;
   variant: { id: string; available: number } | null;
   available: number;
@@ -95,7 +98,7 @@ function clientProduct(product: StoreProduct): ClientCatalogProduct {
     product.category.name,
     grade,
     packSize,
-    ...product.applications.flatMap((application) => [application.name, application.slug]),
+    ...product.catalogueSections,
     grade?.replace(/[^a-z0-9]/gi, ""),
   ].filter(Boolean).join(" ").toLocaleLowerCase("en").replace(/[^a-z0-9]+/g, " ").trim();
 
@@ -111,7 +114,8 @@ function clientProduct(product: StoreProduct): ClientCatalogProduct {
     currency: product.currency,
     brand: product.brand,
     category: product.category,
-    applications: product.applications,
+    catalogueSections: product.catalogueSections,
+    variantCount: product.variants.length,
     images: product.images,
     variant: product.variant ? { id: product.variant.id, available: product.variant.available } : null,
     available: product.available,
@@ -136,14 +140,17 @@ export function presentProduct(product: ProductRecord, locale: StoreLocale, pric
   const promotion = resolvePromotionUnitPrice({ productId: product.id, categoryId: product.categoryId, baseUnitPriceMinor: basePriceMinor, loyaltyEligible: pricing.loyaltyEligible, promotions: pricing.promotions });
   const applicablePromotion = promotion && promotion.unitPriceMinor >= 0n && promotion.unitPriceMinor < basePriceMinor ? promotion : null;
   const priceMinor = applicablePromotion?.unitPriceMinor ?? basePriceMinor;
+  const manufacturer = manufacturerContent(product.brand?.name, product.name);
+  const description = translation?.description ?? product.description;
 
   return {
     id: product.id,
     slug: product.slug,
     sku: product.sku,
-    name: translation?.name ?? product.name,
+    name: offerTitle(translation?.name ?? product.name, product.technicalSpecs as Record<string, unknown> | null),
     shortDescription: translation?.shortDescription ?? product.shortDescription,
-    description: translation?.description ?? product.description,
+    description: withoutCompatibilityCopy(manufacturer && (!description || description.startsWith("Available from Saranankara")) ? manufacturer.description : description),
+    manufacturerUrl: manufacturer?.url ?? null,
     technicalSpecs: (translation?.technicalSpecs ?? product.technicalSpecs) as Record<string, unknown> | null,
     usedFallback: locale !== "en" && !translation,
     priceMinor,
@@ -152,6 +159,7 @@ export function presentProduct(product: ProductRecord, locale: StoreLocale, pric
     priceSource: applicablePromotion ? "PROMOTION" as const : pricing.loyaltyEligible && loyaltyPriceMinor != null ? "LOYALTY" as const : "STANDARD" as const,
     currency: product.currency,
     type: product.type,
+    acceptsPreOrders: product.acceptsPreOrders,
     unitOfSale: product.unitOfSale,
     featured: product.featured,
     createdAt: product.createdAt,
@@ -160,7 +168,14 @@ export function presentProduct(product: ProductRecord, locale: StoreLocale, pric
       name: categoryTranslation?.name ?? product.category.name,
       slug: product.category.slug,
     },
-    applications: product.vehicleApplications.map((slug) => ({ slug, name: vehicleApplicationName(slug) })),
+    catalogueSections: catalogueSections(product.sourceCatalogueItems.map((item) => item.sourceCategory), product.brand?.name, categoryTranslation?.name ?? product.category.name),
+    variants: product.variants.map((item) => {
+      const standard = item.priceOverrideMinor ?? product.standardPriceMinor;
+      const loyalty = item.loyaltyPriceMinor ?? product.loyaltyPriceMinor;
+      const base = pricing.loyaltyEligible && loyalty != null ? loyalty : standard;
+      const promotion = resolvePromotionUnitPrice({ productId: product.id, categoryId: product.categoryId, baseUnitPriceMinor: base, loyaltyEligible: pricing.loyaltyEligible, promotions: pricing.promotions });
+      return { id: item.id, name: item.name, priceMinor: (promotion?.unitPriceMinor ?? base).toString(), standardPriceMinor: standard.toString(), available: Math.max(0, decimalNumber(item.inventory?.quantityOnHand) - decimalNumber(item.inventory?.quantityReserved)), minQuantity: item.minQuantity.toString(), quantityStep: item.quantityStep.toString() };
+    }),
     images: product.images.map((image) => ({
       url: image.url,
       alt: image.altText,
@@ -198,7 +213,7 @@ async function getStorefrontPricing() {
 }
 
 export const getNavigationData = cache(async (locale: StoreLocale) => {
-  const [categories, brands, applicationProducts] = await Promise.all([
+  const [categories, brands] = await Promise.all([
     db.category.findMany({
       where: { status: PublicationStatus.ACTIVE },
       include: { translations: true },
@@ -208,10 +223,8 @@ export const getNavigationData = cache(async (locale: StoreLocale) => {
       where: { status: PublicationStatus.ACTIVE },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     }),
-    db.product.findMany({ where: { status: PublicationStatus.ACTIVE }, select: { vehicleApplications: true } }),
   ]);
   const dbLocale = localeToDb[locale];
-  const usedApplications = new Set(applicationProducts.flatMap((product) => product.vehicleApplications));
   return {
     categories: categories.map((category) => ({
       slug: category.slug,
@@ -219,7 +232,6 @@ export const getNavigationData = cache(async (locale: StoreLocale) => {
       description: category.translations.find((item) => item.locale === dbLocale)?.description ?? category.description,
     })),
     brands: brands.map(({ slug, name, logoUrl }) => ({ slug, name, logoUrl })),
-    applications: VEHICLE_APPLICATIONS.filter((application) => usedApplications.has(application.slug)),
   };
 });
 
@@ -308,7 +320,6 @@ export async function getCatalog(locale: StoreLocale, filters: CatalogFilters) {
       : {}),
     ...(category ? { category: { slug: category } } : {}),
     ...(filters.brand ? { brand: { slug: filters.brand } } : {}),
-    ...(filters.application ? { vehicleApplications: { has: filters.application } } : {}),
     ...(filters.availability
       ? {
           variants: {
@@ -389,7 +400,7 @@ export const getProductBySlug = cache(async (slug: string, locale: StoreLocale) 
   if (!record) return null;
   const pricing = await getStorefrontPricing();
   const product = presentProduct(record, locale, pricing);
-  const manual = record.relatedFrom.map((item) => presentProduct(item.targetProduct, locale, pricing));
+  const manual = record.relatedFrom.filter((item) => item.targetProduct.status === PublicationStatus.ACTIVE).map((item) => presentProduct(item.targetProduct, locale, pricing));
   const related = manual.length
     ? manual
     : (
@@ -400,7 +411,10 @@ export const getProductBySlug = cache(async (slug: string, locale: StoreLocale) 
           orderBy: { createdAt: "desc" },
         })
       ).map((item) => presentProduct(item, locale, pricing));
-  return { product, related };
+  const candidates = await db.product.findMany({ where: { status: PublicationStatus.ACTIVE, brandId: record.brandId, categoryId: record.categoryId, type: record.type }, include: productInclude });
+  const family = productFamilyKey(record.name);
+  const sizes = candidates.filter((item) => productFamilyKey(item.name) === family).map((item) => ({ slug: item.slug, name: presentProduct(item, locale, pricing).name }));
+  return { product, related, sizes };
 });
 
 export async function getProductSlugRedirect(slug: string) {

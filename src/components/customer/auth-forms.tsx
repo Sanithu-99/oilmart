@@ -20,7 +20,7 @@ export function CustomerLoginForm({ locale }: { locale: StoreLocale }) {
   const search = useSearchParams();
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
-  return <form className="customer-form" onSubmit={async (event) => {
+  return <form noValidate className="customer-form" onSubmit={async (event) => {
     event.preventDefault(); setPending(true); setError("");
     const data = new FormData(event.currentTarget);
     const result = await signIn("customer-credentials", { email: data.get("email"), password: data.get("password"), redirect: false });
@@ -44,7 +44,7 @@ export function CustomerLoginForm({ locale }: { locale: StoreLocale }) {
 
 export function RegistrationForm({ locale }: { locale: StoreLocale }) {
   const [state, action, pending] = useActionState(registerCustomerAction, initial);
-  return <form className="customer-form" action={action}>
+  return <form noValidate className="customer-form" action={action}>
     <input type="hidden" name="locale" value={locale}/>
     <div className="customer-form-grid"><label>First name<input name="firstName" autoComplete="given-name" required/></label><label>Last name<input name="lastName" autoComplete="family-name" required/></label></div>
     <label>Email address<input name="email" type="email" autoComplete="email" required/></label>
@@ -59,20 +59,20 @@ export function RegistrationForm({ locale }: { locale: StoreLocale }) {
 
 export function ForgotPasswordForm({ locale }: { locale: StoreLocale }) {
   const [state, action, pending] = useActionState(requestPasswordResetAction, initial);
-  return <form className="customer-form" action={action}><input type="hidden" name="locale" value={locale}/><label>Email address<input name="email" type="email" autoComplete="email" required/></label><Feedback state={state}/><button className="button-primary justify-center" disabled={pending}>{pending ? "Preparing…" : "Request reset link"}</button></form>;
+  return <form noValidate className="customer-form" action={action}><input type="hidden" name="locale" value={locale}/><label>Email address<input name="email" type="email" autoComplete="email" required/></label><Feedback state={state}/><button className="button-primary justify-center" disabled={pending}>{pending ? "Preparing…" : "Request reset link"}</button></form>;
 }
 
 export function ResetPasswordForm({ email, token }: { email: string; token: string }) {
   const [state, action, pending] = useActionState(resetCustomerPasswordAction, initial);
-  return <form className="customer-form" action={action}><input type="hidden" name="email" value={email}/><input type="hidden" name="token" value={token}/><label>New password<input name="password" type="password" autoComplete="new-password" minLength={10} required/></label><label>Confirm password<input name="confirmPassword" type="password" autoComplete="new-password" minLength={10} required/></label><Feedback state={state}/><button className="button-primary justify-center" disabled={pending}>{pending ? "Updating…" : "Update password"}</button></form>;
+  return <form noValidate className="customer-form" action={action}><input type="hidden" name="email" value={email}/><input type="hidden" name="token" value={token}/><label>New password<input name="password" type="password" autoComplete="new-password" minLength={10} required/></label><label>Confirm password<input name="confirmPassword" type="password" autoComplete="new-password" minLength={10} required/></label><Feedback state={state}/><button className="button-primary justify-center" disabled={pending}>{pending ? "Updating…" : "Update password"}</button></form>;
 }
 
 export function VerifyEmailForm({ locale, email, token }: { locale: StoreLocale; email: string; token: string }) {
   const [state, action, pending] = useActionState(verifyEmailAction, initial);
-  return <form className="customer-form" action={action}><input type="hidden" name="email" value={email}/><input type="hidden" name="token" value={token}/><Feedback state={state}/><button className="button-primary justify-center" disabled={!email || !token || pending}>{pending ? "Verifying…" : "Verify email"}</button>{state.ok && <Link className="button-secondary justify-center" href={`/${locale}/login`}>Continue to sign in</Link>}</form>;
+  return <form noValidate className="customer-form" action={action}><input type="hidden" name="email" value={email}/><input type="hidden" name="token" value={token}/><Feedback state={state}/><button className="button-primary justify-center" disabled={!email || !token || pending}>{pending ? "Verifying…" : "Verify email"}</button>{state.ok && <Link className="button-secondary justify-center" href={`/${locale}/login`}>Continue to sign in</Link>}</form>;
 }
 
 export function ResendVerificationForm({ locale }: { locale: StoreLocale }) {
   const [state, action, pending] = useActionState(resendVerificationAction, initial);
-  return <form className="customer-form" action={action}><input type="hidden" name="locale" value={locale}/><label>Email address<input name="email" type="email" required/></label><Feedback state={state}/><button className="button-secondary justify-center" disabled={pending}>{pending ? "Preparing…" : "Resend verification link"}</button></form>;
+  return <form noValidate className="customer-form" action={action}><input type="hidden" name="locale" value={locale}/><label>Email address<input name="email" type="email" required/></label><Feedback state={state}/><button className="button-secondary justify-center" disabled={pending}>{pending ? "Preparing…" : "Resend verification link"}</button></form>;
 }

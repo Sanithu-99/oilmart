@@ -31,7 +31,7 @@ async function loyaltyEligibleFor(customerId: string | null | undefined) {
 }
 
 async function presentCart(cart: CartRecord | null) {
-  if (!cart) return { id: null, itemCount: 0, items: [], subtotalMinor: "0", totalMinor: "0", currency: "LKR", hasUnavailablePrices: false };
+  if (!cart) return { id: null, itemCount: 0, items: [], subtotalMinor: "0", totalMinor: "0", currency: "LKR", hasUnavailablePrices: false, cardTotalMinor: "0", cardSurchargeMinor: "0" };
   const loyaltyEligible = await loyaltyEligibleFor(cart.customerId);
   const now = new Date();
   const promotions = await db.promotion.findMany({
@@ -54,6 +54,7 @@ async function presentCart(cart: CartRecord | null) {
     })?.unitPriceMinor,
   }));
   const pricing = calculatePrice(lines, { loyaltyEligible });
+  const cardPricing = calculatePrice(lines, { loyaltyEligible, paymentMethod: "CARD" });
   const hasUnavailablePrices = lines.some((line) => line.standardUnitPriceMinor <= 0n);
   return {
     id: cart.id,
@@ -62,6 +63,8 @@ async function presentCart(cart: CartRecord | null) {
     subtotalMinor: pricing.subtotalMinor.toString(),
     totalMinor: pricing.totalMinor.toString(),
     hasUnavailablePrices,
+    cardTotalMinor: cardPricing.totalMinor.toString(),
+    cardSurchargeMinor: cardPricing.surchargeMinor.toString(),
     items: cart.items.map((item, index) => {
       const available = Math.max(
         0,
@@ -73,7 +76,7 @@ async function presentCart(cart: CartRecord | null) {
         productId: item.productId,
         variantId: item.variantId,
         slug: item.product.slug,
-        name: item.product.name,
+        name: item.variant.name === "Default" ? item.product.name : `${item.product.name} - ${item.variant.name}`,
         sku: item.variant.sku,
         quantity: item.quantity.toString(),
         quantityStep: item.variant.quantityStep.toString(),

@@ -147,6 +147,32 @@ body {
 }
 
 body { overflow-x: hidden; }
+/* Shared commerce controls retain the storefront's established tokens. */
+:root { --scrollbar-thumb: var(--store-steel); --scrollbar-track: var(--store-warm-ivory); --scrollbar-hover: var(--store-deep); }
+* { scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track); scrollbar-width: thin; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+*::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border: 2px solid var(--scrollbar-track); border-radius: 8px; }
+*::-webkit-scrollbar-thumb:hover, *::-webkit-scrollbar-thumb:active { background: var(--scrollbar-hover); }
+@media (forced-colors: active) { * { scrollbar-color: auto; } }
+.price-change-notice { margin-top: .4rem; color: var(--store-steel); font-size: .72rem; line-height: 1.5; }
+.purchase-stock-notice { margin-top: 1rem; padding: .9rem 1rem; border-left: 3px solid var(--store-accent); background: var(--store-soft-accent); color: var(--store-deep); font-size: .85rem; line-height: 1.65; }
+.product-size-label, .request-form > label { display: grid; gap: .45rem; font-size: .875rem; font-weight: 600; }
+.product-options { margin-top: 1.25rem; }
+.product-size-label select, .request-form input:not([type=checkbox]), .request-form textarea, .request-form select { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .7rem .8rem; background: var(--surface); color: var(--store-ink); font: inherit; }
+.product-size-label select { margin-top: .4rem; }
+.request-form { display: grid; gap: 1.25rem; align-content: start; }
+.request-form small { font-size: .75rem; font-weight: 400; color: var(--store-steel); }
+.request-form .request-consent { display: flex; align-items: flex-start; gap: .7rem; font-weight: 400; }
+.request-consent input { margin-top: .25rem; flex-shrink: 0; width: 18px; height: 18px; }
+.request-form [aria-invalid=true] { border-color: var(--store-accent); outline: 1px solid var(--store-accent); }
+.request-error { padding: .75rem; border-left: 3px solid var(--store-accent); background: var(--store-soft-accent); color: var(--store-accent-strong); }
+.request-history article, .request-review-card { padding: 1.5rem 0; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
+.request-history p, .request-review-card p { margin-top: .6rem; font-size: .875rem; line-height: 1.7; }
+.request-form button { min-height: 44px; }
+button:enabled, select, summary { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+:where(a, button, input, textarea, select, summary):focus-visible { outline: 2px solid var(--store-accent); outline-offset: 3px; }
 a, button, input, select { transition: color var(--duration-base) var(--ease-standard), background-color var(--duration-base) var(--ease-standard), border-color var(--duration-base) var(--ease-standard), transform var(--duration-base) var(--ease-standard); }
 
 .font-display { font-family: var(--font-heading); font-weight: 700; letter-spacing: -.025em; }

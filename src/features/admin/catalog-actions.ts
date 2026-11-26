@@ -18,7 +18,6 @@ import {
   type Prisma,
 } from "@/generated/prisma/client";
 import { db } from "@/lib/db/client";
-import { VEHICLE_APPLICATION_SLUGS } from "@/lib/catalog/applications";
 
 const slug = z.string().trim().min(2).max(120).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const required = z.string().trim().min(1).max(500);
@@ -37,7 +36,8 @@ function technicalSpecsFromForm(form: FormData): Prisma.InputJsonObject | undefi
   const publicFields = [
     ["Fluid Type", text(form, "specFluidType")],
     ["Volume", text(form, "specVolume")],
-    ["Suitable For", text(form, "specSuitableFor")],
+    ["Pack offer", text(form, "packOffer")],
+    ["Manufacturer URL", text(form, "manufacturerUrl")],
     ["Key Benefits", text(form, "specKeyBenefits")],
   ] as const;
   const technicalSpecs = {
@@ -89,8 +89,17 @@ export async function saveProductAction(form: FormData) {
     unitOfSale: text(form, "unitOfSale"),
   });
   const standardPriceMinor = moneyMinor(text(form, "standardPrice"));
-  const loyaltyPriceMinor = null;
-  const vehicleApplications = z.array(z.enum(VEHICLE_APPLICATION_SLUGS)).parse(form.getAll("vehicleApplications"));
+  const minimum = parsed.type === ProductType.LOOSE_OIL ? text(form, "looseMinQuantity") || "0.5" : text(form, "minQuantity") || "1";
+  const increment = parsed.type === ProductType.LOOSE_OIL ? text(form, "looseIncrement") || "0.5" : text(form, "quantityStep") || "1";
+  for (const value of [minimum, increment]) {
+    const quantity = new Decimal(value);
+    if (!quantity.isFinite() || quantity.lte(0) || quantity.decimalPlaces() > 3) throw new Error("Minimum and increment must be positive quantities with up to three decimals.");
+  }
+
+  const loyaltyPriceMinor = text(form, "loyaltyPrice") ? moneyMinor(text(form, "loyaltyPrice")) : null;
+  if (loyaltyPriceMinor != null && (loyaltyPriceMinor <= 0n || loyaltyPriceMinor >= standardPriceMinor)) throw new Error("Loyalty price must be positive and lower than the retail price.");
+  const manufacturerUrl = text(form, "manufacturerUrl");
+  if (manufacturerUrl && (!z.url().safeParse(manufacturerUrl).success || !/^https:\/\//i.test(manufacturerUrl))) throw new Error("Enter a valid official manufacturer URL.");
   const translations = [Locale.SI, Locale.TA].flatMap((locale) => {
     const prefix = locale.toLowerCase();
     const name = text(form, `${prefix}Name`);
@@ -114,7 +123,6 @@ export async function saveProductAction(form: FormData) {
       brandId: parsed.brandId ?? null,
       standardPriceMinor,
       loyaltyPriceMinor,
-      vehicleApplications,
       status: parsed.status,
       type: parsed.type,
       unitOfSale: parsed.unitOfSale,
@@ -131,8 +139,8 @@ export async function saveProductAction(form: FormData) {
           productId: product.id,
           sku: `${parsed.sku}-DEFAULT`,
           name: "Default",
-          minQuantity: text(form, "minQuantity") || "1",
-          quantityStep: text(form, "quantityStep") || "1",
+          minQuantity: minimum,
+          quantityStep: increment,
         },
       });
       await tx.inventory.create({ data: { variantId: variant.id, lowStockThreshold: text(form, "lowStockThreshold") || "3" } });
@@ -141,7 +149,7 @@ export async function saveProductAction(form: FormData) {
       if (variant) {
         await tx.productVariant.update({
           where: { id: variant.id },
-          data: { minQuantity: text(form, "minQuantity") || "1", quantityStep: text(form, "quantityStep") || "1" },
+          data: { minQuantity: minimum, quantityStep: increment },
         });
         if (text(form, "lowStockThreshold")) {
           await tx.inventory.updateMany({ where: { variantId: variant.id }, data: { lowStockThreshold: text(form, "lowStockThreshold") } });
@@ -195,7 +203,6 @@ export async function updateProductPriceAction(form: FormData) {
   const productId = z.string().min(1).parse(form.get("productId"));
   const expectedUpdatedAt = z.coerce.date().parse(form.get("expectedUpdatedAt"));
   const standardPriceMinor = moneyMinor(text(form, "standardPrice"));
-  const loyaltyPriceMinor = null;
   const reason = z.string().trim().min(3).max(240).parse(form.get("priceReason"));
 
   const product = await db.$transaction(async (tx) => {
@@ -203,18 +210,20 @@ export async function updateProductPriceAction(form: FormData) {
       where: { id: productId },
       include: { variants: { where: { active: true }, orderBy: { sortOrder: "asc" }, take: 1 } },
     });
+    const loyaltyPriceMinor = before.loyaltyPriceMinor;
+    if (loyaltyPriceMinor != null && loyaltyPriceMinor >= standardPriceMinor) throw new Error("Retail must remain higher than the saved loyalty price. Edit both prices on the product page.");
     const updated = await tx.product.updateMany({
       where: { id: productId, updatedAt: expectedUpdatedAt },
       data: { standardPriceMinor, loyaltyPriceMinor },
     });
     if (updated.count !== 1) throw new Error("This product changed while you were editing it. Reload and try again.");
     const defaultVariant = before.variants[0];
-    if (defaultVariant && (defaultVariant.priceOverrideMinor != null || defaultVariant.loyaltyPriceMinor != null)) {
+    if (defaultVariant?.priceOverrideMinor != null) {
+      if (defaultVariant.loyaltyPriceMinor != null && defaultVariant.loyaltyPriceMinor >= standardPriceMinor) throw new Error("Update the variant loyalty price before reducing retail below it.");
       await tx.productVariant.update({
         where: { id: defaultVariant.id },
         data: {
           ...(defaultVariant.priceOverrideMinor != null ? { priceOverrideMinor: standardPriceMinor } : {}),
-          ...(defaultVariant.loyaltyPriceMinor != null ? { loyaltyPriceMinor } : {}),
         },
       });
     }
@@ -279,7 +288,7 @@ export async function saveVariantAction(form: FormData) {
     name: required.parse(form.get("variantName")),
     attributes,
     priceOverrideMinor: override ? moneyMinor(override) : null,
-    loyaltyPriceMinor: null,
+    loyaltyPriceMinor: text(form, "variantLoyaltyPrice") ? moneyMinor(text(form, "variantLoyaltyPrice")) : null,
     minQuantity: text(form, "variantMinQuantity") || "1",
     quantityStep: text(form, "variantQuantityStep") || "1",
     sortOrder: Number(text(form, "variantSortOrder") || 0),
@@ -287,6 +296,9 @@ export async function saveVariantAction(form: FormData) {
   };
   await db.$transaction(async (tx) => {
     const before = variantId ? await tx.productVariant.findFirst({ where: { id: variantId, productId } }) : null;
+    if (variantId && !before) throw new Error("Variant does not belong to this product.");
+    const parent = await tx.product.findUniqueOrThrow({ where: { id: productId } });
+    if (data.loyaltyPriceMinor != null && (data.loyaltyPriceMinor <= 0n || data.loyaltyPriceMinor >= (data.priceOverrideMinor ?? parent.standardPriceMinor))) throw new Error("Variant loyalty price must be lower than its retail price.");
     const variant = variantId
       ? await tx.productVariant.update({ where: { id: variantId }, data })
       : await tx.productVariant.create({ data });

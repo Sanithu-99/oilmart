@@ -30,7 +30,7 @@ function dateValue(value: Date | null | undefined) {
 function PromotionForm({ promotion, products, categories }: { promotion?: PromotionRecord; products: Array<{ id: string; name: string }>; categories: Array<{ id: string; name: string }> }) {
   const selectedProducts = new Set(promotion?.products.map((item) => item.productId));
   const selectedCategories = new Set(promotion?.categories.map((item) => item.categoryId));
-  return <form action={savePromotionAction} className="admin-inline-form">
+  return <form noValidate action={savePromotionAction} className="admin-inline-form">
     {promotion && <input type="hidden" name="id" value={promotion.id}/>}<label className="admin-field span-2">Name<input name="name" defaultValue={promotion?.name} required/></label>
     <label className="admin-field">Type<select name="type" defaultValue={promotion?.type ?? PromotionType.PERCENTAGE}>{Object.values(PromotionType).map((item) => <option key={item}>{item}</option>)}</select></label>
     <label className="admin-field">Scope<select name="scope" defaultValue={promotion?.scope ?? DiscountScope.PRODUCT}>{[DiscountScope.PRODUCT, DiscountScope.CATEGORY].map((item) => <option key={item}>{item}</option>)}</select></label>

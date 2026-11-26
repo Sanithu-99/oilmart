@@ -6,7 +6,6 @@ import { setProductStatusAction, updateProductPriceAction } from "@/features/adm
 import { requireAdminPage } from "@/features/admin/auth/authorization";
 import { PublicationStatus, type Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db/client";
-import { VEHICLE_APPLICATIONS, vehicleApplicationName } from "@/lib/catalog/applications";
 import { formatLkr } from "@/lib/pricing/money";
 
 type SearchParams = {
@@ -14,7 +13,7 @@ type SearchParams = {
   status?: string;
   category?: string;
   pricing?: string;
-  application?: string;
+  images?: string;
   page?: string;
 };
 
@@ -41,7 +40,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
       ? { status: params.status as PublicationStatus }
       : {}),
     ...(params.category ? { categoryId: params.category } : {}),
-    ...(params.application ? { vehicleApplications: { has: params.application } } : {}),
+    ...(params.images === "missing" ? { images: { none: {} } } : {}),
     ...(params.pricing === "missing"
       ? { standardPriceMinor: 0n }
       : params.pricing === "priced"
@@ -73,12 +72,12 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
       <div><p className="admin-eyebrow">Inventory report catalogue</p><h1>Products</h1><p>{total} records match the current view. Retail-price changes update the storefront and every active cart.</p></div>
       {canWrite && <Link className="admin-primary-button" href="/admin/products/new"><Plus size={16}/> Add product</Link>}
     </div>
-    <form className="admin-filterbar">
+    <form noValidate className="admin-filterbar">
       <label><Search size={16}/><input name="q" defaultValue={params.q} placeholder="Search name, SKU or brand…"/></label>
       <select name="pricing" defaultValue={params.pricing}><option value="">All prices</option><option value="missing">Needs retail price</option><option value="priced">Retail price ready</option></select>
       <select name="status" defaultValue={params.status}><option value="">All statuses</option>{Object.values(PublicationStatus).map((item) => <option key={item}>{item}</option>)}</select>
       <select name="category" defaultValue={params.category}><option value="">All categories</option>{categories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select>
-      <select name="application" defaultValue={params.application}><option value="">All applications</option>{VEHICLE_APPLICATIONS.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}</select>
+      <select name="images" defaultValue={params.images}><option value="">All photos</option><option value="missing">Needs photo</option></select>
       <button>Apply filters</button>
     </form>
     <section className="admin-table-card">
@@ -92,10 +91,10 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
           const effectiveStandard = variant?.priceOverrideMinor ?? product.standardPriceMinor;
           return <tr key={product.id}>
             <td><div className="admin-product-cell">{image ? <Image src={image.url} alt="" width={48} height={48} unoptimized/> : <span><PackageSearch size={18}/></span>}<div><Link href={`/admin/products/${product.id}`}>{product.name}</Link><small>{product.sku} · {product.brand?.name ?? "Unbranded"}</small></div></div></td>
-            <td><strong>{product.category.name}</strong>{product.vehicleApplications.slice(0, 2).map((application) => <small key={application}>{vehicleApplicationName(application)}</small>)}</td>
+            <td><strong>{product.category.name}</strong></td>
             <td>{canWrite ? <details className={`admin-price-editor ${effectiveStandard === 0n ? "is-missing" : ""}`}>
               <summary><strong>{effectiveStandard > 0n ? formatLkr(effectiveStandard) : "Needs price"}</strong>{variant?.priceOverrideMinor != null && <small>Default variant retail override</small>}</summary>
-              <form action={updateProductPriceAction}>
+              <form noValidate action={updateProductPriceAction}>
                 <input type="hidden" name="productId" value={product.id}/>
                 <input type="hidden" name="expectedUpdatedAt" value={product.updatedAt.toISOString()}/>
                 <label>Retail price (LKR)<input name="standardPrice" inputMode="decimal" defaultValue={priceInput(effectiveStandard)} required/></label>
@@ -105,7 +104,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
             </details> : <strong>{effectiveStandard > 0n ? formatLkr(effectiveStandard) : "Needs price"}</strong>}</td>
             <td><span className={available <= Number(inventory?.lowStockThreshold ?? 0) ? "admin-stock-low" : "admin-stock-ok"}>{available.toFixed(3).replace(/\.000$/, "")} available</span></td>
             <td><span className={`admin-status admin-status-${product.status.toLowerCase()}`}>{product.status}</span></td>
-            <td><div className="admin-row-actions"><Link href={`/admin/products/${product.id}`}>Full edit</Link>{canWrite && <form action={setProductStatusAction}><input type="hidden" name="id" value={product.id}/><input type="hidden" name="status" value={product.status === "ARCHIVED" ? "DRAFT" : "ARCHIVED"}/><button>{product.status === "ARCHIVED" ? "Restore" : "Archive"}</button></form>}</div></td>
+            <td><div className="admin-row-actions"><Link href={`/admin/products/${product.id}`}>Full edit</Link>{canWrite && <form noValidate action={setProductStatusAction}><input type="hidden" name="id" value={product.id}/><input type="hidden" name="status" value={product.status === "ARCHIVED" ? "DRAFT" : "ARCHIVED"}/><button>{product.status === "ARCHIVED" ? "Restore" : "Archive"}</button></form>}</div></td>
           </tr>;
         })}</tbody>
       </table></div>

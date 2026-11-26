@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 
 import type { ClientCatalogBrand, ClientCatalogProduct } from "@/features/catalog/queries";
+import { commerceCopy } from "@/lib/i18n/commerce";
 import { getBrandLogoPath } from "@/lib/catalog/brand-logos";
 import { storeConfig } from "@/lib/config/store";
 import { inquiryListWhatsAppUrl, oilMatchWhatsAppUrl, productConfirmationWhatsAppUrl } from "@/lib/contact/whatsapp";
@@ -32,11 +33,9 @@ type InitialFilters = {
   q?: string;
   brand?: string;
   category?: string;
-  application?: string;
-  vehicle?: string;
   grade?: string;
   availability?: string;
-  sort?: string;
+  section?: string;
 };
 
 type CatalogExperienceProps = {
@@ -96,32 +95,9 @@ const spotlightCategories = [
   },
 ] as const;
 
-const vehicleOptions = [
-  { value: "", label: "Select vehicle type" },
-  { value: "motorcycle", label: "Motorcycle 4T" },
-  { value: "passenger", label: "Passenger Car" },
-  { value: "diesel", label: "Diesel Van & Lorry" },
-  { value: "transmission", label: "Gear & ATF" },
-  { value: "loose", label: "Loose Oil" },
-];
-
 const groupCategories: Record<string, string[]> = {
   engine: ["engine-oils"],
   motorcycle: ["motorcycle-oils"],
-  diesel: ["diesel-engine-oils"],
-  transmission: ["transmission-fluids", "gear-oils"],
-  loose: ["loose-oils"],
-};
-
-const vehicleApplications: Record<string, string[]> = {
-  motorcycle: ["four-stroke-motorcycles", "two-stroke-motorcycles", "motorcycles", "three-wheelers"],
-  passenger: ["passenger-cars", "petrol-engines", "hybrid-vehicles"],
-  diesel: ["diesel-engines", "heavy-duty-commercial", "commercial-vehicles", "light-commercial-vehicles"],
-};
-
-const vehicleCategories: Record<string, string[]> = {
-  motorcycle: ["motorcycle-oils"],
-  passenger: ["engine-oils"],
   diesel: ["diesel-engine-oils"],
   transmission: ["transmission-fluids", "gear-oils"],
   loose: ["loose-oils"],
@@ -147,7 +123,7 @@ const labels = {
     anyGrade: "Any grade",
     brands: "Shop trusted brands",
     brandBody: "Live SKU counts update with the current catalogue.",
-    search: "Search product, brand, grade or application",
+    search: "Search product, brand or grade",
     results: "products ready to browse",
     reset: "Clear all",
     allBrands: "All brands",
@@ -306,14 +282,7 @@ function normalize(value: string) {
 
 function categoryGroup(category?: string) {
   if (!category) return "all";
-  return Object.entries(groupCategories).find(([, slugs]) => slugs.includes(category))?.[0] ?? "all";
-}
-
-function matchesVehicle(product: ClientCatalogProduct, vehicle: string) {
-  if (!vehicle) return true;
-  const categoryMatch = vehicleCategories[vehicle]?.includes(product.category.slug) ?? false;
-  const applicationMatch = product.applications.some((application) => vehicleApplications[vehicle]?.includes(application.slug));
-  return categoryMatch || applicationMatch;
+  return Object.entries(groupCategories).find(([, slugs]) => slugs.includes(category))?.[0] ?? category;
 }
 
 function formatLkr(minor: string, locale: StoreLocale) {
@@ -356,11 +325,12 @@ function ProductTile({ product, locale, copy, selected, onToggle }: {
         <div className="discovery-price-row">
           {hasPrice ? <><strong><span>{copy.from}</span> {formatLkr(product.priceMinor, locale)}</strong>{discounted && <s>{formatLkr(product.standardPriceMinor, locale)}</s>}</> : <strong>{product.inStock ? copy.request : copy.requestUnavailable}</strong>}
         </div>
+        <p className="price-change-notice">{commerceCopy(locale).priceNotice}</p>
         <p className={`discovery-stock ${product.inStock ? "is-in" : "is-out"}`}><span/>{product.inStock ? "Live stock available" : "Confirm current stock"}</p>
       </div>
     </Link>
     <div className="discovery-product-actions">
-      {hasPrice && <AddToCart variantId={product.variant?.id} disabled={!product.inStock} label={product.inStock ? "Add to cart" : "Out of stock"}/>}
+      {hasPrice && product.variantCount > 1 ? <Link className="button-primary" href={`/${locale}/products/${product.slug}`}>{commerceCopy(locale).sizes}</Link> : hasPrice && <AddToCart variantId={product.variant?.id} disabled={!product.inStock} label={product.inStock ? "Add to cart" : "Out of stock"}/>}
       <a className="catalog-whatsapp-button" href={whatsappHref} target="_blank" rel="noreferrer"><MessageCircle size={17}/>{copy.whatsapp}</a>
       <button className={`catalog-quote-button ${selected ? "is-selected" : ""}`} type="button" onClick={onToggle} aria-pressed={selected}><span>{selected ? <Check size={16}/> : <ClipboardList size={16}/>}</span>{selected ? copy.quoted : copy.quote}</button>
     </div>
@@ -567,11 +537,11 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
   const deferredQuery = useDeferredValue(query);
   const [group, setGroup] = useState(categoryGroup(initialFilters.category));
   const [brand, setBrand] = useState(initialFilters.brand ?? "");
-  const [vehicle, setVehicle] = useState(initialFilters.vehicle ?? "");
-  const [application, setApplication] = useState(initialFilters.application ?? "");
+  const [section, setSection] = useState(initialFilters.section ?? "");
+  const commerce = commerceCopy(locale);
+  const sectionOptions = [...new Set(products.flatMap((product) => product.catalogueSections))].sort();
   const [grade, setGrade] = useState(initialFilters.grade ?? "");
   const [stock, setStock] = useState(initialFilters.availability === "in" ? "in" : "");
-  const [sort, setSort] = useState(initialFilters.sort ?? "recommended");
   const [visible, setVisible] = useState(showHero ? 12 : 24);
   const [inquiryIds, setInquiryIds] = useState<string[]>([]);
   const [spotlightIndex, setSpotlightIndex] = useState(0);
@@ -591,7 +561,7 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
   useEffect(() => {
     if (!syncUrl) return;
     const url = new URL(window.location.href);
-    const next: Record<string, string> = { q: query, brand, vehicle, application, grade, availability: stock, sort: sort === "recommended" ? "" : sort };
+    const next: Record<string, string> = { q: query, brand, section, grade, availability: stock, vehicle: "", application: "", sort: "" };
     const category = group === "all" ? "" : groupCategories[group]?.[0] ?? "";
     next.category = category;
     for (const [key, value] of Object.entries(next)) {
@@ -599,33 +569,30 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
       else url.searchParams.delete(key);
     }
     window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
-  }, [application, brand, grade, group, query, sort, stock, syncUrl, vehicle]);
+  }, [section, brand, grade, group, query, stock, syncUrl]);
 
   const gradeOptions = useMemo(() => {
-    const values = new Set(products.filter((product) => matchesVehicle(product, vehicle)).map((product) => product.grade).filter((value): value is string => Boolean(value)));
+    const values = new Set(products.filter((product) => !section || product.catalogueSections.includes(section)).map((product) => product.grade).filter((value): value is string => Boolean(value)));
     return [...values].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-  }, [products, vehicle]);
+  }, [products, section]);
 
   const filtered = useMemo(() => {
     const tokens = normalize(deferredQuery).split(" ").filter(Boolean);
-    const categorySlugs = groupCategories[group];
+    const categorySlugs = groupCategories[group] ?? (group === "all" ? undefined : [group]);
     const result = products.filter((product) => {
       const indexed = `${product.searchText} ${normalize(product.searchText).replace(/ /g, "")}`;
       if (tokens.length && !tokens.every((token) => indexed.includes(token))) return false;
       if (categorySlugs && !categorySlugs.includes(product.category.slug)) return false;
       if (brand && product.brand?.slug !== brand) return false;
-      if (!matchesVehicle(product, vehicle)) return false;
-      if (application && !product.applications.some((item) => item.slug === application)) return false;
+      if (section && !product.catalogueSections.includes(section)) return false;
       if (grade && product.grade !== grade) return false;
       if (stock === "in" && !product.inStock) return false;
       return true;
     });
     return result.sort((a, b) => {
-      if (sort === "price-asc") return Number(BigInt(a.priceMinor) - BigInt(b.priceMinor));
-      if (sort === "price-desc") return Number(BigInt(b.priceMinor) - BigInt(a.priceMinor));
       return Number(b.inStock) - Number(a.inStock);
     });
-  }, [application, brand, deferredQuery, grade, group, products, sort, stock, vehicle]);
+  }, [section, brand, deferredQuery, grade, group, products, stock]);
 
   const inquiryProducts = inquiryIds.map((id) => products.find((product) => product.id === id)).filter((product): product is ClientCatalogProduct => Boolean(product));
   const minimumRemaining = Math.max(0, 3 - inquiryProducts.length);
@@ -636,16 +603,13 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
 
   function chooseGroup(nextGroup: string) {
     setGroup(nextGroup);
-    setVehicle("");
-    setApplication("");
+    setSection("");
     resetVisible();
     window.setTimeout(() => document.getElementById("catalog-grid")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
   }
 
   function applySelector() {
-    const nextGroup = vehicle === "transmission" ? "transmission" : vehicle === "loose" ? "loose" : vehicle === "motorcycle" ? "motorcycle" : vehicle === "diesel" ? "diesel" : vehicle === "passenger" ? "engine" : group;
-    setGroup(nextGroup);
-    setApplication("");
+    setGroup("all");
     resetVisible();
     window.setTimeout(() => document.getElementById("catalog-grid")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
   }
@@ -664,11 +628,9 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
     setQuery("");
     setGroup("all");
     setBrand("");
-    setVehicle("");
-    setApplication("");
+    setSection("");
     setGrade("");
     setStock("");
-    setSort("recommended");
     resetVisible();
   }
 
@@ -700,8 +662,8 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
             </div>
           </div>
           <div className="quick-selector-card" id="quick-oil-selector">
-            <div className="quick-selector-heading"><div><h2>{copy.selector}</h2></div><p>{copy.selectorHint}</p><a className="selector-location" href={storeConfig.mapsUrl} target="_blank" rel="noreferrer"><span className="status-dot"/><span>{copy.status}</span><strong><MapPin size={13}/>{copy.directions}</strong></a></div>
-            <label><span>{copy.vehicle}</span><div className="selector-control"><select value={vehicle} onChange={(event) => { setVehicle(event.target.value); setGrade(""); }}><option value="">{vehicleOptions[0].label}</option>{vehicleOptions.slice(1).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><ChevronDown size={17}/></div></label>
+            <div className="quick-selector-heading"><div><h2>{copy.selector}</h2></div><p>{commerce.selectorHint}</p><a className="selector-location" href={storeConfig.mapsUrl} target="_blank" rel="noreferrer"><span className="status-dot"/><span>{copy.status}</span><strong><MapPin size={13}/>{copy.directions}</strong></a></div>
+            <label><span>{commerce.category}</span><div className="selector-control"><select value={section} onChange={(event) => { setSection(event.target.value); setGroup("all"); setGrade(""); }}><option value="">{commerce.allCategories}</option>{sectionOptions.map((item) => <option key={item} value={item}>{item}</option>)}</select><ChevronDown size={17}/></div></label>
             <label><span>{copy.grade}</span><div className="selector-control"><select value={grade} onChange={(event) => setGrade(event.target.value)}><option value="">{copy.anyGrade}</option>{gradeOptions.map((item) => <option value={item} key={item}>{item}</option>)}</select><ChevronDown size={17}/></div></label>
             <button type="button" onClick={applySelector}><span>{copy.selectorAction.replace("{count}", String(products.length))}</span><ArrowRight size={17}/></button>
           </div>
@@ -729,13 +691,13 @@ export function CatalogExperience({ products, brands, locale, dictionary, initia
         </section>
 
         <div className="instant-filter-bar">
-          <label className="instant-search"><Search size={19}/><input ref={searchInput} name="q" value={query} onChange={(event) => { setQuery(event.target.value); resetVisible(); }} placeholder={copy.search} autoComplete="off"/><kbd>⌘ K</kbd></label>
+          <label className="instant-search"><Search size={19}/><input ref={searchInput} name="q" value={query} onChange={(event) => { setQuery(event.target.value); resetVisible(); }} placeholder={dictionary.catalog.search} aria-label={dictionary.catalog.search} autoComplete="off"/>{query && <button type="button" aria-label={dictionary.catalog.clear} onClick={() => { setQuery(""); resetVisible(); searchInput.current?.focus(); }}><X size={16}/></button>}<kbd>⌘ K</kbd></label>
           <label className="instant-select"><span className="sr-only">Brand</span><select name="brand" value={brand} onChange={(event) => { setBrand(event.target.value); resetVisible(); }}><option value="">{copy.allBrands}</option>{brands.map((item) => <option value={item.slug} key={item.slug}>{item.name} ({item.count})</option>)}</select><ChevronDown size={15}/></label>
           <label className="instant-select"><span className="sr-only">Availability</span><select name="availability" value={stock} onChange={(event) => { setStock(event.target.value); resetVisible(); }}><option value="">{copy.anyStock}</option><option value="in">{copy.inStock}</option></select><ChevronDown size={15}/></label>
-          <label className="instant-select"><span className="sr-only">Sort</span><select value={sort} onChange={(event) => { setSort(event.target.value); resetVisible(); }}><option value="recommended">{copy.newest}</option><option value="price-asc">{copy.priceLow}</option><option value="price-desc">{copy.priceHigh}</option></select><ChevronDown size={15}/></label>
+          <label className="instant-select"><span className="sr-only">{commerce.category}</span><select value={section} onChange={(event) => { setSection(event.target.value); setGroup("all"); resetVisible(); }}><option value="">{commerce.allCategories}</option>{sectionOptions.map((item) => <option key={item}>{item}</option>)}</select><ChevronDown size={15}/></label>
         </div>
 
-        <div className="catalog-result-heading" id="catalog-grid"><div><strong>{filtered.length}</strong><span>{copy.results}</span></div>{(query || group !== "all" || brand || vehicle || application || grade || stock || sort !== "recommended") && <button type="button" onClick={clearFilters}><X size={15}/>{copy.reset}</button>}</div>
+        <div className="catalog-result-heading" id="catalog-grid"><div><strong>{filtered.length}</strong><span>{copy.results}</span></div>{(query || group !== "all" || brand || section || grade || stock) && <button type="button" onClick={clearFilters}><X size={15}/>{copy.reset}</button>}</div>
 
         {filtered.length ? <><div className="discovery-product-grid">{filtered.slice(0, Math.min(8, visible)).map((product) => <ProductTile key={product.id} product={product} locale={locale} copy={copy} selected={inquiryIds.includes(product.id)} onToggle={() => toggleInquiry(product.id)}/>)}{showHero && filtered.length >= 8 && <PerformanceFilm copy={copy}/>} {filtered.slice(8, visible).map((product) => <ProductTile key={product.id} product={product} locale={locale} copy={copy} selected={inquiryIds.includes(product.id)} onToggle={() => toggleInquiry(product.id)}/>)}</div>{visible < filtered.length && <button className="catalog-load-more" type="button" onClick={() => setVisible((current) => current + 24)}>{copy.more}<span>{Math.min(24, filtered.length - visible)}</span></button>}</> : <div className="catalog-empty"><Search size={30}/><p>{copy.empty}</p><button type="button" onClick={clearFilters}>{copy.reset}</button></div>}
       </div>

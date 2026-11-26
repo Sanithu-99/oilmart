@@ -1,20 +1,22 @@
 "use client";
 
+import { stepQuantity, belowMinimum, exceedsAvailable } from "@/lib/quantity";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { MessageCircle, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 
+import { commerceCopy } from "@/lib/i18n/commerce";
 import { cartOrderWhatsAppUrl } from "@/lib/contact/whatsapp";
 
 type CartItem = {
-  id: string; variantId: string; slug: string; name: string; sku: string; quantity: string; quantityStep: string;
+  id: string; variantId: string; slug: string; name: string; sku: string; quantity: string; quantityStep: string; minQuantity: string;
   available: number; inStock: boolean; priceAvailable: boolean; standardUnitPriceMinor: string; unitPriceMinor: string; lineTotalMinor: string;
   priceSource: "STANDARD" | "LOYALTY" | "PROMOTION";
   image: { url: string; alt: string } | null;
 };
-type Cart = { itemCount: number; items: CartItem[]; subtotalMinor: string; totalMinor: string; currency: string; hasUnavailablePrices: boolean };
+type Cart = { cardTotalMinor: string; cardSurchargeMinor: string; itemCount: number; items: CartItem[]; subtotalMinor: string; totalMinor: string; currency: string; hasUnavailablePrices: boolean };
 type CartContextValue = {
   cart: Cart | null; open: boolean; setOpen(value: boolean): void;
   add(variantId: string, quantity?: string): Promise<void>;
@@ -98,12 +100,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             {cart.items.map((item) => <li className="flex gap-4 border-b pb-5" key={item.id}>
               <div className="relative h-24 w-20 shrink-0 rounded-xl bg-[#f2eee5]">{item.image && <Image src={item.image.url} alt={item.image.alt} fill sizes="80px" className="object-contain p-2" />}</div>
               <div className="min-w-0 flex-1"><Link href={`/${locale}/products/${item.slug}`} onClick={() => setOpen(false)} className="font-display text-lg leading-tight hover:text-amber-700">{item.name}</Link><div className="mt-1 flex flex-wrap items-baseline gap-2"><p className="text-sm text-muted-foreground">{item.priceAvailable ? format(item.unitPriceMinor) : labels.confirmation}</p>{item.priceAvailable && BigInt(item.unitPriceMinor) < BigInt(item.standardUnitPriceMinor) && <p className="text-xs text-slate-400 line-through">{format(item.standardUnitPriceMinor)}</p>}{item.priceAvailable && item.priceSource !== "STANDARD" && <span className="w-full text-[9px] font-bold uppercase tracking-[.11em] text-amber-800">{item.priceSource === "LOYALTY" ? labels.loyalty : labels.promotion}</span>}</div>
-                <div className="mt-3 flex items-center justify-between"><div className="quantity-control"><button onClick={() => Number(item.quantity) <= 1 ? value.remove(item.id) : value.update(item.id, String(Number(item.quantity)-Number(item.quantityStep)))}><Minus size={14}/></button><span>{item.quantity}</span><button disabled={Number(item.quantity) >= item.available} onClick={() => value.update(item.id, String(Number(item.quantity)+Number(item.quantityStep)))}><Plus size={14}/></button></div><button className="text-amber-700" onClick={() => value.remove(item.id)}><Trash2 size={17}/><span className="sr-only">Remove</span></button></div>
+                <p className="price-change-notice">{commerceCopy(locale).priceNotice}</p><div className="mt-3 flex items-center justify-between"><div className="quantity-control"><button onClick={() => belowMinimum(stepQuantity(item.quantity, item.quantityStep, -1), item.minQuantity) ? value.remove(item.id) : value.update(item.id, stepQuantity(item.quantity, item.quantityStep, -1))}><Minus size={14}/></button><span>{item.quantity}</span><button disabled={exceedsAvailable(stepQuantity(item.quantity, item.quantityStep, 1), item.available)} onClick={() => value.update(item.id, stepQuantity(item.quantity, item.quantityStep, 1))}><Plus size={14}/></button></div><button className="text-amber-700" onClick={() => value.remove(item.id)}><Trash2 size={17}/><span className="sr-only">Remove</span></button></div>
               </div>
             </li>)}
           </ul>}
         </div>
-        {Boolean(cart?.items.length) && <div className="border-t p-6">{cart!.hasUnavailablePrices && <p className="mb-4 rounded-xl bg-[#f4efe5] p-3 text-xs leading-5 text-muted-foreground">One or more prices changed to “confirm with store”. Review the cart before ordering.</p>}<div className="mb-5 flex justify-between"><span>Subtotal</span><strong className="font-display text-xl">{format(cart!.subtotalMinor)}</strong></div><a href={cartOrderWhatsAppUrl(cart!)} target="_blank" rel="noreferrer" className="order-whatsapp-button w-full" onClick={() => setOpen(false)}><MessageCircle size={18}/>{labels.orderWhatsApp}</a><Link href={`/${locale}/cart`} onClick={() => setOpen(false)} className="button-secondary mt-3 w-full justify-center">View cart</Link></div>}
+        {Boolean(cart?.items.length) && <div className="border-t p-6">{cart!.hasUnavailablePrices && <p className="mb-4 rounded-xl bg-[#f4efe5] p-3 text-xs leading-5 text-muted-foreground">One or more prices changed to “confirm with store”. Review the cart before ordering.</p>}<div className="mb-5 flex justify-between"><span>Subtotal</span><strong className="font-display text-xl">{format(cart!.subtotalMinor)}</strong></div><p className="price-change-notice">{commerceCopy(locale).priceNotice}</p><p className="mb-4 text-xs leading-5">{commerceCopy(locale).stockNotice}</p><a href={cartOrderWhatsAppUrl(cart!)} target="_blank" rel="noreferrer" className="order-whatsapp-button w-full" onClick={() => setOpen(false)}><MessageCircle size={18}/>{labels.orderWhatsApp}</a><Link href={`/${locale}/cart`} onClick={() => setOpen(false)} className="button-secondary mt-3 w-full justify-center">View cart</Link></div>}
       </aside>
     </div>}
   </CartContext.Provider>;

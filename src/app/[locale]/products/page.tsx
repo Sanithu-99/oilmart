@@ -33,11 +33,9 @@ export default async function CatalogPage({ params, searchParams }: { params: Pr
       q: first(query.q)?.trim(),
       category: first(query.category),
       brand: first(query.brand),
-      vehicle: first(query.vehicle),
-      application: first(query.application),
       grade: first(query.grade),
       availability: first(query.availability),
-      sort: first(query.sort),
+      section: first(query.section),
     }}
   />;
 }

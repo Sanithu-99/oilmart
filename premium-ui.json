@@ -1,0 +1,19 @@
+{
+  "profile": "product-admin",
+  "sourceRoots": ["src"],
+  "canonicalMap": "UX-CONTRACT.md",
+  "requiredCapabilities": ["Select/Listbox", "Date", "Form", "Scrollbar", "Toast", "CRUD"],
+  "ownership": { "Select/Listbox": "native", "Date": "native" },
+  "requiredCommands": ["lint", "typecheck", "unit", "e2e", "build"],
+  "commands": {
+    "lint": "pnpm lint",
+    "typecheck": "pnpm typecheck",
+    "unit": "pnpm test",
+    "e2e": "pnpm exec playwright test tests/e2e/commerce-requirements.spec.ts tests/e2e/order-workflows.spec.ts",
+    "build": "pnpm build"
+  },
+  "evidence": {
+    "crudFullFlow": "tests/unit/request-actions.test.ts",
+    "failurePaths": "tests/unit/request-actions.test.ts"
+  }
+}

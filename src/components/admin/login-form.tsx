@@ -9,7 +9,7 @@ export function LoginForm() {
   const search = useSearchParams();
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
-  return <form className="admin-auth-form" onSubmit={async (event) => {
+  return <form noValidate className="admin-auth-form" onSubmit={async (event) => {
     event.preventDefault(); setPending(true); setError("");
     const data = new FormData(event.currentTarget);
     const result = await signIn("credentials", { email: data.get("email"), password: data.get("password"), redirect: false });

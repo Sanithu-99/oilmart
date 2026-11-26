@@ -28,7 +28,7 @@ export function SiteHeader({ locale, dictionary }: { locale: StoreLocale; dictio
         {nav.map(([label, href]) => <Link className="nav-link" href={href} key={href}>{label}</Link>)}
       </nav>
 
-      <form action={`/${locale}/products`} className="header-search-form">
+      <form noValidate action={`/${locale}/products`} className="header-search-form">
         <label className="header-search-field"><Search size={16}/><input name="q" placeholder={dictionary.nav.search} aria-label={dictionary.nav.search}/></label>
       </form>
 
@@ -41,7 +41,7 @@ export function SiteHeader({ locale, dictionary }: { locale: StoreLocale; dictio
         <details className="mobile-menu">
           <summary className="icon-button"><Menu size={20}/><span className="sr-only">{dictionary.nav.menu}</span></summary>
           <div className="mobile-menu-panel">
-            <form action={`/${locale}/products`}><label className="header-search-field"><Search size={16}/><input name="q" placeholder={dictionary.nav.search} aria-label={dictionary.nav.search}/></label></form>
+            <form noValidate action={`/${locale}/products`}><label className="header-search-field"><Search size={16}/><input name="q" placeholder={dictionary.nav.search} aria-label={dictionary.nav.search}/></label></form>
             <nav className="mobile-primary-nav" aria-label="Mobile navigation">{nav.map(([label, href]) => <Link href={href} key={href}>{label}</Link>)}</nav>
             <div className="mobile-menu-utilities">
               <a href={`tel:${storeConfig.phone.replace(/\s/g, "")}`}><Phone size={16}/><span>{storeConfig.phone}</span></a>

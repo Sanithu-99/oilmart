@@ -11,6 +11,7 @@ export type PricingLine = Readonly<{
 
 export type PricingContext = Readonly<{
   loyaltyEligible: boolean;
+  paymentMethod?: "CASH" | "BANK_TRANSFER" | "CARD";
   deliveryMinor?: bigint;
   surchargeMinor?: bigint;
 }>;
@@ -47,6 +48,7 @@ export function calculatePrice(lines: readonly PricingLine[], context: PricingCo
       : percentageDiscount(lineSubtotalMinor, line.promotionBasisPoints ?? 0);
 
     return {
+      loyaltyPriced: useLoyaltyPrice,
       productId: line.productId,
       unitPriceMinor,
       quantity: line.quantity,
@@ -60,7 +62,10 @@ export function calculatePrice(lines: readonly PricingLine[], context: PricingCo
   const subtotalMinor = pricedLines.reduce((total, line) => total + line.lineSubtotalMinor, 0n);
   const discountMinor = pricedLines.reduce((total, line) => total + line.lineDiscountMinor, 0n);
   const deliveryMinor = context.deliveryMinor ?? 0n;
-  const surchargeMinor = context.surchargeMinor ?? 0n;
+  const loyaltyTotal = pricedLines.filter((line) => line.loyaltyPriced).reduce((total, line) => total + line.lineTotalMinor, 0n);
+  // Round once to the nearest cent on the loyalty-priced subtotal.
+  const cardAdjustment = context.paymentMethod === "CARD" ? (loyaltyTotal * 4n + 50n) / 100n : 0n;
+  const surchargeMinor = (context.surchargeMinor ?? 0n) + cardAdjustment;
 
   if (deliveryMinor < 0n || surchargeMinor < 0n) {
     throw new RangeError("Charges cannot be negative");

@@ -64,7 +64,7 @@ export async function requestPhoneOtpAction(_state: AccountState, form: FormData
   const customer = await requireCustomer();
   try {
     const result = await issuePhoneOtp(customer.userId, text(form, "phone"));
-    return { ok: result.status !== "unavailable", message: result.status === "unavailable" ? "SMS verification is not configured yet." : "Verification code prepared.", challengeId: result.challengeId, code: result.status === "development" ? result.code : undefined };
+    return { ok: result.status !== "unavailable", message: result.status === "unavailable" ? "SMS verification is not configured yet." : result.status === "queued" ? "SMS accepted by the gateway and queued for delivery." : "Development verification code prepared.", challengeId: result.challengeId, code: result.status === "development" ? result.code : undefined };
   } catch (error) { return { message: error instanceof Error ? error.message : "Could not prepare a code." }; }
 }
 

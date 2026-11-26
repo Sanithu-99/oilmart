@@ -59,7 +59,7 @@ export default async function SourceDataPage({ searchParams }: { searchParams: P
 
     {source && <aside className="admin-source-policy"><strong>Retail-only price policy</strong><p>{source.retainedPriceColumn ? `${source.retainedPriceColumn} is the only imported selling price.` : "This source does not provide a retained selling price."} {source.excludedColumns.length > 0 && `${source.excludedColumns.join(" and ")} are deliberately excluded from the database and every interface.`}</p><span>{matchedCount} source rows linked to stocked products · {retailCount} rows with retail prices</span></aside>}
 
-    <form className="admin-filterbar admin-source-filter">
+    <form noValidate className="admin-filterbar admin-source-filter">
       <label><Search size={16}/><input name="q" defaultValue={params.q} placeholder="Search source item, code, product or SKU…"/></label>
       <select name="source" defaultValue={source?.key}>{sources.map((item) => <option key={item.id} value={item.key}>{item.title}</option>)}</select>
       <select name="group" defaultValue={params.group}><option value="">All source groups</option>{groups.flatMap((item) => item.sourceCategory ? [<option key={item.sourceCategory} value={item.sourceCategory}>{item.sourceCategory}</option>] : [])}</select>

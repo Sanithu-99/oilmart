@@ -83,6 +83,7 @@ export function cartOrderWhatsAppUrl(cart: {
   items: CartOrderItem[];
   totalMinor: string;
   hasUnavailablePrices: boolean;
+  paymentMethod?: string;
 }) {
   const lines = cart.items.flatMap((item, index) => [
     `${index + 1}. ${item.quantity} × ${item.name}`,
@@ -95,10 +96,12 @@ export function cartOrderWhatsAppUrl(cart: {
   return whatsappUrl([
     "Hello Saranankara Oil Mart,",
     "",
-    "I would like to place this order:",
+    "Please check stock and confirm this order request before payment:",
     "",
     ...lines,
-    `${totalLabel}: ${lkr(cart.totalMinor)}`,
+    `${totalLabel} (estimate): ${lkr(cart.totalMinor)}`,
+    cart.paymentMethod ? `Preferred payment method: ${cart.paymentMethod.replaceAll("_", " ")}` : null,
+    "Prices are subject to change. Payment only after stock and final total are confirmed.",
     cart.hasUnavailablePrices ? "Some items require price confirmation." : null,
     "",
     "Please confirm availability, the final total, and delivery or store pickup. Thank you.",
