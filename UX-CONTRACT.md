@@ -14,6 +14,7 @@ The current user requirements and clarification on 25 November 2026 establish so
 | Scrollbar | Global application stylesheet | src/app/globals.css | Standard thin scrollbar, engine fallback, forced colors | Static audit and browser computed style |
 | Toast | Inline status/alert feedback in request forms | RequestState and server acknowledgement | Success status and recoverable inline error | Unit/component verification |
 | CRUD | Domain server actions and authenticated routes | features/requests/actions.ts and existing catalogue actions | Stay on review; product save keeps existing redirect to edit | Unit and browser route protection |
+| Table Selection | CommerceBatchForm native checkboxes | features/admin/commerce-setup-rules.ts | Current page only, at most 50 products per action, preview and explicit acknowledgement | Batch action tests and browser interaction fixture |
 
 ## Flow ledger
 
@@ -38,3 +39,6 @@ Read-only browser checks must not submit test orders, change production inventor
 - Verification checks the exact amount, prevents reused provider references and commits stock once through an idempotent sale ledger. Unpaid cancellation releases reservations. A reported payment must be resolved before cancellation; paid-order refunds are outside this workflow.
 - Client forms prevent automatic native resets so values survive failed actions. Success is acknowledged with a link or in-place status; critical confirmation uses explicit labelled acknowledgements.
 - Phone OTPs use a configured private SMSGate connection. An acknowledged request is queued, not delivered. Plaintext OTPs are not persisted; expiry, resend/attempt limits and single consumption apply. Browser tests never send SMS or mutate production data.
+- Commerce setup shows configuration status rather than claiming successful live delivery. The shop chooses its own loyalty discount and preorder-enabled products. Batch edits preview exact prices, check every product revision, preserve individual size pricing, update price history and audit, and commit atomically. Selection is limited to the current page and resets when navigating; no supplier offer or discount is invented.
+- Automatic PayHere preparation requires an owned, confirmed unpaid order, exact amount/currency and the configured merchant hostname. Billing details are explicitly shared only when the customer continues. The browser return never marks paid. Only the matching signed provider notification can commit the existing stock reservation once; retries, closed orders and refund/failure notices cannot duplicate inventory movements.
+- Loyalty application, activation and pricing require verified email and phone. Resend dispatch acknowledges provider acceptance rather than inbox delivery; missing credentials never claim a message was sent. One-time token digests and conditional consumption prevent replay.

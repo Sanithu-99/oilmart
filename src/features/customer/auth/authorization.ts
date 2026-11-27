@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 import { authOptions } from "@/features/admin/auth/options";
+import { loyaltyContactsVerified } from "@/features/customer/loyalty/eligibility";
 import { LoyaltyStatus, UserStatus } from "@/generated/prisma/client";
 import { db } from "@/lib/db/client";
 import type { StoreLocale } from "@/lib/i18n/config";
@@ -34,7 +35,7 @@ export function hasActiveLoyalty(customer: Awaited<ReturnType<typeof getCurrentC
   return Boolean(
     membership?.status === LoyaltyStatus.ACTIVE &&
       (!membership.expiresAt || membership.expiresAt > new Date()) &&
-      customer?.user.emailVerified,
+      customer && loyaltyContactsVerified(customer.user),
   );
 }
 

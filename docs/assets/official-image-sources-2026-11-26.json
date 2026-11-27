@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-11-26",
+  "method": "Exact inventory SKU, manufacturer name, product identity and pack size checked against public official product pages. Downloaded bytes decoded and dimensions verified with Pillow; selected images visually inspected. No upscaling and no database writes.",
+  "rights": "Manufacturer-origin public catalogue assets; no separate image licence confirmed. Owner should confirm commercial catalogue reuse terms and actual supplied batch appearance.",
+  "added": 4,
+  "highResolutionAdded": 3,
+  "sources": [
+    {"sku":"INV-9F0F6C436C","brand":"Eurol","product":"Eurol ATF 7400 1 L","sourcePage":"https://www.eurol.com/en/shop/products/E113647-eurol-atf-7400/1147","imageUrl":"https://sirv.eurol.com/eurol/product_image/E113647-1L.png","localUrl":"/images/verified-manufacturers/eurol-atf-7400-1l.webp","sourceWidth":2048,"sourceHeight":3840,"width":640,"height":1200,"highResolution":true,"match":"E113647-1L page and bottle label ATF 7400 / 1L. Original downsampled proportionally, retaining transparent background."},
+    {"sku":"INV-CFEB8E446C","brand":"Wurth","product":"Windscreen Wash Concentrate 32 ml","sourcePage":"https://eshop.wuerth.de/Rapid-windscreen-cleaner-in-display-carton-CLNR-WSCRN-SUM-RAPID-32ML/0892333.sku/en/US/EUR/","imageUrl":"https://media.witglobal.net/source/eshop/stmedia/0100/images/std.lang.all/resolutions/category/800px/1016043.jpg","localUrl":"/images/verified-manufacturers/wurth-windscreen-32ml.webp","sourceWidth":800,"sourceHeight":800,"width":800,"height":800,"highResolution":true,"match":"Official article 0892333, 32 ml rapid windscreen concentrate. Single-bottle photograph selected; display-carton photograph deliberately excluded."},
+    {"sku":"INV-F0A0154BA3","brand":"Wurth","product":"PVC Black Tape 19mm x 10m","sourcePage":"https://www.wurth.es/cinta-aislante-pvc-19mm-x-10m-negra","imageUrl":"https://media.wuerth.com/stmedia/wuerth/images/std.lang.all/resolutions/category/800px/119313540.jpg","localUrl":"/images/verified-manufacturers/wurth-pvc-tape-19mm-10m.webp","sourceWidth":800,"sourceHeight":800,"width":800,"height":800,"highResolution":true,"match":"Official article 0985610: black PVC tape, 19 mm width and 10 m length. Individual roll shown."},
+    {"sku":"INV-5291F165C2","brand":"Prestone","product":"ATF+ Stop Leak 946 ml","sourcePage":"https://prestone.com.ph/prestone-automatic-transmission-fluid-stop-leak/","imageUrl":"https://prestone.com.ph/wp-content/uploads/2023/08/ATF_300x493px.png","localUrl":"/images/verified-manufacturers/prestone-atf-stop-leak-946ml.webp","sourceWidth":300,"sourceHeight":493,"width":300,"height":493,"highResolution":false,"match":"Bottle label explicitly ATF + Stop Leak / 32 fl oz (946 ml). Standard-resolution source retained without enlargement; clearer supplier photo still desirable."}
+  ],
+  "notUsed": [
+    {"product":"Waxpol DOT3 250 ml","reason":"Official Shopify image endpoint returned a bot/error response; no usable original downloaded. Fluid colour and exact supplied variant still need confirmation."},
+    {"product":"Mobil Extra 4T 10W-40 1 L","reason":"Official Mobil product page blocked direct requests; available public PDS alone does not establish exact local bottle photograph."},
+    {"product":"Toyota filter part numbers","reason":"Official pages verified identifiers but did not expose usable product photographs in reviewed content. No substitute or superseded-part image assigned."},
+    {"product":"Unidentified generic items and ambiguous regional brands","reason":"No manufacturer identity or exact supplied model/pack established. Supplier/shop photographs needed; no generic branded substitutes used."}
+  ]
+}

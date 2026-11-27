@@ -36,7 +36,7 @@ beforeEach(() => {
   m.settings.mockResolvedValue(paymentSettingsSchema.parse({ bankEnabled: true, bankName: "Bank", accountName: "Shop", accountNumber: "123" }));
   m.customer.mockResolvedValue({ id: "c1", userId: "u1" }); m.admin.mockResolvedValue({ id: "owner" });
   m.transaction.mockImplementation((work) => work(m.tx));
-  m.tx.customerProfile.findUniqueOrThrow.mockResolvedValue({ id: "c1", user: { name: "Customer", phone: "+94771234567", emailVerified: new Date() }, loyaltyMembership: { status: "ACTIVE", expiresAt: null } });
+  m.tx.customerProfile.findUniqueOrThrow.mockResolvedValue({ id: "c1", user: { name: "Customer", phone: "+94771234567", phoneVerifiedAt: new Date(), emailVerified: new Date() }, loyaltyMembership: { status: "ACTIVE", expiresAt: null } });
   m.tx.cart.findFirst.mockResolvedValue({ id: "cart1", status: "ACTIVE", expiresAt: null, items: [{ variantId: "v1", quantity: { toString: () => "1" } }] });
   m.tx.productVariant.findMany.mockResolvedValue([{ id: "v1", productId: "p1", sku: "SKU", name: "1 L", minQuantity: { toString: () => "1" }, quantityStep: { toString: () => "1" }, priceOverrideMinor: null, loyaltyPriceMinor: null, product: { name: "Oil", standardPriceMinor: 100000n, loyaltyPriceMinor: 90000n, categoryId: "cat" } }]);
   m.tx.promotion.findMany.mockResolvedValue([]);
@@ -62,6 +62,11 @@ describe("checkout request creation", () => {
     await expect(createOrder("c1", "u1", { ...input, expectedTotal: "1" })).rejects.toThrow("price changed");
     await expect(createOrder("c1", "u1", { ...input, method: "HOSTED" })).rejects.toThrow("unavailable");
     expect(m.tx.order.create).not.toHaveBeenCalled();
+  });
+  it("does not grant loyalty pricing to an unverified phone", async () => {
+    m.tx.customerProfile.findUniqueOrThrow.mockResolvedValue({ id: "c1", user: { phone: "+94771234567", phoneVerifiedAt: null, emailVerified: new Date() }, loyaltyMembership: { status: "ACTIVE", expiresAt: null } });
+    await createOrder("c1", "u1", { ...input, expectedTotal: "100000", fingerprint: purchaseFingerprint([{ variantId: "v1", quantity: "1", unitPriceMinor: "100000" }]) });
+    expect(m.tx.order.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ totalMinor: 100000n, pricingSnapshot: expect.objectContaining({ loyaltyEligible: false }) }) }));
   });
   it("requires pre-order approval and respects expiry", async () => {
     m.tx.preOrder.findFirst.mockResolvedValue({ id: "pre", status: "PENDING_APPROVAL", updatedAt: revision });

@@ -6,8 +6,10 @@ import { PublicationStatus, type Prisma } from "@/generated/prisma/client";
 import { getCustomerPricingContext } from "@/features/customer/auth/authorization";
 import { resolvePromotionUnitPrice, type ApplicablePromotion } from "@/features/pricing/promotions";
 import { db } from "@/lib/db/client";
-import { catalogueSections, offerTitle, productFamilyKey } from "@/lib/catalog/product-options";
+import { catalogueSections, offerTitle, productFamilyKey, publicProductName } from "@/lib/catalog/product-options";
 import { manufacturerContent, withoutCompatibilityCopy } from "@/lib/catalog/manufacturer-content";
+import { manufacturerImage } from "@/lib/catalog/manufacturer-images";
+import { officialProductImage } from "@/lib/catalog/official-images";
 import { localeToDb, type StoreLocale } from "@/lib/i18n/config";
 
 const productInclude = {
@@ -141,13 +143,15 @@ export function presentProduct(product: ProductRecord, locale: StoreLocale, pric
   const applicablePromotion = promotion && promotion.unitPriceMinor >= 0n && promotion.unitPriceMinor < basePriceMinor ? promotion : null;
   const priceMinor = applicablePromotion?.unitPriceMinor ?? basePriceMinor;
   const manufacturer = manufacturerContent(product.brand?.name, product.name);
+  const verifiedImage = officialProductImage(product.sku) ?? manufacturerImage(product.brand?.name, product.name);
+  const hasOwnerImage = product.images.some((image) => !image.url.startsWith("/images/products/inventory/"));
   const description = translation?.description ?? product.description;
 
   return {
     id: product.id,
     slug: product.slug,
     sku: product.sku,
-    name: offerTitle(translation?.name ?? product.name, product.technicalSpecs as Record<string, unknown> | null),
+    name: offerTitle(publicProductName(translation?.name ?? product.name, product.sku), product.technicalSpecs as Record<string, unknown> | null),
     shortDescription: translation?.shortDescription ?? product.shortDescription,
     description: withoutCompatibilityCopy(manufacturer && (!description || description.startsWith("Available from Saranankara")) ? manufacturer.description : description),
     manufacturerUrl: manufacturer?.url ?? null,
@@ -176,9 +180,9 @@ export function presentProduct(product: ProductRecord, locale: StoreLocale, pric
       const promotion = resolvePromotionUnitPrice({ productId: product.id, categoryId: product.categoryId, baseUnitPriceMinor: base, loyaltyEligible: pricing.loyaltyEligible, promotions: pricing.promotions });
       return { id: item.id, name: item.name, priceMinor: (promotion?.unitPriceMinor ?? base).toString(), standardPriceMinor: standard.toString(), available: Math.max(0, decimalNumber(item.inventory?.quantityOnHand) - decimalNumber(item.inventory?.quantityReserved)), minQuantity: item.minQuantity.toString(), quantityStep: item.quantityStep.toString() };
     }),
-    images: product.images.map((image) => ({
+    images: verifiedImage && !hasOwnerImage ? [verifiedImage] : product.images.map((image) => ({
       url: image.url,
-      alt: image.altText,
+      alt: publicProductName(image.altText),
       width: image.width ?? 900,
       height: image.height ?? 900,
     })),

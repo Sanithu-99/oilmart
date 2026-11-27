@@ -9,10 +9,12 @@ import { writeAudit } from "@/features/admin/audit";
 import { requireCustomer } from "@/features/customer/auth/authorization";
 import { LoyaltyStatus } from "@/generated/prisma/client";
 import { db } from "@/lib/db/client";
+import { loyaltyContactsVerified } from "./eligibility";
 
 export async function applyForLoyaltyAction() {
   const customer = await requireCustomer();
   if (!customer.user.emailVerified) throw new Error("Verify your email before applying");
+  if (!loyaltyContactsVerified(customer.user)) throw new Error("Verify your mobile number in Security & verification before applying for loyalty.");
   await db.$transaction(async (tx) => {
     const existing = await tx.loyaltyMembership.findUnique({ where: { customerId: customer.id } });
     if (existing && existing.status !== LoyaltyStatus.REJECTED && existing.status !== LoyaltyStatus.EXPIRED) return;
@@ -23,6 +25,15 @@ export async function applyForLoyaltyAction() {
     await writeAudit(tx, { id: customer.userId }, { action: "LOYALTY_APPLIED", entityType: "LoyaltyMembership", entityId: membership.id });
   });
   revalidatePath("/en/account/loyalty", "page");
+}
+
+export async function applyForLoyaltyFormAction() {
+  try {
+    await applyForLoyaltyAction();
+    return { ok: true, message: "Your loyalty application was submitted for shop approval." };
+  } catch {
+    return { ok: false, message: "Verify your email and mobile number, then try again. If you already did, refresh or contact the store." };
+  }
 }
 
 const allowed: Record<LoyaltyStatus, LoyaltyStatus[]> = {
@@ -50,6 +61,10 @@ export async function decideLoyaltyAction(form: FormData) {
   if (!allowed[current.status].includes(toStatus)) throw new Error(`Cannot change ${current.status} to ${toStatus}`);
   const number = toStatus === LoyaltyStatus.ACTIVE ? current.memberNumber ?? await memberNumber() : current.memberNumber;
   await db.$transaction(async (tx) => {
+    if (toStatus === LoyaltyStatus.ACTIVE) {
+      const applicant = await tx.customerProfile.findUnique({ where: { id: current.customerId }, include: { user: true } });
+      if (!applicant || !loyaltyContactsVerified(applicant.user)) throw new Error("The customer must verify their email and mobile number before loyalty can be activated.");
+    }
     const after = await tx.loyaltyMembership.update({ where: { id }, data: {
       status: toStatus,
       memberNumber: number,

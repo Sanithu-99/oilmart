@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { calculatePrice } from "@/features/pricing/service";
-import { productFamilyKey, publicSpecifications, offerTitle, catalogueSections } from "@/lib/catalog/product-options";
+import { productFamilyKey, publicSpecifications, offerTitle, catalogueSections, publicProductName } from "@/lib/catalog/product-options";
 import { manufacturerContent } from "@/lib/catalog/manufacturer-content";
 import { assertPreorderDecision, assertQuotationEditable, quotationFeeMinor, requestSchema } from "@/features/requests/validation";
 
@@ -26,6 +26,12 @@ describe("loyalty payment estimates", () => {
 });
 
 describe("catalogue requirements", () => {
+  it("removes imported fitment suffixes while preserving part codes, grades and offers",()=>{
+    expect(publicProductName("C 313 / 310 — Pajero (4M40) 2500, 2800, Canter")).toBe("C 313 / 310");
+    expect(publicProductName("A-90170 — HONDA")).toBe("A-90170");
+    expect(publicProductName("RENAULT — KWID","ACCESSORY-1")).toBe("Automotive accessory (ACCESSORY-1)");
+    expect(publicProductName("Oil 20W-50 — 5 L + 1 L free")).toBe("Oil 20W-50 — 5 L + 1 L free");
+  });
   it("groups pack sizes while keeping distinct grades and model numbers separate", () => {
     expect(productFamilyKey("Caltex Formula 10W30 (1 L)")).toBe(productFamilyKey("Caltex Formula 10W30 4 L"));
     expect(productFamilyKey("Caltex Formula 15W40 1 L")).not.toBe(productFamilyKey("Caltex Formula 10W30 1 L"));

@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 
 import { writeAudit } from "@/features/admin/audit";
-import { dispatchCustomerEmail } from "@/features/customer/verification/email";
+import { dispatchCustomerEmail, emailDeliveryReady } from "@/features/customer/verification/email";
 import { ConsentType, Locale } from "@/generated/prisma/client";
 import { resolveAppUrl } from "@/lib/config/app-url";
 import { db } from "@/lib/db/client";
@@ -63,7 +63,7 @@ export async function registerCustomerAction(_state: AuthFormState, form: FormDa
   const delivery = await dispatchCustomerEmail({ customerId: customer.id, recipient: email, templateKey: "customer-email-verification", subject: "Verify your Saranankara Oil Mart account", actionUrl });
   return {
     ok: true,
-    message: delivery.status === "unavailable" ? "Account created. Email delivery is not configured yet; contact the store to verify your account." : "Account created. Check your email to verify it before signing in.",
+    message: delivery.status === "unavailable" ? "Account created. Email delivery is not configured yet; contact the store to verify your account." : delivery.status === "failed" ? "Account created, but the email provider could not accept the verification email. Use Resend verification to try again or contact the store." : "Account created. Check your email to verify it before signing in.",
     previewUrl: delivery.status === "development" ? delivery.previewUrl : undefined,
   };
 }
@@ -90,7 +90,7 @@ export async function resendVerificationAction(_state: AuthFormState, form: Form
     const delivery = await dispatchCustomerEmail({ customerId: user.customer.id, recipient: email, templateKey: "customer-email-verification", subject: "Verify your Saranankara Oil Mart account", actionUrl });
     previewUrl = delivery.status === "development" ? delivery.previewUrl : undefined;
   }
-  return { ok: true, message: "If that account needs verification, a new link has been prepared.", previewUrl };
+  return { ok: true, message: emailDeliveryReady() || previewUrl ? "If that account needs verification, check your email for the new link. If nothing arrives, retry or contact the store." : "Email delivery is unavailable. Contact the store for account verification.", previewUrl };
 }
 
 export async function requestPasswordResetAction(_state: AuthFormState, form: FormData): Promise<AuthFormState> {
@@ -106,7 +106,7 @@ export async function requestPasswordResetAction(_state: AuthFormState, form: Fo
     const delivery = await dispatchCustomerEmail({ customerId: user.customer.id, recipient: email, templateKey: "customer-password-reset", subject: "Reset your Saranankara Oil Mart password", actionUrl });
     previewUrl = delivery.status === "development" ? delivery.previewUrl : undefined;
   }
-  return { ok: true, message: "If an account exists, password reset instructions have been prepared.", previewUrl };
+  return { ok: true, message: emailDeliveryReady() || previewUrl ? "If an eligible account exists, check your email for reset instructions. If nothing arrives, retry or contact the store." : "Email delivery is unavailable. Contact the store for account recovery.", previewUrl };
 }
 
 export async function resetCustomerPasswordAction(_state: AuthFormState, form: FormData): Promise<AuthFormState> {

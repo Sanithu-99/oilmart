@@ -1,4 +1,5 @@
 import { productFamilyKey } from "./product-options";
+import { additionalManufacturerSummaries } from "./manufacturer-summaries";
 
 // Original summaries of verified Sri Lankan manufacturer facts, checked 25 Nov 2026.
 // Exact product families only: no vehicle fitment or extended-drain claims.
@@ -11,11 +12,29 @@ const summaries = [
 ];
 
 export function manufacturerContent(brand: string | undefined, name: string) {
-  if (brand?.toLowerCase() !== "caltex") return null;
+  if (!brand) return null;
   const key = productFamilyKey(name);
-  return summaries.find((entry) => entry.match.test(key)) ?? null;
+  const original = brand.toLowerCase() === "caltex" ? summaries.find((entry) => entry.match.test(key)) : null;
+  if (original) return { ...original, sourceRegion: "Sri Lanka" as const, checkedAt: "2026-11-25" };
+  const normalized = manufacturerFamilyKey(brand, name);
+  return additionalManufacturerSummaries.find((entry) => entry.brand.toLowerCase() === brand.toLowerCase() && entry.aliases.some((alias) => manufacturerFamilyKey(brand, alias) === normalized)) ?? null;
+}
+
+/** Remove documented pack notation only; grades, formulations and model codes stay intact. */
+export function manufacturerFamilyKey(brand: string, name: string) {
+  let key = productFamilyKey(name).replace(/(\d+)w-?(\d+)/g, "$1w$2").replace(/\bsae\s*/g, "");
+  const prefix = `${brand.toLowerCase()} `;
+  if (key.startsWith(prefix)) key = key.slice(prefix.length);
+  return key.replace(/[\/–—-]/g, " ").replace(/\bdot\s*(\d)/g, "dot$1").replace(/\s+/g, " ").trim().replace(/(?:\s+(?:loose|tin|pack|prom))+$/, "");
 }
 
 export function withoutCompatibilityCopy(text: string | null) {
-  return text?.replace(/,?\s*(?:and\s+)?vehicle compatibility/gi, "") ?? null;
+  if (text == null) return null;
+  return text
+    .split(/(?<=[.!?])\s+|\r?\n+/)
+    .filter((sentence) => !/\b(?:fits?|compatible with|suitable for|recommended for(?: use in)?)\b/i.test(sentence))
+    .map((sentence) => sentence.replace(/,?\s*(?:and\s+)?(?:vehicle|machine) compatibility/gi, ""))
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
 }

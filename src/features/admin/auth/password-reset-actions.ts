@@ -6,6 +6,8 @@ import { hash } from "bcryptjs";
 import { z } from "zod";
 
 import { writeAudit } from "@/features/admin/audit";
+import { dispatchCustomerEmail, emailDeliveryReady } from "@/features/customer/verification/email";
+import { resolveAppUrl } from "@/lib/config/app-url";
 import { db } from "@/lib/db/client";
 import { assertPersistentRateLimit } from "@/lib/security/admin-rate-limit";
 
@@ -20,9 +22,9 @@ export async function requestAdminPasswordResetAction(_previous: { sent: boolean
     const rawToken = randomBytes(32).toString("base64url");
     await db.verificationToken.deleteMany({ where: { identifier: email, purpose: PURPOSE } });
     await db.verificationToken.create({ data: { identifier: email, purpose: PURPOSE, tokenHash: digest(rawToken), expires: new Date(Date.now() + 30 * 60_000) } });
-    // Delivery adapters consume rawToken here when EMAIL_PROVIDER is configured. It is never logged or returned.
+    await dispatchCustomerEmail({ recipient: email, templateKey: "admin-password-reset", subject: "Reset your Saranankara Oil Mart administrator password", actionUrl: `${resolveAppUrl()}/admin/reset-password?token=${encodeURIComponent(rawToken)}` });
   }
-  return { sent: true };
+  return { sent: true, deliveryAvailable: emailDeliveryReady() };
 }
 
 export async function resetAdminPasswordAction(_previous: { complete: boolean; error?: string }, form: FormData) {
@@ -34,10 +36,12 @@ export async function resetAdminPasswordAction(_previous: { complete: boolean; e
   const user = await db.user.findUnique({ where: { email: verification.identifier }, include: { roles: true } });
   if (!user || user.roles.length === 0) return { complete: false, error: "This reset link is invalid or expired." };
   const passwordHash = await hash(password, 12);
-  await db.$transaction(async (tx) => {
-    await tx.user.update({ where: { id: user.id }, data: { passwordHash } });
-    await tx.verificationToken.deleteMany({ where: { identifier: verification.identifier, purpose: PURPOSE } });
+  const complete = await db.$transaction(async (tx) => {
+    const consumed = await tx.verificationToken.deleteMany({ where: { tokenHash, identifier: verification.identifier, purpose: PURPOSE, expires: { gt: new Date() } } });
+    if (consumed.count !== 1) return false;
+    await tx.user.update({ where: { id: user.id }, data: { passwordHash, sessionVersion: { increment: 1 } } });
     await writeAudit(tx, { id: user.id }, { action: "ADMIN_PASSWORD_RESET", entityType: "User", entityId: user.id });
+    return true;
   });
-  return { complete: true };
+  return complete ? { complete: true } : { complete: false, error: "This reset link is invalid or expired." };
 }

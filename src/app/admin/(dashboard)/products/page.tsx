@@ -7,6 +7,8 @@ import { requireAdminPage } from "@/features/admin/auth/authorization";
 import { PublicationStatus, type Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db/client";
 import { formatLkr } from "@/lib/pricing/money";
+import { manufacturerImage } from "@/lib/catalog/manufacturer-images";
+import { officialProductImage } from "@/lib/catalog/official-images";
 
 type SearchParams = {
   q?: string;
@@ -26,6 +28,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
   const params = await searchParams;
   const page = Math.max(1, Number(params.page) || 1);
   const take = 10;
+  const verifiedPhotoIds = params.images === "missing" ? (await db.product.findMany({where:{images:{none:{}}},select:{id:true,sku:true,name:true,brand:{select:{name:true}}}})).filter(product=>officialProductImage(product.sku)||manufacturerImage(product.brand?.name,product.name)).map(product=>product.id) : [];
   const where: Prisma.ProductWhereInput = {
     ...(params.q
       ? {
@@ -40,7 +43,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
       ? { status: params.status as PublicationStatus }
       : {}),
     ...(params.category ? { categoryId: params.category } : {}),
-    ...(params.images === "missing" ? { images: { none: {} } } : {}),
+    ...(params.images === "missing" ? { images: { none: {} }, id:{notIn:verifiedPhotoIds} } : {}),
     ...(params.pricing === "missing"
       ? { standardPriceMinor: 0n }
       : params.pricing === "priced"
@@ -84,7 +87,9 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
       <div className="admin-table-scroll"><table className="admin-product-table">
         <thead><tr><th>Product</th><th>Category</th><th>Retail price</th><th>Stock</th><th>Status</th><th><span className="sr-only">Actions</span></th></tr></thead>
         <tbody>{products.map((product) => {
-          const image = product.images[0];
+          const uploaded = product.images[0];
+          const verified = officialProductImage(product.sku) ?? manufacturerImage(product.brand?.name,product.name);
+          const image = verified && (!uploaded || uploaded.url.startsWith("/images/products/inventory/")) ? verified : uploaded;
           const variant = product.variants[0];
           const inventory = variant?.inventory;
           const available = Number(inventory?.quantityOnHand ?? 0) - Number(inventory?.quantityReserved ?? 0);

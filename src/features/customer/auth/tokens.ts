@@ -33,7 +33,7 @@ export async function consumeVerificationToken(identifier: string, token: string
       where: { identifier: normalized, purpose, tokenHash, expires: { gt: new Date() } },
     });
     if (!record) return false;
-    await tx.verificationToken.delete({ where: { tokenHash } });
-    return true;
+    const consumed = await tx.verificationToken.deleteMany({ where: { tokenHash, identifier: normalized, purpose, expires: { gt: new Date() } } });
+    return consumed.count === 1;
   });
 }

@@ -6,8 +6,8 @@ import Link from "next/link";
 import { requestAdminPasswordResetAction, resetAdminPasswordAction } from "@/features/admin/auth/password-reset-actions";
 
 export function ForgotPasswordForm() {
-  const [state, action, pending] = useActionState(requestAdminPasswordResetAction, { sent: false });
-  if (state.sent) return <div className="admin-auth-message"><strong>Check your email</strong><p>If that address has admin access, a one-time reset link has been requested.</p><Link href="/admin/login">Return to sign in</Link></div>;
+  const [state, action, pending] = useActionState(requestAdminPasswordResetAction, { sent: false, deliveryAvailable: false });
+  if (state.sent) return <div className="admin-auth-message"><strong>{state.deliveryAvailable ? "Check your email" : "Contact the shop owner"}</strong><p>{state.deliveryAvailable ? "If that address has admin access, check your email for a one-time reset link. If nothing arrives, retry or contact the owner." : "Email delivery is unavailable. Contact the shop owner for administrator account recovery."}</p><Link href="/admin/login">Return to sign in</Link></div>;
   return <form noValidate action={action} className="admin-auth-form"><label>Email address<input name="email" type="email" autoComplete="email" required /></label><button className="admin-primary-button" disabled={pending}>{pending ? "Requesting…" : "Request reset link"}</button></form>;
 }
 

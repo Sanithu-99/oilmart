@@ -8,6 +8,7 @@ const navigation = [
   ["Overview", "/admin", Gauge, "admin.dashboard.read"], ["Products", "/admin/products", PackageSearch, "catalog.read"], ["Categories", "/admin/categories", FolderTree, "catalog.write"],
   ["Orders & payments", "/admin/orders", ClipboardList, "orders.read"],
   ["Payment settings", "/admin/payments", Tags, "settings.manage"],
+  ["Commerce setup", "/admin/launch", ClipboardList, "catalog.read"],
   ["Source data", "/admin/source-data", FileSearch, "catalog.read"],
   ["Brands", "/admin/brands", Tags, "catalog.write"], ["Inventory", "/admin/inventory", Boxes, "inventory.read"], ["Promotions", "/admin/promotions", BadgePercent, "promotions.manage"],
   ["Homepage", "/admin/content", ImageIcon, "content.manage"], ["Audit log", "/admin/audit", ClipboardList, "audit.read"],

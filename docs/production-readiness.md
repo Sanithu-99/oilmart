@@ -2,9 +2,9 @@
 
 ## Not launch-ready
 
-The 25 November continuation implements the manual order/payment lifecycle, pre-order continuation, quotation-service fee acceptance, owner payment settings, QR payment links and the private SMSGate adapter. See `docs/operations/payments-and-sms.md`. Production activation still requires verified receiving accounts, merchant onboarding, message delivery configuration and isolated database integration testing.
+The 26 November continuation adds automatic PayHere checkout and signed server notifications, phone verification gates for loyalty, real Resend transactional email, reviewed batch catalogue setup, original manufacturer summaries for 88 imported products and ten exact manufacturer photographs. The manual order/payment lifecycle, preorder approval, quotation-service invoices and payment-link QR remain supported. See `docs/requirements-2026-11-26.md` for current completion and `docs/payment-gateway-integration.md` for activation. Production activation still requires verified receiving accounts, merchant onboarding, device/sender configuration and isolated database integration testing.
 
-Phases 1–4, the Inventory Details Report import and the Caltex retail-price/application import are complete. The storefront, multilingual catalogue, vehicle/application filtering, guest/customer carts, customer authentication, loyalty workflows, secure administrative authentication/RBAC, document source register, catalogue/content management, transactional inventory, promotion infrastructure, audit trail and persistent database-backed abuse limits are implemented and tested. Remaining launch blockers are verified retail prices for unmatched products, supplier approval of imagery/specifications, checkout/order submission, notification delivery, production provider credentials, the temporary-to-handoff Neon migration, credential rotation, MFA policy, legal/content approval and final accessibility/security/performance verification.
+The storefront, multilingual catalogue, source-section filtering, carts, customer authentication, verified loyalty, secure administrative RBAC, document register, catalogue management, stock-confirmed order submission, transactional inventory, approval workflows and persistent abuse limits are implemented. Remaining launch blockers include verified retail/loyalty prices, the remaining 225 manufacturer descriptions and 121 missing storefront photos, provider credentials and sandbox evidence, isolated database concurrency/rollback testing, production infrastructure ownership, MFA policy, content rights and final accessibility/security/performance review.
 
 ## External dependencies
 
@@ -15,9 +15,9 @@ Managed PostgreSQL, S3-compatible storage/public URL, email provider/domain, SMS
 - Domain and public application URL.
 - Opening hours and pickup instructions.
 - Delivery coverage, rates, free-delivery threshold, and route provider.
-- Loyalty approval/verification/expiry rules.
+- Final loyalty expiry policy; email, phone verification and shop approval are enforced.
 - Pre-order approval and expiry rules.
-- Quotation fee amount and credit/refund policy (disabled).
+- Quotation fee credit/refund policy; the owner sets the fee per request.
 - Card surcharge legality/contract approval (disabled).
 - Offline payment methods and manual verification procedure.
 - Tax rules, returns/refunds, privacy, terms, delivery, and warranty policy text.

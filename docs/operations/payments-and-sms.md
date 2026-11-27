@@ -6,7 +6,7 @@ Open `/admin/payments` with `settings.manage`. Cash pickup is available by defau
 
 For hosted payments, enter the exact checkout hostname issued by the merchant provider, without a scheme or path. After confirming an order, generate a payment link in the merchant portal for the exact LKR amount and order number. In `/admin/orders`, select **Add unique merchant payment link**, enter the link and its provider expiry including timezone. Only that configured HTTPS hostname is accepted. No merchant credentials are stored in the dashboard.
 
-Genie/Dialog Pay Business, PayHere or another approved provider can supply a hosted payment link. Direct API initiation and automated provider webhooks are not configured: incoming funds are verified by the shop in its bank/merchant records. The requested 4% card adjustment remains an estimate; it is not attached to hosted payments because the previously reviewed Genie terms prohibit card-fee pass-through.
+Genie/Dialog Pay Business or another approved provider can supply a manual hosted payment link. PayHere now also has automatic signed checkout and a verified callback route; see [gateway integration and activation](../payment-gateway-integration.md). Merchant credentials and explicit owner enablement are still required. Manual bank/phone transfers and manual hosted links continue to require actual incoming-funds verification. The requested 4% card adjustment remains an estimate; it is not attached to hosted payments because the reviewed Genie terms prohibit card-fee pass-through.
 
 ## Customer and shop workflow
 
@@ -50,7 +50,7 @@ The code is HMAC-hashed in PostgreSQL and never persisted in notification payloa
 
 `SMS_PROVIDER=development` exposes a development-only preview code outside production. With no supported provider/credentials, the UI says delivery is unavailable. No real SMS was sent during verification. Confirm the SIM plan permits automated transactional use; an unlimited personal package alone does not establish that.
 
-Email delivery is still a separate deployment configuration requirement for new customer email verification. Owner bank details, merchant onboarding, phone connectivity and tokens cannot be inferred from the database credentials.
+The Resend adapter now delivers new-account verification and customer/admin recovery links when configured. Loyalty application, activation and discount eligibility require both verified email and phone. See [customer verification setup](customer-verification.md). Owner receiving details, merchant credentials, a verified email sender and phone gateway credentials cannot be inferred from database access.
 
 ## Verification and deployment
 

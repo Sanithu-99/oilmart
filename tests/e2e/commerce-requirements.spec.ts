@@ -8,7 +8,7 @@ test("uses source sections, removes sort and fitment selectors, and shows price 
   await expect(page.getByRole("combobox", { name: "Sort", exact: true })).toHaveCount(0);
   await expect(page.getByRole("combobox", { name: /vehicle/i })).toHaveCount(0);
   const section = page.getByRole("combobox", { name: "Catalogue section", exact: true });
-  await expect(section).toBeVisible();
+  await ready(section).toBeVisible();
   await section.selectOption({ label: "Caltex - Passenger Car Motor Oils" });
   await expect(page.locator(".discovery-product-card").first()).toBeVisible();
   await expect(page).toHaveURL(/section=/);

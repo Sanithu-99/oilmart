@@ -39,6 +39,7 @@ export function CustomerLoginForm({ locale }: { locale: StoreLocale }) {
     {error && <p className="form-error" role="alert">{error}</p>}
     <button className="button-primary justify-center" disabled={pending}>{pending ? "Signing in…" : "Sign in"}</button>
     <div className="customer-form-links"><Link href={`/${locale}/forgot-password`}>Forgot password?</Link><Link href={`/${locale}/verify-email`}>Resend verification</Link></div>
+    <p className="text-sm text-muted-foreground">Shop administrators: <Link className="text-link" href="/admin/login">use admin sign-in</Link>.</p>
   </form>;
 }
 

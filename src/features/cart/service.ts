@@ -5,13 +5,17 @@ import Decimal from "decimal.js";
 import { CartStatus, LoyaltyStatus, PublicationStatus, type Prisma } from "@/generated/prisma/client";
 import { calculatePrice } from "@/features/pricing/service";
 import { resolvePromotionUnitPrice } from "@/features/pricing/promotions";
+import { loyaltyContactsVerified } from "@/features/customer/loyalty/eligibility";
 import { db } from "@/lib/db/client";
+import { publicProductName } from "@/lib/catalog/product-options";
+import { manufacturerImage } from "@/lib/catalog/manufacturer-images";
+import { officialProductImage } from "@/lib/catalog/official-images";
 
 const cartInclude = {
   items: {
     orderBy: { createdAt: "asc" },
     include: {
-      product: { include: { images: { orderBy: [{ primary: "desc" }, { sortOrder: "asc" }], take: 1 } } },
+      product: { include: { brand: true, images: { orderBy: [{ primary: "desc" }, { sortOrder: "asc" }], take: 1 } } },
       variant: { include: { inventory: true } },
     },
   },
@@ -25,9 +29,9 @@ async function loyaltyEligibleFor(customerId: string | null | undefined) {
   if (!customerId) return false;
   const customer = await db.customerProfile.findUnique({
     where: { id: customerId },
-    select: { user: { select: { emailVerified: true } }, loyaltyMembership: { select: { status: true, expiresAt: true } } },
+    select: { user: { select: { emailVerified: true, phone: true, phoneVerifiedAt: true } }, loyaltyMembership: { select: { status: true, expiresAt: true } } },
   });
-  return Boolean(customer?.user.emailVerified && customer.loyaltyMembership?.status === LoyaltyStatus.ACTIVE && (!customer.loyaltyMembership.expiresAt || customer.loyaltyMembership.expiresAt > new Date()));
+  return Boolean(customer && loyaltyContactsVerified(customer.user) && customer.loyaltyMembership?.status === LoyaltyStatus.ACTIVE && (!customer.loyaltyMembership.expiresAt || customer.loyaltyMembership.expiresAt > new Date()));
 }
 
 async function presentCart(cart: CartRecord | null) {
@@ -66,6 +70,9 @@ async function presentCart(cart: CartRecord | null) {
     cardTotalMinor: cardPricing.totalMinor.toString(),
     cardSurchargeMinor: cardPricing.surchargeMinor.toString(),
     items: cart.items.map((item, index) => {
+      const manufacturer = officialProductImage(item.product.sku) ?? manufacturerImage(item.product.brand?.name,item.product.name);
+      const uploaded = item.product.images[0];
+      const image = manufacturer && (!uploaded || uploaded.url.startsWith("/images/products/inventory/")) ? {url:manufacturer.url,alt:manufacturer.alt} : uploaded ? {url:uploaded.url,alt:publicProductName(uploaded.altText)} : null;
       const available = Math.max(
         0,
         Number(item.variant.inventory?.quantityOnHand.toString() ?? 0) -
@@ -76,7 +83,7 @@ async function presentCart(cart: CartRecord | null) {
         productId: item.productId,
         variantId: item.variantId,
         slug: item.product.slug,
-        name: item.variant.name === "Default" ? item.product.name : `${item.product.name} - ${item.variant.name}`,
+        name: item.variant.name === "Default" ? publicProductName(item.product.name,item.product.sku) : `${publicProductName(item.product.name,item.product.sku)} - ${publicProductName(item.variant.name)}`,
         sku: item.variant.sku,
         quantity: item.quantity.toString(),
         quantityStep: item.variant.quantityStep.toString(),
@@ -88,9 +95,7 @@ async function presentCart(cart: CartRecord | null) {
         unitPriceMinor: pricing.lines[index]!.unitPriceMinor.toString(),
         priceSource: pricing.lines[index]!.priceSource,
         lineTotalMinor: pricing.lines[index]!.lineTotalMinor.toString(),
-        image: item.product.images[0]
-          ? { url: item.product.images[0].url, alt: item.product.images[0].altText }
-          : null,
+        image,
       };
     }),
   };

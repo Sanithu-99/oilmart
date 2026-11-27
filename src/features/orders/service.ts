@@ -43,7 +43,7 @@ export async function createOrder(customerId: string, userId: string, input: z.i
     if (fee === null && !requested.length) throw new CommerceError("Your cart is empty.");
     const variants = await tx.productVariant.findMany({ where: { id: { in: requested.map((item) => item.variantId) }, active: true, product: { status: "ACTIVE" } }, include: { product: true } });
     const membership = customer.loyaltyMembership;
-    const loyaltyEligible = Boolean(membership?.status === "ACTIVE" && (!membership.expiresAt || membership.expiresAt > now));
+    const loyaltyEligible = Boolean(customer.user.emailVerified && customer.user.phoneVerifiedAt && membership?.status === "ACTIVE" && (!membership.expiresAt || membership.expiresAt > now));
     const promotions = await tx.promotion.findMany({ where: { active: true, AND: [{ OR: [{ startsAt: null }, { startsAt: { lte: now } }] }, { OR: [{ endsAt: null }, { endsAt: { gte: now } }] }] }, include: { products: true, categories: true } });
     const pricedInput = requested.map((item) => {
       const variant = variants.find((entry) => entry.id === item.variantId);
@@ -83,7 +83,7 @@ export async function createOrder(customerId: string, userId: string, input: z.i
   }, { isolationLevel: "Serializable", maxWait: 10000, timeout: 20000 });
 }
 
-export async function moveOrderStock(tx: Prisma.TransactionClient, order: ManagedOrder, operation: "reserve" | "release" | "commit", actorId: string) {
+export async function moveOrderStock(tx: Prisma.TransactionClient, order: ManagedOrder, operation: "reserve" | "release" | "commit", actorId: string | null) {
   for (const item of order.items) {
     const inventory = await tx.inventory.findUnique({ where: { variantId: item.variantId }, include: { variant: { include: { product: true } } } });
     if (!inventory || operation === "reserve" && (!inventory.variant.active || inventory.variant.product.status !== "ACTIVE")) throw new CommerceError("A selected size is no longer available.");

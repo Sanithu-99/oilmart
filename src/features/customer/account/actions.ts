@@ -71,6 +71,11 @@ export async function requestPhoneOtpAction(_state: AccountState, form: FormData
 export async function verifyPhoneOtpAction(_state: AccountState, form: FormData): Promise<AccountState> {
   const customer = await requireCustomer();
   const valid = await verifyPhoneOtp(customer.userId, text(form, "challengeId"), text(form, "code"));
+  if (valid) {
+    revalidatePath("/en", "layout");
+    revalidatePath("/si", "layout");
+    revalidatePath("/ta", "layout");
+  }
   return valid ? { ok: true, message: "Phone number verified." } : { message: "That code is invalid, expired, or has too many attempts." };
 }
 
