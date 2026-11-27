@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-11-27",
+  "method": "Official manufacturer sources only; exact product and supplied pack identity checked. All saved bytes decoded with Pillow and pack labels inspected visually. No enlargement, synthetic photos or database changes.",
+  "assets": [
+    {
+      "sku": "INV-1FD3ED97E0",
+      "name": "Wurth Interior Cleaner 500 ml",
+      "sourcePage": "https://eshop.wurth.rs/aktivna-pena-za-ciscenje-sprej",
+      "sourceImage": "https://eshop.wurth.rs/images/thumbs/0765157_sredstvo-za-ciscenje-unutrasnjosti-vozila-500-ml.webp",
+      "url": "/images/products/verified-2026-11-27/accessory-wurth-interior-cleaner-500ml.webp",
+      "sourceWidth": 1000, "sourceHeight": 1000, "width": 1000, "height": 1000,
+      "highResolution": true,
+      "replaces": "/images/products/inventory/wurth-interior-cleaner.webp",
+      "verification": "Official product page identifies article 0893033 and 500 ml; original linked as data-full-image-url. Prior imported asset was made from the manufacturer's 500px thumbnail padded onto a 900px canvas. New file is the original 1000px manufacturer asset, copied without resizing. It retains manufacturer compression; larger dimensions alone do not guarantee perfect label detail."
+    },
+    {
+      "sku": "INV-61377B8291",
+      "name": "ABRO Radiator Flush 354 ml",
+      "sourcePage": "https://abro.com/wp-content/uploads/2022/10/AB-505-Radiator-Flush-Sellsheet-2022.pdf",
+      "sourceImage": "Embedded product image xref83 with alpha mask xref82, page1 of official AB-505 product sheet",
+      "url": "/images/products/verified-2026-11-27/accessory-abro-radiator-flush-354ml.webp",
+      "sourceWidth": 269, "sourceHeight": 581, "width": 269, "height": 581,
+      "highResolution": false,
+      "replaces": null,
+      "verification": "Actual embedded photograph extracted at native dimensions rather than rendering/upscaling a PDF crop. Label clearly reads ABRO, RADIATOR 10 MINUTE FLUSH, 12 FL OZ (354 mL), PART NO. AB-505. Original alpha mask preserved. Fills a missing photograph; a higher-resolution supplier image is still desirable."
+    }
+  ],
+  "notAssigned": [
+    {"products":["ABRO Radiator Coolant Green 4 L","ABRO Radiator Coolant Red 4 L"],"reason":"Official corresponding gallon packages are 3.785 L, not the inventory's stated 4 L. Exact supplied code/volume must be confirmed."},
+    {"products":["ABRO Gasket Maker Gray 999 (L)","ABRO Gasket Maker Gray 999 (S)"],"reason":"Inventory gives only L/S, without grams or full manufacturer code. Multiple official 999 pack sizes exist; do not guess."},
+    {"products":["Wurth Brake Fluid DOT3 250 ml"],"reason":"Official category exposes 800px product photographs but contains several 250/500ml variants and selected photo's volume is not readable. Exact per-SKU image association was not verified; no image assigned."},
+    {"products":["Waxpol Brake Fluid DOT3 red/yellow, 100/250 ml"],"reason":"Official legacy photo is only250x450 and lacks a readable volume; official Shopify assets failed direct download. Red/yellow and pack variants must not share a guessed photograph."},
+    {"products":["Waxpol Ultra Gold Car Polish 100g","Waxpol Cut & Clean Polish 200 ml"],"reason":"No exact current official product/pack photo found. Do not substitute newer Ultra Glo, rubbing compound or different pack size."},
+    {"products":["Wurth blue/green antifreeze -45C 1L","Wurth blue/green concentrate 1L"],"reason":"Official Sri Lankan catalogue verifies several formula/colour codes but did not provide a usable exact image association. Ready-mixed -45C must not be confused with concentrate."}
+  ]
+}

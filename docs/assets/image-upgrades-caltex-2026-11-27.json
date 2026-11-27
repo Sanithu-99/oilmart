@@ -1,0 +1,48 @@
+{
+  "checkedAt": "2026-11-27",
+  "scope": "Exact Caltex Sri Lanka inventory pack replacements; no database writes",
+  "added": 1,
+  "highResolutionAdded": 0,
+  "method": "Manufacturer original downloaded, decoded with sharp and visually inspected with view_image. Only an exact native-resolution crop was made. No enlarging, sharpening, AI redrawing, recolouring or generated label detail. Bottle branding and full label remain intact; unrelated campaign copy is outside the crop.",
+  "rights": "Official manufacturer campaign provenance retained. No separate reproduction licence confirmed. Packaging may vary by supplied batch.",
+  "sources": [
+    {
+      "sku": "INV-21CAF07E53",
+      "inventoryName": "Caltex Delo Gold Ultra 15W40 (6 L)",
+      "sourcePage": "https://caltex.lk/product/caltex-delo-gold-ultra/",
+      "imageUrl": "https://caltex.lk/wp-content/uploads/2025/03/Delo-Diesel-Waasi-Digital-Banner-1.jpg",
+      "sourceWidth": 4444,
+      "sourceHeight": 1780,
+      "crop": { "left": 3920, "top": 1120, "width": 368, "height": 610 },
+      "outputWidth": 368,
+      "outputHeight": 610,
+      "nativeBottleForegroundApproximately": { "width": 345, "height": 555 },
+      "localUrl": "/images/products/verified-2026-11-27/caltex-delo-gold-ultra-15w40-6l.webp",
+      "highResolution": false,
+      "match": "Visually confirmed Delo Gold ULTRA, SAE 15W-40, net contents 6 Litres on the complete bottle label. Exact 6L SKU only, never reused for 1L or loose oil. Original road background is retained.",
+      "improvement": "Replaces a 250x350 family thumbnail padded onto a 900x900 canvas; the true pack foreground is approximately twice as tall. Real improvement in readable label detail, but a dedicated higher-resolution supplier packshot is still desirable."
+    }
+  ],
+  "notUsed": [
+    {
+      "source": "https://caltex.lk/wp-json/wp/v2/media",
+      "reason": "Official WordPress media originals for current standalone product assets remain 250x350; larger search results were brand logos, campaign artwork or price lists rather than exact standalone pack photographs."
+    },
+    {
+      "source": "https://www.caltex.com/sg/motorists/products-and-services/lubricants.html",
+      "reason": "Downloaded seven linked global original PNG assets for Super4T20W50, Super4T20W40, Texamatic1888, full synthetic multi-vehicleATF, ProDS5W30, DeloGoldUltra and DeloGold. All decoded to250x350 pixels, so none is called a high-resolution upgrade."
+    },
+    {
+      "source": "https://caltex.lk/wp-content/uploads/2026/07/CX-Web-Banner_ECO.jpg",
+      "reason": "Campaign displays API SQ-upgraded ECO packaging; imported ECO5 stock does not establish that exact supplied formulation. No substitution made from a superficially similar pack."
+    },
+    {
+      "source": "https://caltex.lk/wp-content/uploads/2026/07/CX-Web-Banner_MCO.jpg",
+      "reason": "Exact one-litre motorcycle grades are visible, but individual foreground packs are only about145x350 pixels and overlap; cropping would not improve genuine detail."
+    },
+    {
+      "brand": "Royal Super",
+      "reason": "Imported RY Bolt/RY Trans Plus identifiers could not be reliably connected to exact official Royal Super products and pack photos. No image from a similarly named manufacturer was assigned."
+    }
+  ]
+}
